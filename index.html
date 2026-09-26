@@ -25,6 +25,7 @@
 :root[data-theme="dark"]{ color-scheme:dark; --bed:#121418; --paper:#181b20; --ink:#eef0f3; --ink2:#a8afb8; --line:#2c3138;
   --pla:#f0578c; --cyan:#35b8c8; --card:#1d2127; }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{background:var(--bed); color:var(--ink); font:16px/1.55 var(--body); padding-inline:16px;
   background-image:repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in srgb, var(--ink) 4%, transparent) 3px 4px);}
 .wrap{max-width:1120px; margin:0 auto}
@@ -33,9 +34,9 @@ header.top{display:flex; align-items:center; gap:14px; padding-block:18px; flex-
 .logo b{color:var(--pla)}
 .tag{font:600 11px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--ink2); border:1px solid var(--line); padding:6px 9px; border-radius:4px}
 header.top .sp{flex:1}
-.btn{display:inline-flex; align-items:center; gap:8px; font:600 15px/1 var(--body); padding:13px 18px; border-radius:8px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); cursor:pointer; text-decoration:none}
+.btn{display:inline-flex; align-items:center; gap:8px; min-height:44px; font:600 15px/1.25 var(--body); padding:13px 18px; border-radius:8px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); cursor:pointer; text-decoration:none}
 .btn.alt{background:transparent; color:var(--ink)}
-.btn:focus-visible, input:focus-visible, button:focus-visible{outline:3px solid var(--cyan); outline-offset:2px}
+.btn:focus-visible, input:focus-visible, button:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible, .drop:focus-within{outline:3px solid var(--cyan); outline-offset:2px}
 h1{font:800 clamp(38px,6.4vw,76px)/.98 var(--display); letter-spacing:-.035em; margin:0; text-wrap:balance}
 h1 em{font-style:normal; color:var(--pla)}
 h2{font:700 clamp(26px,3.4vw,38px)/1.05 var(--display); letter-spacing:-.02em; margin:0 0 8px; text-wrap:balance}
@@ -91,16 +92,22 @@ section{padding-block:56px}
 .contact h2{color:var(--paper)}
 .contact p{margin:0; color:color-mix(in srgb, var(--paper) 75%, transparent)}
 .mail{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
-.mail code{font:600 17px/1 var(--mono); background:color-mix(in srgb, var(--paper) 10%, transparent); padding:12px 14px; border-radius:8px; user-select:all}
+.mail code{max-width:100%; overflow-wrap:anywhere; font:600 17px/1.5 var(--mono); background:color-mix(in srgb, var(--paper) 10%, transparent); padding:12px 14px; border-radius:8px; user-select:all}
 .contact .btn{background:var(--pla); border-color:var(--pla); color:#fff}
 /* ---- cotizador ---- */
-.quote{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:24px}
+.quote{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:18px; margin-top:24px}
 @media (max-width:860px){ .quote{grid-template-columns:1fr} }
-.qcard{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px}
+.qcard{min-width:0; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px}
+.qcard input:not([type=file]), .qcard textarea{width:100%; min-width:0; font:500 16px/1.5 var(--body); padding:11px 12px; border-radius:8px; border:1px solid var(--line); background:var(--paper); color:var(--ink)}
+.qcard textarea{resize:vertical}
+.qcard textarea[readonly]{font:400 13px/1.5 var(--mono); min-height:180px}
+.request-note{padding:12px 14px; border-left:3px solid var(--cyan); background:var(--paper); color:var(--ink2)}
 .drop{border:2px dashed var(--line); border-radius:10px; padding:22px; text-align:center; color:var(--ink2); cursor:pointer; display:block}
 .drop.on{border-color:var(--cyan); color:var(--ink)}
-.drop input{display:none}
-.qrow{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px}
+.drop input{position:absolute; width:1px; height:1px; margin:0; opacity:0}
+.qrow{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; margin-top:14px}
+.qrow>div{min-width:0}
+@media (max-width:600px){.qrow,.grid,.plans{grid-template-columns:minmax(0,1fr)} .row .btn{max-width:100%}}
 .qrow label, .qcard .lbl{font:600 12px/1 var(--mono); letter-spacing:.08em; text-transform:uppercase; color:var(--ink2); display:block; margin-bottom:6px}
 select, input[type=number]{width:100%; font:500 16px/1 var(--body); padding:11px 12px; border-radius:8px; border:1px solid var(--line); background:var(--paper); color:var(--ink)}
 .bk{width:100%; border-collapse:collapse; font:400 14px/1.4 var(--body); font-variant-numeric:tabular-nums}
@@ -116,6 +123,8 @@ select, input[type=number]{width:100%; font:500 16px/1 var(--body); padding:11px
 .book img{width:100%; border-radius:8px; box-shadow:0 18px 40px -20px rgba(0,0,0,.55)}
 .book h3{font:800 clamp(24px,3vw,32px)/1.1 var(--display); margin:10px 0 6px}
 .book ul{margin:12px 0 0; padding-left:18px; color:var(--ink2)} .book li{margin:4px 0}
+footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex; gap:12px; flex-wrap:wrap; justify-content:space-between}
+@media (prefers-reduced-motion: no-preference){ .stage svg{transition:transform .25s} }
 /* ---- Filo: asistente 3D ---- */
 #filo{position:fixed; right:16px; bottom:12px; z-index:50; width:180px; height:205px; cursor:pointer; -webkit-tap-highlight-color:transparent}
 #filo canvas{width:180px; height:205px; display:block}
@@ -143,30 +152,55 @@ select, input[type=number]{width:100%; font:500 16px/1 var(--body); padding:11px
 
 footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex; gap:12px; flex-wrap:wrap; justify-content:space-between}
 @media (prefers-reduced-motion: no-preference){ .stage svg{transition:transform .25s} }
+/* ---- Taller: idea -> modelo 3D ---- */
+.taller{margin-top:20px; background:var(--card); border:1px solid var(--line); border-radius:14px; box-shadow:0 18px 40px -28px rgba(0,0,0,.45); overflow:hidden}
+.taller .tbar{display:flex; justify-content:space-between; align-items:center; padding:12px 14px; font:600 11px/1 var(--mono); letter-spacing:.1em; text-transform:uppercase; color:var(--ink2); border-bottom:1px solid var(--line)}
+#tlog{max-height:470px; min-height:110px; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; font:400 15px/1.45 var(--body)}
+.tm{max-width:92%; padding:10px 12px; border-radius:14px; white-space:pre-wrap; overflow-wrap:anywhere}
+.tm.bot{background:var(--paper); border:1px solid var(--line); border-top-left-radius:4px; align-self:flex-start}
+.tm.me{background:var(--pla); color:#fff; border-top-right-radius:4px; align-self:flex-end}
+.tm a{color:var(--cyan); font-weight:600}
+.tm.tcard{align-self:stretch; max-width:100%; white-space:normal; padding:10px}
+.tview{width:100%; border-radius:10px; overflow:hidden; cursor:grab; background:#1a1b1e radial-gradient(circle at 1px 1px, #2c2d31 1px, transparent 1.5px) 0 0/9px 9px}
+.tview canvas{display:block; max-width:100%}
+.tinfo{display:flex; flex-direction:column; gap:3px; margin-top:10px} .tinfo span{font:400 12.5px/1.4 var(--mono); color:var(--ink2)}
+.tsw{display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin-top:8px; font:600 11px/1 var(--mono); letter-spacing:.06em; text-transform:uppercase; color:var(--ink2)}
+.tsw .sb,.tsw .sl{display:flex; gap:5px}
+.tsw button{width:22px; height:22px; border-radius:50%; border:2px solid var(--line); padding:0; cursor:pointer}
+.tsw button[aria-pressed="true"]{outline:2px solid var(--cyan); outline-offset:1px}
+.trow{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px} .trow .btn{font-size:14px; padding:11px 14px}
+.tnote{font:400 12.5px/1.4 var(--body); color:var(--ink2); margin:8px 0 0} .tnote a{color:var(--cyan)}
+#tchips{display:flex; gap:6px; flex-wrap:wrap; padding:0 14px 10px}
+#tchips button{font:600 12.5px/1.2 var(--body); padding:8px 10px; border-radius:999px; border:1px solid var(--line); background:var(--paper); color:var(--ink); cursor:pointer}
+#tform{display:flex; gap:8px; padding:10px 12px; border-top:1px solid var(--line)}
+#tform input{flex:1; min-width:0; font:500 16px/1.2 var(--body); padding:12px; border-radius:10px; border:1px solid var(--line); background:var(--paper); color:var(--ink)}
 </style>
 </head>
 <body>
 
 
 <div class="wrap">
+<noscript><p class="request-note">Puedes consultar planes o pedir una pieza por <a href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com">correo</a>. Indica tu idea, medidas, colores y forma de entrega.</p></noscript>
 <header class="top">
   <div class="logo">hack<b>gorithmic</b> 3D</div>
   <span class="tag">Florida · impresión 3D</span>
   <div class="sp"></div>
   <a class="btn alt" href="#cotizar">Cotizar</a>
-  <a class="btn alt" href="#precios">Planes</a>
+  <a class="btn alt" href="#precios">Suscripciones</a>
   <a class="btn alt" href="#libro">Libro</a>
   <a class="btn" href="#pedir">Hacer pedido</a>
 </header>
 
 <div class="hero">
   <div>
-    <span class="soon">App en camino</span>
+    <span class="soon">Diseño e impresión por encargo</span>
     <h1 style="margin-top:14px">Escribe tu idea.<br>La <em>imprimimos</em> en 3D.</h1>
-    <p class="lead">Llaveros con tu nombre, charms, accesorios para cámara y piezas a la medida. Nuestra app arma el modelo 3D por ti y lo imprimimos en PLA con la Snapmaker U1 de 4 colores.</p>
-    <div class="row" style="margin-top:22px">
-      <a class="btn" href="#pedir">Pedir el mío</a>
-      <a class="btn alt" href="#productos">Ver piezas</a>
+    <p class="lead">Llaveros, charms, placas y letreros con tu texto: descríbelo aquí y te armamos el modelo 3D al instante. Lo descargas gratis o lo imprimimos por ti en PLA con la Snapmaker U1 de 4 colores.</p>
+    <div class="taller" id="taller" aria-label="Taller: describe tu pieza y te armamos el modelo 3D">
+      <div class="tbar"><span>Taller · escribe tu idea</span><span class="soon">Gratis</span></div>
+      <div id="tlog" aria-live="polite"></div>
+      <div id="tchips"></div>
+      <form id="tform" autocomplete="off"><input id="tin" type="text" maxlength="140" placeholder="Ej.: llavero de corazón que diga “Luna” en rosa" aria-label="Describe tu pieza"><button class="btn" type="submit">Crear</button></form>
     </div>
   </div>
 
@@ -193,7 +227,9 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
     </div>
     <div class="specs" id="specs"></div>
     <div class="row" style="align-items:center;margin-top:10px;gap:10px"><label for="kq" style="font:600 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)">Cantidad</label><input id="kq" type="number" min="1" max="50" value="1" style="width:84px"><div class="price-kc" id="kprice" aria-live="polite"></div></div>
-    <div class="note">1 por $7 · 3 por $18 · 5 por $25. Envío en EE.UU. $5 (gratis desde $25) o recógelo en Florida gratis.</div>
+    <div class="note">Llaveros impresos: 1 por $7 · 3 por $18 · 5 por $25 USD. Envío en EE.UU. cotizado aparte. Recogida local en Florida gratis.</div>
+    <div class="note">Incluye nombre, dos colores, argolla y empaque sencillo.</div>
+    <div class="note">Diseños especiales, grandes o con logo desde $10 USD, según el trabajo. <a href="#contacto">Solicitar cotización</a>.</div>
     <a class="btn" id="kpedir" href="#pedir" style="margin-top:12px">Pedir este llavero</a>
   </div>
 </div>
@@ -217,7 +253,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
     <article class="prod">
       <div class="img kc"><svg id="kc2" viewBox="0 0 600 240" style="width:88%" role="img" aria-label="Llavero de ejemplo con nombre"></svg></div>
       <div class="txt"><h3>Llaveros y charms con nombre</h3>
-        <p>Dos colores, letras en relieve. Set llavero + charm compatible con pulseras tipo Pandora.</p>
+        <p>Llaveros con nombre, dos colores y letras en relieve. Los charms compatibles con pulseras tipo Pandora se cotizan aparte.</p>
         <div class="meta">≈ 60 × 20 × 4 mm · argolla de 5.8 mm para charm</div></div>
     </article>
   </div>
@@ -246,7 +282,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
       </div>
       <div id="qdims" class="specs"></div>
       <div id="qwarn" class="warn"></div>
-      <p class="note" style="margin-top:14px">¿No tienes archivo? Escríbenos tu idea abajo: la diseñamos y te cotizamos.</p>
+      <p class="note" style="margin-top:14px">¿No tienes archivo? Descríbela en el <a href="#taller">Taller</a> de arriba o cuéntasela a Filo.</p>
     </div>
     <div class="qcard">
       <span class="lbl">Tu cotización</span>
@@ -259,56 +295,84 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 </section>
 
 <section id="precios">
-  <h2>Planes de la app</h2>
-  <p class="lead" style="margin-top:4px">Crea tus propios modelos 3D. La vista previa de arriba es gratis para todos. <span class="soon">Muy pronto</span></p>
+  <h2>Suscripciones de creación de modelos 3D</h2>
+  <p class="lead" style="margin-top:4px">Planes de creación de modelos 3D de $4, $8 o $24 USD al mes. La vista previa de arriba es gratis. La impresión física y el envío se cobran por separado. <span class="soon" data-subscription-pending>Consulta los planes</span></p>
+  <p class="request-note" data-subscription-pending>Estos planes todavía no se pueden contratar. Consulta los beneficios propuestos y cuéntanos tu idea para confirmar disponibilidad y forma de entrega.</p>
   <div class="plans">
     <div class="plan">
       <h3 style="font:700 22px var(--display); margin:0">Básico</h3>
       <div class="price">$4 <small>/ mes</small></div>
       <ul><li>3 descargas STL al mes</li><li>Llaveros y charms con nombre</li><li>Estilos básicos</li></ul>
-      <a class="btn alt" style="margin-top:14px" href="mailto:agent@hackgorithmic.com?subject=Lista%20de%20espera%20-%20Plan%20B%C3%A1sico%20%244">Apartar mi lugar</a>
+      <a class="btn alt" data-subscription-plan="basico" style="margin-top:14px" href="#solicitar-plan">Consultar Básico</a>
     </div>
     <div class="plan main">
-      <span class="soon">El más popular</span>
-      <h3 style="font:700 22px var(--display); margin:12px 0 0">Creador</h3>
+      <h3 style="font:700 22px var(--display); margin:0">Creador</h3>
       <div class="price">$8 <small>/ mes</small></div>
       <ul><li>Descargas ilimitadas</li><li>Todos los estilos y colores</li><li>Archivos multicolor listos para imprimir</li></ul>
-      <a class="btn" style="margin-top:14px" href="mailto:agent@hackgorithmic.com?subject=Lista%20de%20espera%20-%20Plan%20Creador%20%248">Apartar mi lugar</a>
+      <a class="btn" data-subscription-plan="creador" style="margin-top:14px" href="#solicitar-plan">Consultar Creador</a>
     </div>
     <div class="plan">
       <h3 style="font:700 22px var(--display); margin:0">Pro</h3>
       <div class="price">$24 <small>/ mes</small></div>
       <ul><li>Diseños a medida con nuestro agente</li><li>Uso comercial: vende lo que imprimas</li><li>Prioridad y 10% de descuento en impresiones</li></ul>
-      <a class="btn alt" style="margin-top:14px" href="mailto:agent@hackgorithmic.com?subject=Lista%20de%20espera%20-%20Plan%20Pro%20%2424">Apartar mi lugar</a>
+      <a class="btn alt" data-subscription-plan="pro" style="margin-top:14px" href="#solicitar-plan">Consultar Pro</a>
     </div>
   </div>
-  <p class="note" style="margin-top:12px">Pago anual: 2 meses gratis ($40, $80 o $240 al año). ¿Prefieres que lo imprimamos nosotros? Usa el <a href="#cotizar">cotizador</a>: material + horas de máquina + preparación.</p>
+  <p class="note" style="margin-top:12px" data-subscription-annual hidden>Pago anual: 2 meses gratis ($40, $80 o $240 al año).</p>
+  <p class="note" data-subscription-live hidden>Cobro mensual recurrente en USD. El importe y la frecuencia se muestran antes de confirmar el pago. Puedes gestionar o cancelar la renovación desde tu portal de suscripción. La impresión física y el envío se cobran aparte.</p>
+  <p class="note">¿Prefieres que lo imprimamos nosotros? Usa el <a href="#cotizar">cotizador</a>: material + horas de máquina + preparación.</p>
+  <p class="note"><a data-subscription-portal hidden>Gestionar o cancelar mi suscripción</a></p>
+</section>
+
+<section id="solicitar-plan" aria-labelledby="plan-request-title">
+  <h2 id="plan-request-title">Cuéntanos qué quieres crear</h2>
+  <p class="lead" style="margin-top:4px">Elige el plan que te interesa y describe tu idea. Te orientamos sobre el diseño y la entrega de tus modelos 3D.</p>
+  <div class="quote">
+    <form class="qcard" id="plan-request" onsubmit="return false" aria-describedby="plan-request-help">
+      <p class="note" id="plan-request-help">El plan, tu email y la idea son obligatorios. Puedes adjuntar fotos o referencias al enviar el correo.</p>
+      <div class="qrow">
+        <div style="grid-column:1/-1"><label for="splan">Plan que te interesa</label><select id="splan" name="plan" required><option value="basico">Básico — $4 USD al mes</option><option value="creador">Creador — $8 USD al mes</option><option value="pro">Pro — $24 USD al mes</option></select></div>
+        <div><label for="sname">Tu nombre (opcional)</label><input id="sname" name="name" type="text" autocomplete="name" maxlength="100"></div>
+        <div><label for="semail">Tu email</label><input id="semail" name="email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254" required></div>
+        <div style="grid-column:1/-1"><label for="sidea">Tu idea y las medidas que necesitas</label><textarea id="sidea" name="idea" rows="5" maxlength="3000" required placeholder="Describe la pieza, el nombre o el uso que le darás. Si conoces las medidas o el formato que necesitas, inclúyelos aquí."></textarea></div>
+      </div>
+    </form>
+    <div class="qcard">
+      <label class="lbl" for="ssummary">Resumen de tu consulta</label>
+      <textarea id="ssummary" rows="10" readonly aria-describedby="sdelivery">Completa el formulario para preparar tu consulta.</textarea>
+      <p class="note" id="sdelivery">«Preparar correo» abre un mensaje que debes enviar desde tu aplicación de correo. También puedes copiar o descargar el resumen y enviarlo <a href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com">por correo</a> o pegarlo en el chat con Filo.</p>
+      <div class="row" style="margin-top:12px"><a class="btn" id="ssend" href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com">Preparar correo</a><button class="btn alt" id="scopy" type="button">Copiar resumen</button><button class="btn alt" id="sdownload" type="button">Descargar resumen</button></div>
+      <p class="note" id="smsg" role="status" aria-live="polite"></p>
+    </div>
+  </div>
 </section>
 
 <section id="pedir">
-  <h2>Haz tu pedido</h2>
-  <p class="lead" style="margin-top:4px">Llena esto y te llega la confirmación con la vista previa y el link de pago. Imprimimos en 1–3 días y te lo enviamos.</p>
+  <h2>Encarga tus llaveros impresos</h2>
+  <p class="lead" style="margin-top:4px">Prepara tu solicitud de llaveros personalizados. Te confirmamos el diseño, el total con envío y el plazo antes de cobrar.</p>
   <div class="quote">
     <form class="qcard" id="ord" onsubmit="return false">
       <div class="qrow">
-        <div style="grid-column:1/-1"><label for="on">Nombre(s) para los llaveros</label><input id="on" type="text" placeholder="Luna, Mateo, Sofía" style="width:100%;font:500 16px var(--body);padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></div>
+        <div style="grid-column:1/-1"><label for="on">Nombre(s) para los llaveros</label><input id="on" type="text" placeholder="Luna, Mateo, Sofía" maxlength="300" required style="width:100%;font:500 16px var(--body);padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></div>
         <div><label for="ost">Estilo</label><select id="ost"><option value="script">Firma</option><option value="round">Burbuja</option><option value="block">Bloque</option></select></div>
-        <div><label for="oq">Cantidad</label><input id="oq" type="number" min="1" max="50" value="1"></div>
+        <div><label for="oq">Cantidad</label><input id="oq" type="number" min="1" max="50" step="1" value="1" required></div>
         <div><label for="ob">Color base</label><select id="ob"><option>rosa</option><option>negro</option><option>cian</option><option>rojo</option><option>amarillo</option></select></div>
         <div><label for="ol">Color letras</label><select id="ol"><option>blanco</option><option>negro</option><option>rosa</option></select></div>
-        <div style="grid-column:1/-1"><label for="od">Entrega</label><select id="od"><option value="envio">Envío en EE.UU.</option><option value="recoger">Recoger en Florida (gratis)</option></select></div>
-        <div><label for="ocn">Tu nombre</label><input id="ocn" type="text" autocomplete="name" style="width:100%;font:500 16px var(--body);padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></div>
-        <div><label for="oct">WhatsApp o email</label><input id="oct" type="text" autocomplete="email" style="width:100%;font:500 16px var(--body);padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></div>
-        <div style="grid-column:1/-1" id="oaddrw"><label for="oa">Dirección de envío</label><textarea id="oa" rows="2" autocomplete="street-address" style="width:100%;font:500 15px var(--body);padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></textarea></div>
+        <div style="grid-column:1/-1"><label for="od">Entrega</label><select id="od"><option value="envio">Envío en EE.UU. (se cotiza aparte)</option><option value="recoger">Recoger en Florida (gratis)</option></select></div>
+        <div><label for="ocn">Tu nombre (opcional)</label><input id="ocn" type="text" autocomplete="name" maxlength="100" style="width:100%;font:500 16px var(--body);padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></div>
+        <div><label for="oct">WhatsApp o email</label><input id="oct" type="text" autocomplete="email" maxlength="254" required style="width:100%;font:500 16px var(--body);padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></div>
+        <div style="grid-column:1/-1" id="oaddrw"><label for="oa">Dirección para cotizar el envío</label><textarea id="oa" rows="2" autocomplete="street-address" maxlength="500" required style="width:100%;font:500 15px var(--body);padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></textarea></div>
       </div>
     </form>
     <div class="qcard">
       <span class="lbl">Tu pedido</span>
       <table class="bk" id="obk"></table>
-      <div class="total"><span>Total</span><b id="otot">—</b></div>
-      <p class="note">No cobramos nada todavía: te confirmamos y te mandamos el link de pago.</p>
-      <div class="row" style="margin-top:12px"><a class="btn" id="osend" href="#">Enviar pedido</a><button class="btn alt" id="ocopy" type="button">Copiar pedido</button></div>
-      <p class="note" id="omsg" aria-live="polite"></p>
+      <div class="total"><span id="ototal-label">Subtotal de llaveros</span><b id="otot">—</b></div>
+      <p class="note">El precio incluye nombre, dos colores, argolla y empaque sencillo. El envío se cotiza aparte según la dirección; la recogida local es gratis. Confirmamos el total antes de enviarte el link de pago.</p>
+      <label class="lbl" for="osummary" style="margin-top:16px">Resumen para enviar</label><textarea id="osummary" rows="8" readonly></textarea>
+      <div class="row" style="margin-top:12px"><a class="btn" id="osend" href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com">Preparar correo</a><button class="btn alt" id="ocopy" type="button">Copiar pedido</button><button class="btn alt" id="odownload" type="button">Descargar pedido</button></div>
+      <p class="note">Abre el correo preparado y pulsa Enviar, o pega el resumen en el chat con Filo (abajo a la derecha).</p>
+      <p class="note" id="omsg" role="status" aria-live="polite"></p>
     </div>
   </div>
 </section>
@@ -319,11 +383,10 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
   <div class="book">
     <img src="data:image/webp;base64,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" alt="Portada del libro Montando tu agente desde 0, de José González">
     <div>
-      <span class="soon">Muy pronto en Amazon Kindle</span>
       <h3>Montando tu agente desde 0</h3>
       <p style="margin:0;color:var(--ink2)">Crea un asistente de IA que atienda clientes, publique en redes y trabaje por ti, aunque no sepas programar. Por José González (hackgorithmic).</p>
       <ul><li>Paso a paso para emprendedores</li><li>Caso real: cómo montamos hackgorithmic 3D</li><li>Plantillas listas y un plan de 30 días</li></ul>
-      <a class="btn" style="margin-top:16px" href="mailto:agent@hackgorithmic.com?subject=Av%C3%ADsame%20cuando%20salga%20el%20libro">Avísame cuando salga</a>
+      <a class="btn" style="margin-top:16px" href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com&amp;subject=Consulta%20sobre%20el%20libro">Consultar sobre el libro</a>
     </div>
   </div>
 </section>
@@ -373,7 +436,7 @@ function cotizar({g,h,mat="pla",colores=1,qty=1,prep=T.prep}){
 }
 const $$=n=>"$"+n.toFixed(2);
 /* Precio fijo de llaveros con nombre (2 colores) */
-const LLAVERO={uno:7, tres:18, cinco:25, extra:5, envio:5, envioGratisDesde:25};
+const LLAVERO={uno:7, tres:18, cinco:25, extra:5};
 function precioLlaveros(n){ if(n>=5) return LLAVERO.cinco+(n-5)*LLAVERO.extra; if(n>=3) return LLAVERO.tres+(n-3)*6; return n*LLAVERO.uno; }
 
 const COL={rosa:"#e0457b",negro:"#1b1c1f",blanco:"#f4f4f2",cian:"#1596a6",rojo:"#d3312f",amarillo:"#f2c230"};
@@ -456,17 +519,18 @@ $("#drop").addEventListener("drop",e=>{e.preventDefault();loadFile(e.dataTransfe
 $("#qsend").onclick=async()=>{try{await navigator.clipboard.writeText(window._q);$("#qmsg").textContent="Copiada. Pégala en el chat con Filo (abajo a la derecha) y te ayudamos.";}catch(e){$("#qmsg").textContent="Ábrele el chat a Filo (abajo a la derecha) y cuéntale.";}};
 function syncOrder(){
   const n=Math.max(1,+$("#oq").value||1), sub=precioLlaveros(n);
-  const env=$("#od").value==="envio"?(sub>=LLAVERO.envioGratisDesde?0:LLAVERO.envio):0;
-  $("#oaddrw").style.display=$("#od").value==="envio"?"":"none";
-  $("#obk").innerHTML="<tr><td>"+n+" llavero"+(n>1?"s":"")+" · "+$("#ob").value+" + "+$("#ol").value+"</td><td>"+$$(sub)+"</td></tr><tr><td>"+($("#od").value==="envio"?"Envío EE.UU.":"Recoger en Florida")+"</td><td>"+(env?$$(env):"Gratis")+"</td></tr>";
-  $("#otot").textContent=$$(sub+env);
-  const body="Pedido hackgorithmic 3D\nNombres: "+($("#on").value||"(falta)")+"\nEstilo: "+$("#ost").selectedOptions[0].text+"\nColores: base "+$("#ob").value+", letras "+$("#ol").value+"\nCantidad: "+n+"\nEntrega: "+$("#od").selectedOptions[0].text+"\nTotal: "+$$(sub+env)+"\nCliente: "+($("#ocn").value||"")+"\nContacto: "+($("#oct").value||"")+($("#od").value==="envio"?"\nDirección: "+($("#oa").value||""):"");
+  const requiereEnvio=$("#od").value==="envio";
+  $("#oaddrw").style.display=requiereEnvio?"":"none";
+  $("#oa").required=requiereEnvio;
+  $("#obk").innerHTML="<tr><td>"+n+" llavero"+(n>1?"s":"")+" · "+$("#ob").value+" + "+$("#ol").value+"</td><td>"+$$(sub)+"</td></tr><tr><td>"+($("#od").value==="envio"?"Envío EE.UU.":"Recoger en Florida")+"</td><td>"+(requiereEnvio?"Por cotizar":"Gratis")+"</td></tr>";
+  $("#ototal-label").textContent=requiereEnvio?"Subtotal de llaveros":"Total con recogida";
+  $("#otot").textContent=$$(sub);
+  const body="Pedido hackgorithmic 3D\nNombres: "+($("#on").value||"(falta)")+"\nEstilo: "+$("#ost").selectedOptions[0].text+"\nColores: base "+$("#ob").value+", letras "+$("#ol").value+"\nCantidad: "+n+"\nEntrega: "+$("#od").selectedOptions[0].text+"\nSubtotal de llaveros: "+$$(sub)+(requiereEnvio?"\nEnvío: por cotizar según la dirección\nTotal final: pendiente de confirmar":"\nRecogida local: gratis\nTotal: "+$$(sub))+"\nCliente: "+($("#ocn").value||"")+"\nContacto: "+($("#oct").value||"")+($("#od").value==="envio"?"\nDirección: "+($("#oa").value||""):"");
   window._ord=body;
-  $("#osend").href="mailto:agent@hackgorithmic.com?subject="+encodeURIComponent("Pedido llaveros - "+($("#on").value||"nuevo"))+"&body="+encodeURIComponent(body);
+  $("#osummary").value=body+"\n\nSolicitud pendiente de revisión. Confirmamos diseño, precio final y plazo antes de cobrar.";
+  $("#osend").href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com&subject="+encodeURIComponent("Solicitud de llaveros - "+($("#on").value||"nuevo"))+"&body="+encodeURIComponent($("#osummary").value);
 }
 ["on","ost","oq","ob","ol","od","ocn","oct","oa"].forEach(id=>$("#"+id).addEventListener("input",syncOrder));
-$("#osend").addEventListener("click",e=>{ if(!$("#on").value.trim()||!$("#oct").value.trim()){e.preventDefault();$("#omsg").textContent="Pon el nombre del llavero y tu WhatsApp o email.";} else {$("#omsg").textContent="Se abrió tu correo con el pedido listo: dale Enviar. Si no se abrió, usa Copiar pedido y pégalo en el chat con Filo.";}});
-$("#ocopy").onclick=async()=>{syncOrder();try{await navigator.clipboard.writeText(window._ord);$("#omsg").textContent="Copiado. Pégalo en el chat con Filo o en un DM a @hackgorithmic.";}catch(e){$("#omsg").textContent="Ábrele el chat a Filo y pégale estos datos.";}};
 $("#nm").addEventListener("input",e=>{st.name=e.target.value.trim()||"Tu nombre";draw();});
 document.querySelectorAll("#styles .chip").forEach(c=>c.onclick=()=>{st.f=c.dataset.f;document.querySelectorAll("#styles .chip").forEach(x=>x.setAttribute("aria-pressed",String(x===c)));draw();});
 swatches($("#base"),"base",["rosa","negro","cian","rojo","amarillo"]);
@@ -476,6 +540,10 @@ function all(){draw();syncOrder();keychain($("#kc2"),"Luna","round","negro","ros
 all();
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(all);
 </script>
+
+<script src="payments-config.js"></script>
+<script src="payments.js"></script>
+<script src="orders.js"></script>
 <script>
 /* ===== Filo: impresora 3D animada (three.js) + chat ===== */
 (function(){
@@ -556,12 +624,13 @@ const log=document.getElementById('filoLog'), chips=document.getElementById('fil
 const go=id=>{closeChat(); const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:reduce?'auto':'smooth'});};
 function add(who,html){const d=document.createElement('div'); d.className='fm '+who; d.innerHTML=html; log.appendChild(d); log.scrollTop=log.scrollHeight; return d;}
 function bot(html,actions){ mood.talk=1; setTimeout(()=>{ add('bot',html); setChips(actions||MAIN); },reduce?0:350); }
-const MAIN=[['Precios','precios'],['Hacer pedido','pedido'],['Cotizar pieza','cotizar'],['Envíos','envio'],['Planes app','planes'],['El libro','libro'],['Hablar con una persona','humano']];
+const MAIN=[['Crear mi modelo','taller'],['Precios','precios'],['Hacer pedido','pedido'],['Cotizar pieza','cotizar'],['Envíos','envio'],['Planes app','planes'],['El libro','libro'],['Hablar con una persona','humano']];
 function setChips(list){chips.innerHTML=''; list.forEach(([label,key])=>{const b=document.createElement('button'); b.type='button'; b.textContent=label; b.onclick=()=>{add('me',label); answer(key,true);}; chips.appendChild(b);});}
 const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 const intents=[
  ['precios',/precio|cuanto|cuesta|vale|cost|\$|barato/],
  ['pedido',/pedido|pedir|orden|compr|quiero (un|uno|mi)|llavero/],
+ ['taller',/descarg|gratis|genera|disen|modelo 3d|mi idea|taller/],
  ['cotizar',/cotiz|stl|archivo|pieza|medida|3mf|obj/],
  ['envio',/envi|shipping|entreg|recog|domicilio|correo postal|llega|dias|tarda|tiempo/],
  ['planes',/plan|app|suscrip|mensual|al mes|descarg/],
@@ -579,10 +648,11 @@ const A={
  precios:()=>bot('🔑 <b>Llaveros con nombre</b> (2 colores, letras en relieve):\n• 1 por <b>$7</b>\n• 3 por <b>$18</b>\n• 5 por <b>$25</b> (y $5 cada extra)\n\n📐 <b>Piezas a medida:</b> depende del material y las horas de máquina. Sube tu archivo en el cotizador y te sale el precio al instante.',[['Diseñar mi llavero','diseno'],['Cotizar pieza','cotizar'],['Envíos','envio']]),
  diseno:()=>{bot('¡Vamos! Escribe tu nombre arriba y elige estilo y colores ✨');setTimeout(()=>go('nm'),900);},
  pedido:()=>{bot('Perfecto 🙌 Te llevo al formulario: pon el nombre, colores, cantidad y cómo lo quieres recibir. Te confirmamos con la vista previa y el link de pago.');setTimeout(()=>go('pedir'),1100);},
+ taller:()=>{bot('Escríbelo en el <b>Taller</b> de arriba (“Escribe tu idea”): te armo el modelo 3D al instante. Lo descargas gratis con la marca hackgorithmic o lo imprimimos por ti.');setTimeout(()=>go('taller'),1300);},
  cotizar:()=>{bot('Sube tu archivo <b>.STL</b> en el cotizador y te calculo material + horas de máquina al instante. ¿No tienes archivo? Cuéntame tu idea aquí y se la paso al equipo.');setTimeout(()=>go('cotizar'),1300);},
- envio:()=>bot('📦 <b>Envío en EE.UU.:</b> $5 (gratis desde $25).\n📍 <b>Recoger en Florida:</b> gratis.\n⏱️ Imprimimos en 1–3 días después de confirmar tu pedido.',[['Hacer pedido','pedido'],['Precios','precios']]),
- planes:()=>{bot('✨ La app para crear tus propios modelos 3D viene <b>muy pronto</b>:\n• Básico $4/mes\n• Creador $8/mes (el más popular)\n• Pro $24/mes\nPuedes apartar tu lugar desde ya.');setTimeout(()=>go('precios'),1400);},
- libro:()=>{bot('📘 Tenemos el libro <b>"Montando tu agente desde 0"</b>, que será tu guía de emprendimiento. Muy pronto en Amazon Kindle.');setTimeout(()=>go('libro'),1300);},
+ envio:()=>bot('📦 <b>Envío en EE.UU.:</b> se cotiza según tu dirección.\n📍 <b>Recoger en Florida:</b> gratis.\n⏱️ Te confirmamos el total y el plazo antes de cobrar.',[['Hacer pedido','pedido'],['Precios','precios']]),
+ planes:()=>{bot('✨ Planes para crear tus propios modelos 3D (aún no se pueden contratar, pero puedes consultarlos):\n• Básico $4/mes\n• Creador $8/mes (el más popular)\n• Pro $24/mes\nMientras tanto, el Taller de arriba es gratis.');setTimeout(()=>go('precios'),1400);},
+ libro:()=>{bot('📘 Tenemos el libro <b>"Montando tu agente desde 0"</b>, que será tu guía de emprendimiento.');setTimeout(()=>go('libro'),1300);},
  colores:()=>bot('🎨 Base: rosa, negro, cian, rojo o amarillo.\nLetras: blanco, negro o rosa.\nPruébalos en vivo en el diseñador de arriba.',[['Diseñar mi llavero','diseno'],['Hacer pedido','pedido']]),
  pago:()=>bot('💳 No cobramos por adelantado en la web: primero confirmamos tu pedido y te mandamos un <b>link de pago seguro</b>. Nunca te pediremos tu tarjeta por chat.'),
  humano:()=>{ask.stage=1; bot('Claro 🙂 Le paso tu mensaje al equipo. Primero, ¿cómo te llamas?',[]);},
@@ -614,6 +684,6 @@ addEventListener('keydown',e=>{if(e.key==='Escape')closeChat();});
 })();
 
 </script>
-
+<script src="taller.js"></script>
 </body>
 </html>
