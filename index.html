@@ -109,6 +109,7 @@ select, input[type=number]{width:100%; font:500 16px/1 var(--body); padding:11px
 .total b{font:800 40px/1 var(--display); letter-spacing:-.03em}
 .price-kc{font:700 18px/1 var(--display); margin-top:10px} .price-kc b{color:var(--pla)}
 .warn{color:#c2410c; font-size:13px; margin-top:8px}
+.note a{color:var(--cyan)}
 footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex; gap:12px; flex-wrap:wrap; justify-content:space-between}
 @media (prefers-reduced-motion: no-preference){ .stage svg{transition:transform .25s} }
 </style>
@@ -122,6 +123,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
   <span class="tag">Florida · impresión 3D</span>
   <div class="sp"></div>
   <a class="btn alt" href="#cotizar">Cotizar</a>
+  <a class="btn alt" href="#precios">Planes</a>
   <a class="btn" href="#contacto">Hacer pedido</a>
 </header>
 
@@ -224,20 +226,30 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 </section>
 
 <section id="precios">
-  <h2>Precios</h2>
+  <h2>Planes de la app</h2>
+  <p class="lead" style="margin-top:4px">Crea tus propios modelos 3D. La vista previa de arriba es gratis para todos. <span class="soon">Muy pronto</span></p>
   <div class="plans">
+    <div class="plan">
+      <h3 style="font:700 22px var(--display); margin:0">Básico</h3>
+      <div class="price">$4 <small>/ mes</small></div>
+      <ul><li>3 descargas STL al mes</li><li>Llaveros y charms con nombre</li><li>Estilos básicos</li></ul>
+      <a class="btn alt" style="margin-top:14px" href="mailto:agent@hackgorithmic.com?subject=Lista%20de%20espera%20-%20Plan%20B%C3%A1sico%20%244">Apartar mi lugar</a>
+    </div>
     <div class="plan main">
-      <span class="soon">Muy pronto</span>
-      <h3 style="font:700 22px var(--display); margin:12px 0 0">App Creador</h3>
-      <div class="price">$5 <small>/ mes</small></div>
-      <ul><li>Crea modelos 3D personalizados con la app</li><li>Descarga el archivo STL para tu impresora</li><li>Estilos de nombres, charms y llaveros</li></ul>
+      <span class="soon">El más popular</span>
+      <h3 style="font:700 22px var(--display); margin:12px 0 0">Creador</h3>
+      <div class="price">$8 <small>/ mes</small></div>
+      <ul><li>Descargas ilimitadas</li><li>Todos los estilos y colores</li><li>Archivos multicolor listos para imprimir</li></ul>
+      <a class="btn" style="margin-top:14px" href="mailto:agent@hackgorithmic.com?subject=Lista%20de%20espera%20-%20Plan%20Creador%20%248">Apartar mi lugar</a>
     </div>
     <div class="plan">
-      <h3 style="font:700 22px var(--display); margin:0">Pedido impreso</h3>
-      <div class="price" style="font-size:30px">Cotización</div>
-      <ul><li>Lo diseñamos y lo imprimimos por ti</li><li>Precio = material + horas de máquina + preparación</li><li>Cotízalo arriba al instante</li><li>Vista previa antes de imprimir</li></ul>
+      <h3 style="font:700 22px var(--display); margin:0">Pro</h3>
+      <div class="price">$24 <small>/ mes</small></div>
+      <ul><li>Diseños a medida con nuestro agente</li><li>Uso comercial: vende lo que imprimas</li><li>Prioridad y 10% de descuento en impresiones</li></ul>
+      <a class="btn alt" style="margin-top:14px" href="mailto:agent@hackgorithmic.com?subject=Lista%20de%20espera%20-%20Plan%20Pro%20%2424">Apartar mi lugar</a>
     </div>
   </div>
+  <p class="note" style="margin-top:12px">Pago anual: 2 meses gratis ($40, $80 o $240 al año). ¿Prefieres que lo imprimamos nosotros? Usa el <a href="#cotizar">cotizador</a>: material + horas de máquina + preparación.</p>
 </section>
 
 <section id="contacto">
