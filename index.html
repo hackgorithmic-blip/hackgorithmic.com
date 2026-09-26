@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="hackgorithmic 3D: diseñamos e imprimimos en 3D lo que imagines. Llaveros con nombre, charms, accesorios de cámara y piezas a la medida.">
+<meta name="description" content="Hackgorithmic: un espacio para tus ideas en 3D. Explora diseños, personaliza piezas y consulta proyectos, fabricación y planes de creación de modelos.">
 <meta property="og:title" content="hackgorithmic 3D">
-<meta property="og:description" content="Escribe tu idea. La imprimimos en 3D.">
+<meta property="og:description" content="Tu próxima idea. En otra dimensión. Diseño 3D y piezas por cotización.">
 <meta property="og:url" content="https://hackgorithmic.com/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%2315171b%27/%3E%3Ctext x=%2732%27 y=%2746%27 font-family=%27Arial%27 font-weight=%27900%27 font-size=%2742%27 text-anchor=%27middle%27 fill=%27%23e0457b%27%3Eh%3C/text%3E%3C/svg%3E">
 <title>hackgorithmic 3D</title>
@@ -175,34 +175,51 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 #tform{display:flex; gap:8px; padding:10px 12px; border-top:1px solid var(--line)}
 #tform input{flex:1; min-width:0; font:500 16px/1.2 var(--body); padding:12px; border-radius:10px; border:1px solid var(--line); background:var(--paper); color:var(--ink)}
 </style>
+<link rel="stylesheet" href="./shader-site.css">
 </head>
-<body>
+<body class="shader-site">
+<a class="shader-skip" href="#inicio">Saltar al contenido</a>
 
 
 <div class="wrap">
 <noscript><p class="request-note">Puedes consultar planes o pedir una pieza por <a href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com">correo</a>. Indica tu idea, medidas, colores y forma de entrega.</p></noscript>
 <header class="top">
-  <div class="logo">hack<b>gorithmic</b> 3D</div>
-  <span class="tag">Florida · impresión 3D</span>
-  <div class="sp"></div>
-  <a class="btn alt" href="#cotizar">Cotizar</a>
-  <a class="btn alt" href="#precios">Suscripciones</a>
-  <a class="btn alt" href="#libro">Libro</a>
-  <a class="btn" href="#pedir">Hacer pedido</a>
+  <a class="shader-brand" href="#inicio" aria-label="Hackgorithmic, inicio"><span class="shader-brand-mark" aria-hidden="true">h<span>.</span></span><span>hackgorithmic<small>3D STUDIO</small></span></a>
+  <nav class="shader-nav" aria-label="Principal"><a href="#personalizar">Crear</a><a href="#productos">Explorar</a><a href="#precios">Planes 3D</a><a href="#libro">El libro</a></nav>
+  <a class="btn shader-header-cta" href="#contacto">Hablemos <span aria-hidden="true">↗</span></a>
 </header>
 
-<div class="hero">
-  <div>
-    <span class="soon">Diseño e impresión por encargo</span>
-    <h1 style="margin-top:14px">Escribe tu idea.<br>La <em>imprimimos</em> en 3D.</h1>
-    <p class="lead">Llaveros, charms, placas y letreros con tu texto: descríbelo aquí y te armamos el modelo 3D al instante. Lo descargas gratis o lo imprimimos por ti en PLA con la Snapmaker U1 de 4 colores.</p>
-    <div class="taller" id="taller" aria-label="Taller: describe tu pieza y te armamos el modelo 3D">
+<main id="inicio" tabindex="-1">
+<section class="shader-hero" aria-labelledby="hero-title">
+  <p class="shader-eyebrow"><span aria-hidden="true"></span>IMAGINA. EXPLORA. CREA.</p>
+  <h1 id="hero-title">Tu próxima idea.<br>En otra <em>dimensión.</em></h1>
+  <p class="shader-intro">Diseño 3D, ideas compartidas y nuevas formas de crear. Explora el taller o consulta tu próximo proyecto.</p>
+  <div class="shader-hero-actions"><a class="btn" href="#personalizar">Empieza con una idea <span aria-hidden="true">↗</span></a><a class="shader-text-link" href="#precios">Conoce los planes <span aria-hidden="true">→</span></a></div>
+  <p class="shader-hero-note">Diseño, precio y entrega acordados antes de cobrar.</p>
+</section>
+
+<section class="shader-showcase" aria-label="Exploración visual interactiva">
+  <div class="shader-frame" data-shader-stage>
+    <div class="shader-frame-top"><span><span class="shader-frame-dot" aria-hidden="true"></span>Exploración digital</span><span class="shader-frame-caption">Color, luz y posibilidades</span></div>
+    <div class="shader-stage">
+      <canvas data-shader-scene aria-hidden="true"></canvas>
+      <div class="shader-scene-copy" aria-hidden="true"><span>IDEAS EN MOVIMIENTO</span><strong>Sin límites<br>para imaginar.</strong></div>
+      <span class="shader-scene-stamp" aria-hidden="true">H / 01</span>
+    </div>
+    <div class="shader-controls"><div class="shader-theme-group" role="group" aria-label="Paleta del efecto"><button type="button" data-shader-theme="lime" aria-pressed="true"><span class="shader-swatch lime" aria-hidden="true"></span>Lima</button><button type="button" data-shader-theme="pearl" aria-pressed="false"><span class="shader-swatch pearl" aria-hidden="true"></span>Perla</button><button type="button" data-shader-theme="ember" aria-pressed="false"><span class="shader-swatch ember" aria-hidden="true"></span>Cobre</button></div><button class="shader-pause" type="button" data-shader-pause aria-pressed="false">Pausar movimiento</button></div>
+  </div>
+  <div class="shader-showcase-caption"><span>Hackgorithmic · Tu espacio creativo</span><a href="#personalizar">Hazlo personal <span aria-hidden="true">↓</span></a></div>
+</section>
+
+<section class="shader-studio-section" id="personalizar" aria-labelledby="studio-title">
+  <div class="shader-studio-intro"><p class="shader-section-label">01 / HECHO A TU MANERA</p><h2 id="studio-title">Una idea pequeña.<br>Algo muy tuyo.</h2><p class="lead">Empieza con tu nombre. Prueba letras y colores, y comparte tu diseño para confirmar los detalles de fabricación.</p><p class="note">Esta vista previa es gratuita. Los productos físicos y su envío se cotizan por separado de los planes de diseño.</p><a class="shader-text-link" href="#productos">Explora otros proyectos <span aria-hidden="true">→</span></a>
+<div class="taller" id="taller" aria-label="Taller: describe tu pieza y te armamos el modelo 3D">
       <div class="tbar"><span>Taller · escribe tu idea</span><span class="soon">Gratis</span></div>
       <div id="tlog" aria-live="polite"></div>
       <div id="tchips"></div>
       <form id="tform" autocomplete="off"><input id="tin" type="text" maxlength="140" placeholder="Ej.: llavero de corazón que diga “Luna” en rosa" aria-label="Describe tu pieza"><button class="btn" type="submit">Crear</button></form>
     </div>
-  </div>
+</div>
 
   <div class="studio" aria-label="Prueba el llavero con tu nombre">
     <div class="bar"><span>Pruébalo · llavero con nombre</span><span id="dims">—</span></div>
@@ -232,11 +249,12 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
     <div class="note">Diseños especiales, grandes o con logo desde $10 USD, según el trabajo. <a href="#contacto">Solicitar cotización</a>.</div>
     <a class="btn" id="kpedir" href="#pedir" style="margin-top:12px">Pedir este llavero</a>
   </div>
-</div>
+</section>
 
 <section id="productos">
-  <h2>Piezas que ya diseñamos</h2>
-  <p class="lead" style="margin-top:4px">Todo modelado por nosotros, desde cero, e impreso en casa.</p>
+  <p class="shader-section-label">02 / DE LA IDEA A LA FORMA</p>
+  <h2>Proyectos para imaginar el siguiente.</h2>
+  <p class="lead" style="margin-top:4px">Explora estas referencias. La fabricación, la compatibilidad y el plazo se confirman por cotización.</p>
   <div class="grid">
     <article class="prod">
       <div class="img"><img src="data:image/webp;base64,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" alt="Kit de cámara de cine para iPhone: portafiltros, parasol, barras de 15 mm y empuñadura"></div>
@@ -264,13 +282,13 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
   <div class="steps">
     <div class="step"><div class="n">PASO 1</div><h3>Dinos qué quieres</h3><p>Un nombre, una foto o la idea de la pieza. Para accesorios, las medidas de tu equipo.</p></div>
     <div class="step"><div class="n">PASO 2</div><h3>Te mostramos el modelo</h3><p>Lo diseñamos en 3D y te enviamos una vista previa para aprobar colores y tamaño.</p></div>
-    <div class="step"><div class="n">PASO 3</div><h3>Lo imprimimos</h3><p>Impreso en PLA a 0.2 mm de capa. Lo recoges o te lo enviamos.</p></div>
+    <div class="step"><div class="n">PASO 3</div><h3>Confirmamos la entrega</h3><p>Revisamos fabricación, proveedor y envío antes de aceptar el pedido.</p></div>
   </div>
 </section>
 
 <section id="cotizar">
   <h2>Cotiza tu pieza</h2>
-  <p class="lead" style="margin-top:4px">¿Ya tienes el archivo 3D? Súbelo y te damos un precio al instante según el material que usa y las horas de máquina. El archivo no sale de tu teléfono o computadora.</p>
+  <p class="lead" style="margin-top:4px">¿Ya tienes el archivo 3D? Explora un estimado de referencia según el material y las horas de máquina. El archivo no sale de tu teléfono o computadora.</p>
   <div class="quote">
     <div class="qcard">
       <label class="drop" id="drop"><input id="stl" type="file" accept=".stl"><b>Sube tu archivo .STL</b><br><span id="fname">o arrástralo aquí</span></label>
@@ -320,7 +338,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
   </div>
   <p class="note" style="margin-top:12px" data-subscription-annual hidden>Pago anual: 2 meses gratis ($40, $80 o $240 al año).</p>
   <p class="note" data-subscription-live hidden>Cobro mensual recurrente en USD. El importe y la frecuencia se muestran antes de confirmar el pago. Puedes gestionar o cancelar la renovación desde tu portal de suscripción. La impresión física y el envío se cobran aparte.</p>
-  <p class="note">¿Prefieres que lo imprimamos nosotros? Usa el <a href="#cotizar">cotizador</a>: material + horas de máquina + preparación.</p>
+  <p class="note">¿Buscas una pieza física? Usa el <a href="#cotizar">cotizador</a> de referencia: confirmaremos fabricación, entrega y precio final.</p>
   <p class="note"><a data-subscription-portal hidden>Gestionar o cancelar mi suscripción</a></p>
 </section>
 
@@ -399,7 +417,8 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
   </div>
 </section>
 
-<footer><span>© 2026 hackgorithmic · diseñado e impreso en Florida</span><span>PLA · Snapmaker U1 · capa 0.2 mm</span></footer>
+</main>
+<footer><a class="shader-footer-brand" href="#inicio">hackgorithmic<span>.</span></a><span>© 2026 · Diseño y proyectos 3D · Florida</span><span>Una red de creación en desarrollo.</span></footer>
 </div>
 
 <div id="filo" role="button" tabindex="0" aria-label="Abrir el chat con Filo, el asistente de hackgorithmic 3D"></div>
@@ -685,5 +704,6 @@ addEventListener('keydown',e=>{if(e.key==='Escape')closeChat();});
 
 </script>
 <script src="taller.js"></script>
+<script defer src="./shader-scene.js"></script>
 </body>
 </html>
