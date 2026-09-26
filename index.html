@@ -129,7 +129,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
   <span class="tag">Florida · impresión 3D</span>
   <div class="sp"></div>
   <a class="btn alt" href="#cotizar">Cotizar</a>
-  <a class="btn alt" href="#precios">Planes</a>
+  <a class="btn alt" href="#precios">Suscripciones</a>
   <a class="btn alt" href="#libro">Libro</a>
   <a class="btn" href="#pedir">Hacer pedido</a>
 </header>
@@ -168,7 +168,9 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
     </div>
     <div class="specs" id="specs"></div>
     <div class="row" style="align-items:center;margin-top:10px;gap:10px"><label for="kq" style="font:600 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)">Cantidad</label><input id="kq" type="number" min="1" max="50" value="1" style="width:84px"><div class="price-kc" id="kprice" aria-live="polite"></div></div>
-    <div class="note">1 por $7 · 3 por $18 · 5 por $25. Envío en EE.UU. $5 (gratis desde $25) o recógelo en Florida gratis.</div>
+    <div class="note">Llaveros impresos: 1 por $7 · 3 por $18 · 5 por $25 USD. Envío en EE.UU. cotizado aparte. Recogida local en Florida gratis.</div>
+    <div class="note">Incluye nombre, dos colores, argolla y empaque sencillo.</div>
+    <div class="note">Diseños especiales, grandes o con logo desde $10 USD, según el trabajo. <a href="#contacto">Solicitar cotización</a>.</div>
     <a class="btn" id="kpedir" href="#pedir" style="margin-top:12px">Pedir este llavero</a>
   </div>
 </div>
@@ -192,7 +194,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
     <article class="prod">
       <div class="img kc"><svg id="kc2" viewBox="0 0 600 240" style="width:88%" role="img" aria-label="Llavero de ejemplo con nombre"></svg></div>
       <div class="txt"><h3>Llaveros y charms con nombre</h3>
-        <p>Dos colores, letras en relieve. Set llavero + charm compatible con pulseras tipo Pandora.</p>
+        <p>Llaveros con nombre, dos colores y letras en relieve. Los charms compatibles con pulseras tipo Pandora se cotizan aparte.</p>
         <div class="meta">≈ 60 × 20 × 4 mm · argolla de 5.8 mm para charm</div></div>
     </article>
   </div>
@@ -234,8 +236,8 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 </section>
 
 <section id="precios">
-  <h2>Planes de la app</h2>
-  <p class="lead" style="margin-top:4px">Crea tus propios modelos 3D. La vista previa de arriba es gratis para todos. <span class="soon">Muy pronto</span></p>
+  <h2>Suscripciones de creación de modelos 3D</h2>
+  <p class="lead" style="margin-top:4px">Nuestros servicios de creación de modelos 3D cuestan $4, $8 o $24 USD al mes, según el plan. La vista previa de arriba es gratis. La impresión física y el envío se cobran por separado. <span class="soon">Muy pronto</span></p>
   <div class="plans">
     <div class="plan">
       <h3 style="font:700 22px var(--display); margin:0">Básico</h3>
@@ -261,7 +263,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 </section>
 
 <section id="pedir">
-  <h2>Haz tu pedido</h2>
+  <h2>Encarga tus llaveros impresos</h2>
   <p class="lead" style="margin-top:4px">Llena esto y te llega la confirmación con la vista previa y el link de pago. Imprimimos en 1–3 días y te lo enviamos.</p>
   <div class="quote">
     <form class="qcard" id="ord" onsubmit="return false">
@@ -271,7 +273,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
         <div><label for="oq">Cantidad</label><input id="oq" type="number" min="1" max="50" value="1"></div>
         <div><label for="ob">Color base</label><select id="ob"><option>rosa</option><option>negro</option><option>cian</option><option>rojo</option><option>amarillo</option></select></div>
         <div><label for="ol">Color letras</label><select id="ol"><option>blanco</option><option>negro</option><option>rosa</option></select></div>
-        <div style="grid-column:1/-1"><label for="od">Entrega</label><select id="od"><option value="envio">Envío en EE.UU.</option><option value="recoger">Recoger en Florida (gratis)</option></select></div>
+        <div style="grid-column:1/-1"><label for="od">Entrega</label><select id="od"><option value="envio">Envío en EE.UU. (se cotiza aparte)</option><option value="recoger">Recoger en Florida (gratis)</option></select></div>
         <div><label for="ocn">Tu nombre</label><input id="ocn" type="text" autocomplete="name" style="width:100%;font:500 16px var(--body);padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></div>
         <div><label for="oct">WhatsApp o email</label><input id="oct" type="text" autocomplete="email" style="width:100%;font:500 16px var(--body);padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></div>
         <div style="grid-column:1/-1" id="oaddrw"><label for="oa">Dirección de envío</label><textarea id="oa" rows="2" autocomplete="street-address" style="width:100%;font:500 15px var(--body);padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></textarea></div>
@@ -280,8 +282,8 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
     <div class="qcard">
       <span class="lbl">Tu pedido</span>
       <table class="bk" id="obk"></table>
-      <div class="total"><span>Total</span><b id="otot">—</b></div>
-      <p class="note">No cobramos nada todavía: te confirmamos y te mandamos el link de pago.</p>
+      <div class="total"><span id="ototal-label">Subtotal de llaveros</span><b id="otot">—</b></div>
+      <p class="note">El precio incluye nombre, dos colores, argolla y empaque sencillo. El envío se cotiza aparte según la dirección; la recogida local es gratis. Confirmamos el total antes de enviarte el link de pago.</p>
       <div class="row" style="margin-top:12px"><a class="btn" id="osend" href="#">Enviar pedido</a><button class="btn alt" id="ocopy" type="button">Copiar pedido</button></div>
       <p class="note" id="omsg" aria-live="polite"></p>
     </div>
@@ -339,7 +341,7 @@ function cotizar({g,h,mat="pla",colores=1,qty=1,prep=T.prep}){
 }
 const $$=n=>"$"+n.toFixed(2);
 /* Precio fijo de llaveros con nombre (2 colores) */
-const LLAVERO={uno:7, tres:18, cinco:25, extra:5, envio:5, envioGratisDesde:25};
+const LLAVERO={uno:7, tres:18, cinco:25, extra:5};
 function precioLlaveros(n){ if(n>=5) return LLAVERO.cinco+(n-5)*LLAVERO.extra; if(n>=3) return LLAVERO.tres+(n-3)*6; return n*LLAVERO.uno; }
 
 const COL={rosa:"#e0457b",negro:"#1b1c1f",blanco:"#f4f4f2",cian:"#1596a6",rojo:"#d3312f",amarillo:"#f2c230"};
@@ -422,11 +424,12 @@ $("#drop").addEventListener("drop",e=>{e.preventDefault();loadFile(e.dataTransfe
 $("#qsend").onclick=async()=>{try{await navigator.clipboard.writeText(window._q);$("#qmsg").textContent="Copiada. Pégala en tu correo a agent@hackgorithmic.com con el archivo.";}catch(e){$("#qmsg").textContent="Escríbenos a agent@hackgorithmic.com con el archivo.";}};
 function syncOrder(){
   const n=Math.max(1,+$("#oq").value||1), sub=precioLlaveros(n);
-  const env=$("#od").value==="envio"?(sub>=LLAVERO.envioGratisDesde?0:LLAVERO.envio):0;
-  $("#oaddrw").style.display=$("#od").value==="envio"?"":"none";
-  $("#obk").innerHTML="<tr><td>"+n+" llavero"+(n>1?"s":"")+" · "+$("#ob").value+" + "+$("#ol").value+"</td><td>"+$$(sub)+"</td></tr><tr><td>"+($("#od").value==="envio"?"Envío EE.UU.":"Recoger en Florida")+"</td><td>"+(env?$$(env):"Gratis")+"</td></tr>";
-  $("#otot").textContent=$$(sub+env);
-  const body="Pedido hackgorithmic 3D\nNombres: "+($("#on").value||"(falta)")+"\nEstilo: "+$("#ost").selectedOptions[0].text+"\nColores: base "+$("#ob").value+", letras "+$("#ol").value+"\nCantidad: "+n+"\nEntrega: "+$("#od").selectedOptions[0].text+"\nTotal: "+$$(sub+env)+"\nCliente: "+($("#ocn").value||"")+"\nContacto: "+($("#oct").value||"")+($("#od").value==="envio"?"\nDirección: "+($("#oa").value||""):"");
+  const requiereEnvio=$("#od").value==="envio";
+  $("#oaddrw").style.display=requiereEnvio?"":"none";
+  $("#obk").innerHTML="<tr><td>"+n+" llavero"+(n>1?"s":"")+" · "+$("#ob").value+" + "+$("#ol").value+"</td><td>"+$$(sub)+"</td></tr><tr><td>"+($("#od").value==="envio"?"Envío EE.UU.":"Recoger en Florida")+"</td><td>"+(requiereEnvio?"Por cotizar":"Gratis")+"</td></tr>";
+  $("#ototal-label").textContent=requiereEnvio?"Subtotal de llaveros":"Total con recogida";
+  $("#otot").textContent=$$(sub);
+  const body="Pedido hackgorithmic 3D\nNombres: "+($("#on").value||"(falta)")+"\nEstilo: "+$("#ost").selectedOptions[0].text+"\nColores: base "+$("#ob").value+", letras "+$("#ol").value+"\nCantidad: "+n+"\nEntrega: "+$("#od").selectedOptions[0].text+"\nSubtotal de llaveros: "+$$(sub)+(requiereEnvio?"\nEnvío: por cotizar según la dirección\nTotal final: pendiente de confirmar":"\nRecogida local: gratis\nTotal: "+$$(sub))+"\nCliente: "+($("#ocn").value||"")+"\nContacto: "+($("#oct").value||"")+($("#od").value==="envio"?"\nDirección: "+($("#oa").value||""):"");
   window._ord=body;
   $("#osend").href="mailto:agent@hackgorithmic.com?cc=hackgorithmic@gmail.com&subject="+encodeURIComponent("Pedido llaveros - "+($("#on").value||"nuevo"))+"&body="+encodeURIComponent(body);
 }
@@ -446,4 +449,3 @@ if(document.fonts&&document.fonts.ready) document.fonts.ready.then(all);
 
 </body>
 </html>
-
