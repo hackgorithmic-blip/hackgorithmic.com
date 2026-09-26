@@ -124,6 +124,8 @@ select, input[type=number]{width:100%; font:500 16px/1 var(--body); padding:11px
 #filoTip.on{opacity:1; transform:none; pointer-events:auto}
 #filoChat{position:fixed; right:16px; bottom:222px; z-index:52; width:min(360px, calc(100vw - 32px)); max-height:min(540px, calc(100vh - 220px)); display:flex; flex-direction:column; background:var(--card); color:var(--ink); border:1px solid var(--line); border-radius:16px; box-shadow:0 24px 60px -20px rgba(0,0,0,.55); overflow:hidden; opacity:0; transform:translateY(14px) scale(.97); transform-origin:bottom right; transition:opacity .3s, transform .3s; pointer-events:none}
 #filoChat.on{opacity:1; transform:none; pointer-events:auto}
+#filoLog{min-height:110px} #filoChips{flex-shrink:0}
+@media (max-height:700px){ #filoChat{bottom:12px; max-height:calc(100vh - 24px)} }
 #filoChat header{display:flex; align-items:center; gap:10px; padding:12px 14px; background:var(--ink); color:var(--paper)}
 #filoChat header b{font:800 16px/1 var(--display)} #filoChat header small{display:block; font:400 12px/1.2 var(--body); opacity:.75; margin-top:3px}
 #filoChat header button{margin-left:auto; background:none; border:0; color:inherit; font-size:22px; line-height:1; cursor:pointer; padding:4px 6px}
