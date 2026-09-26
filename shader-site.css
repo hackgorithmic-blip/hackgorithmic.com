@@ -1,0 +1,258 @@
+/* The public studio keeps its original form IDs and behavior under this theme. */
+body.shader-site {
+  --bed: #101010;
+  --paper: #151515;
+  --card: #161616;
+  --ink: #f1f1ed;
+  --ink2: #a5a5a0;
+  --line: #30302e;
+  --pla: #cafa78;
+  --pla-ink: #16210d;
+  --cyan: #cafa78;
+  --display: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: dark;
+  margin: 0;
+  padding-inline: 28px;
+  background: var(--bed);
+  color: var(--ink);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+.shader-site .wrap { max-width: 1200px; }
+.shader-site a { color: inherit; }
+.shader-site main { min-width: 0; }
+.shader-site main:focus { outline: 0; }
+.shader-site button, .shader-site input, .shader-site a { -webkit-tap-highlight-color: transparent; }
+.shader-site a, .shader-site button { touch-action: manipulation; }
+.shader-site :is(button, a, input, select, textarea):focus-visible { outline: 2px solid #cafa78; outline-offset: 5px; }
+.shader-skip { position: fixed; z-index: 99; top: -80px; left: 15px; background: #cafa78; color: #16210d!important; padding: 13px 18px; border-radius: 7px; text-decoration: none; }
+.shader-skip:focus { top: 14px; }
+.shader-site header.top { min-height: 79px; padding-block: 14px; gap: 28px; border-bottom: 1px solid #262624; flex-wrap: nowrap; }
+.shader-brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-size: 22px; font-weight: 500; letter-spacing: -.9px; line-height: 1; min-height: 44px; }
+.shader-brand-mark { font-size: 39px; letter-spacing: -4px; line-height: 1; width: 34px; flex: none; font-weight: 600; }
+.shader-brand-mark span { color: #cafa78; }
+.shader-brand small { display: block; font: 400 7px/1.5 var(--mono); letter-spacing: 3px; color: #90908a; margin-top: 6px; }
+.shader-nav { display: flex; justify-content: center; align-items: center; gap: 27px; margin-left: auto; font-size: 12px; color: #adada7; }
+.shader-nav a { display: inline-flex; align-items: center; min-height: 44px; text-decoration: none; }
+.shader-nav a:hover, .shader-text-link:hover { color: #fff; }
+.shader-site .btn { padding: 12px 17px; min-height: 44px; font-size: 12px; font-weight: 500; border-radius: 7px; background: #f0f0eb; color: #161615; border: 1px solid #f0f0eb; justify-content: center; text-align: center; line-height: 1.4; }
+.shader-site .btn:hover:not(:disabled):not([aria-disabled="true"]) { background: #d8e5c2; border-color: #d8e5c2; }
+.shader-site .btn.alt { background: transparent; color: #d9d9d2; border-color: #3a3a36; }
+.shader-site .btn.alt:hover:not(:disabled):not([aria-disabled="true"]) { background: #242820; color: #f3f6ed; border-color: #627447; }
+.shader-site .btn:disabled, .shader-site .btn[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
+.shader-header-cta { margin-left: 20px; gap: 22px!important; }
+.shader-site h1, .shader-site h2, .shader-site h3 { font-weight: 500; }
+.shader-site h2 { font-size: clamp(28px, 3.1vw, 39px); letter-spacing: -1.3px; line-height: 1.15; }
+.shader-site h3 { line-height: 1.25; }
+.shader-site .lead { font-size: 15px; line-height: 1.75; color: #a4a49c; max-width: 61ch; }
+.shader-site main > section { padding-block: 70px; scroll-margin-top: 25px; }
+.shader-site .shader-hero { padding: 30px 24px 24px; text-align: center; }
+.shader-eyebrow { display: flex; align-items: center; justify-content: center; gap: 9px; font: 400 9px/1.5 var(--mono); letter-spacing: 1.65px; color: #9eaa8e; margin: 0 0 19px; }
+.shader-eyebrow > span { width: 5px; height: 5px; border-radius: 50%; background: #cafa78; box-shadow: 0 0 12px #cafa7850; }
+.shader-hero h1 { font-size: clamp(49px, 5.5vw, 70px); font-weight: 400; letter-spacing: -4px; line-height: 1.05; margin: 0; }
+.shader-hero h1 em { color: #f1f1ed; font-style: normal; }
+.shader-intro { max-width: 465px; margin: 18px auto 0; color: #a0a098; font-size: 13px; line-height: 1.8; }
+.shader-hero-actions { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 26px; margin-top: 19px; }
+.shader-hero-actions .btn { gap: 22px; }
+.shader-text-link { color: #c5c5bd; display: inline-flex; align-items: center; justify-content: space-between; gap: 17px; min-height: 44px; font-size: 12px; text-decoration: none; }
+.shader-hero-note { margin: 12px 0 0; font-size: 10px; color: #93938c; }
+.shader-site .shader-showcase { padding: 0 0 56px; }
+.shader-frame { border: 1px solid #343431; border-radius: 12px; overflow: hidden; background: #151515; }
+.shader-frame-top { min-height: 43px; padding: 11px 18px; display: flex; align-items: center; justify-content: space-between; gap: 15px; font: 400 9px/1.5 var(--mono); color: #999991; border-bottom: 1px solid #31312c; }
+.shader-frame-top > span:first-child { display: inline-flex; align-items: center; gap: 8px; }
+.shader-frame-dot { width: 5px; height: 5px; border: 1px solid #909789; border-radius: 50%; }
+.shader-frame-caption { color: #96968e; font-family: var(--body); }
+.shader-stage { position: relative; height: 420px; overflow: hidden; background: radial-gradient(ellipse at 55% 118%, #adc990 0, #6d804c 16%, #272c21 39%, transparent 62%), radial-gradient(ellipse at 21% 54%, #516336 0, #172318 33%, #0d100d 69%); }
+.shader-stage canvas { display: block; width: 100%; height: 100%; pointer-events: none; }
+.shader-scene-copy { pointer-events: none; position: absolute; left: 45px; bottom: 39px; text-shadow: 0 2px 24px #0009; }
+.shader-scene-copy > span { display: block; font: 400 8px/1.5 var(--mono); letter-spacing: 2px; color: #e3ebd2; margin-bottom: 13px; }
+.shader-scene-copy strong { display: block; font-size: 39px; line-height: 1.12; font-weight: 400; letter-spacing: -1.5px; color: #fbfff4; }
+.shader-scene-stamp { position: absolute; bottom: 41px; right: 34px; font: 400 10px/1 var(--mono); letter-spacing: 3px; color: #e3ebd2; pointer-events: none; }
+.shader-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 12px; border-top: 1px solid #35382f; min-height: 64px; }
+.shader-theme-group { display: flex; align-items: center; gap: 5px; }
+.shader-theme-group button { display: flex; align-items: center; gap: 8px; padding: 10px 12px; min-height: 44px; border: 1px solid transparent; background: transparent; color: #a9a99f; border-radius: 6px; cursor: pointer; font: 400 11px/1.4 var(--body); }
+.shader-theme-group button:hover { color: #eee; background: #22251d; }
+.shader-theme-group button[aria-pressed="true"] { color: #e9efd9; border-color: #48523b; background: #252b1d; }
+.shader-swatch { display: inline-block; width: 13px; height: 13px; border-radius: 50%; flex: none; }
+.shader-swatch.lime { background: linear-gradient(130deg, #ecfdb2, #66813c); }
+.shader-swatch.pearl { background: linear-gradient(130deg, #f4efff, #9286ab); }
+.shader-swatch.ember { background: linear-gradient(130deg, #f9bb7e, #bd462e); }
+.shader-pause { min-height: 44px; border: 1px solid #373a32; padding: 9px 12px; border-radius: 6px; color: #b4b7a9; background: #1c1f19; font: 400 10px/1.4 var(--body); cursor: pointer; }
+.shader-pause:hover { background: #282d21; color: #e3e7d9; }
+.shader-showcase-caption { display: flex; justify-content: space-between; align-items: center; gap: 14px; color: #a0a096; font-size: 10px; margin-top: 10px; padding-inline: 2px; }
+.shader-showcase-caption a { min-height: 44px; display: inline-flex; align-items: center; gap: 9px; text-decoration: none; }
+.shader-site .shader-studio-section { display: grid; grid-template-columns: .8fr 1.2fr; gap: 84px; align-items: center; padding-block: 74px; border-top: 1px solid #292927; border-bottom: 1px solid #292927; }
+.shader-section-label { font: 400 9px/1.5 var(--mono); letter-spacing: 1.3px; color: #a2ae91; margin: 0 0 22px; }
+.shader-studio-intro h2 { font-size: 37px; line-height: 1.14; font-weight: 400; letter-spacing: -1.4px; }
+.shader-studio-intro .lead { margin-top: 19px; font-size: 14px; }
+.shader-studio-intro > .note { margin-top: 17px; font-size: 11px; line-height: 1.8; max-width: 300px; }
+.shader-studio-intro > .shader-text-link { margin-top: 15px; font-size: 11px; }
+.shader-site .studio { background: #171717; border-color: #343430; border-radius: 12px; padding: 20px; box-shadow: none; }
+.shader-site .taller { margin-top: 28px; box-shadow: none; border-radius: 10px; }
+.shader-site .taller .tbar { font-size: 9px; letter-spacing: .5px; }
+.shader-site .tm.me, .shader-site .fm.me { color: #24321a; }
+.shader-site #tlog { max-height: 330px; font-size: 13px; }
+.shader-site #tchips button, .shader-site #filoChips button { font-size: 11px; font-weight: 400; min-height: 40px; }
+.shader-site #tform input { padding: 11px 10px; }
+.shader-site #tform .btn { padding-inline: 12px; }
+.shader-site #filoChat header a { color: #18210f; }
+.shader-site .studio .bar { font-size: 9px; letter-spacing: .6px; gap: 12px; line-height: 1.5; }
+.shader-site .stage { background: radial-gradient(ellipse at 50% 70%, #263022, transparent 75%), #111511; border: 1px solid #2c3526; aspect-ratio: 1.85; border-radius: 7px; }
+.shader-site .ctl { gap: 16px; margin-top: 18px; }
+.shader-site .ctl label, .shader-site .qrow label, .shader-site .qcard .lbl { font-family: var(--body); font-size: 11px; font-weight: 400; letter-spacing: 0; text-transform: none; }
+.shader-site .ctl input[type=text] { font-size: 18px; font-weight: 400; }
+.shader-site .chip { border-radius: 5px; font-size: 11px; font-weight: 400; min-height: 40px; }
+.shader-site .chip[aria-pressed="true"] { color: #cfe8ac; background: #29331e; border-color: #536d37; }
+.shader-site .sw { width: 35px; height: 35px; }
+.shader-site .specs { font-size: 11px; gap: 12px; line-height: 1.5; }
+.shader-site .price-kc { font-size: 18px; font-weight: 500; }
+.shader-site .note { line-height: 1.75; }
+.shader-site .note a { color: #b5cf8e; text-underline-offset: 3px; }
+.shader-site .studio > .note { font-size: 10px; }
+.shader-site .studio > .btn { width: 100%; margin-top: 15px!important; }
+.shader-site .grid { gap: 20px; margin-top: 30px; }
+.shader-site .prod { border-radius: 10px; border-color: #30302c; }
+.shader-site .prod .img { aspect-ratio: 1.3; }
+.shader-site .prod .txt { padding: 24px 21px; gap: 11px; }
+.shader-site .prod h3 { font-size: 18px; font-weight: 500; letter-spacing: -.4px; }
+.shader-site .prod p { font-size: 12px; line-height: 1.8; }
+.shader-site .prod .meta { font-size: 9px; line-height: 1.7; padding-top: 7px; color: #a0a095; }
+.shader-site .steps { border-top: 1px solid #343430; gap: 26px; margin-top: 30px; }
+.shader-site .step { padding: 24px 10px 0 0; }
+.shader-site .step .n { font-size: 9px; font-weight: 400; }
+.shader-site .step h3 { font-size: 20px; font-weight: 400; margin-block: 16px 10px; letter-spacing: -.3px; }
+.shader-site .step p { font-size: 13px; line-height: 1.8; }
+.shader-site .quote { gap: 20px; margin-top: 29px; }
+.shader-site .qcard { padding: 25px; border-radius: 10px; }
+.shader-site .drop { border-width: 1px; padding: 29px 15px; font-size: 12px; line-height: 1.8; }
+.shader-site .qcard .note { font-size: 11px; }
+.shader-site .request-note { border-left-width: 2px; border-left-color: #668244; border-radius: 0 6px 6px 0; font-size: 12px; padding: 15px 17px; background: #171b14; color: #bac3ab; }
+.shader-site .bk { font-size: 12px; }
+.shader-site .bk td { padding-block: 11px; }
+.shader-site .total { gap: 13px; font-size: 13px; margin-top: 22px; }
+.shader-site .total b { font-size: 34px; font-weight: 400; }
+.shader-site .warn { color: #eda785; }
+.shader-site .plans { margin-top: 27px; gap: 20px; }
+.shader-site .plan { border-radius: 10px; padding: 27px; display: flex; flex-direction: column; }
+.shader-site .plan.main { border-width: 1px; border-color: #617b3d; background: linear-gradient(155deg, #20291a, #181c15 58%); }
+.shader-site .plan h3 { font-weight: 500!important; font-size: 18px!important; }
+.shader-site .plan .price { font-size: 49px; font-weight: 400; letter-spacing: -2px; margin: 23px 0 16px; }
+.shader-site .plan .price small { font-size: 12px; }
+.shader-site .plan ul { font-size: 12px; line-height: 1.8; margin-block: 0 25px; padding-left: 16px; flex: 1; }
+.shader-site .plan .btn { margin-top: auto!important; width: 100%; }
+.shader-site .soon { font-family: var(--body); font-size: 10px; text-transform: none; letter-spacing: 0; background: #27321d; color: #bed998; border: 1px solid #485d32; padding: 6px 9px; border-radius: 4px; }
+.shader-site .book { padding: 35px; gap: 43px; border-radius: 11px; grid-template-columns: minmax(150px, 210px) 1fr; }
+.shader-site .book h3 { font-size: 29px; font-weight: 400; line-height: 1.2; }
+.shader-site .book ul, .shader-site .book p { font-size: 13px; line-height: 1.8; }
+.shader-site .book img { max-height: 285px; object-fit: contain; border-radius: 5px; }
+.shader-site .contact { background: #191e14; border: 1px solid #37482a; border-radius: 12px; color: #e0e9d2; padding: 35px; gap: 15px; }
+.shader-site .contact h2 { color: #f0f5e7; font-size: 34px; }
+.shader-site .contact p { color: #adbba0; font-size: 13px; }
+.shader-site .mail code { font-size: 15px; color: #d4e3bf; background: #222b1a; padding: 12px 14px; font-weight: 400; }
+.shader-site .contact .btn { color: #263617; background: #cafa78; border-color: #cafa78; }
+.shader-site footer { border-top: 1px solid #2d2d29; padding-block: 27px 38px; font-size: 10px; align-items: center; gap: 18px; }
+.shader-footer-brand { font-size: 20px; font-weight: 500; letter-spacing: -.8px; text-decoration: none; color: #e6e6df!important; margin-right: auto; }
+.shader-footer-brand span { color: #cafa78; }
+@media (max-width: 1000px) {
+  .shader-site header.top { gap: 20px; }
+  .shader-nav { gap: 19px; }
+  .shader-header-cta { margin-left: 0; }
+  .shader-site .shader-studio-section { gap: 40px; grid-template-columns: .85fr 1.15fr; }
+  .shader-studio-intro h2 { font-size: 32px; }
+  .shader-stage { height: 385px; }
+  .shader-site .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .shader-site .prod .txt { padding: 20px 16px; }
+  .shader-site .prod h3 { font-size: 16px; }
+}
+@media (max-width: 760px) {
+  body.shader-site { padding-inline: 20px; }
+  .shader-site header.top { flex-wrap: wrap; gap: 9px 20px; padding-block: 15px 8px; }
+  .shader-brand { margin-right: auto; font-size: 20px; }
+  .shader-nav { order: 3; flex-basis: 100%; justify-content: flex-start; margin-left: 0; gap: 25px; }
+  .shader-header-cta { font-size: 11px!important; padding-inline: 12px!important; }
+  .shader-site .shader-hero { padding: 60px 10px 34px; }
+  .shader-hero h1 { font-size: 59px; letter-spacing: -3px; }
+  .shader-intro { max-width: 390px; font-size: 13px; }
+  .shader-stage { height: 340px; }
+  .shader-scene-copy { left: 29px; bottom: 30px; }
+  .shader-scene-copy strong { font-size: 34px; }
+  .shader-scene-stamp { bottom: 31px; right: 23px; }
+  .shader-site main > section { padding-block: 53px; }
+  .shader-site .shader-showcase { padding: 0 0 39px; }
+  .shader-site .shader-studio-section { grid-template-columns: 1fr; gap: 29px; padding-block: 46px; }
+  .shader-studio-intro { max-width: 520px; }
+  .shader-studio-intro h2 { font-size: 35px; }
+  .shader-studio-intro .lead { font-size: 13px; margin-top: 13px; }
+  .shader-studio-intro > .note { max-width: 390px; }
+  .shader-studio-intro > .shader-text-link { margin-top: 3px; }
+  .shader-section-label { margin-bottom: 17px; }
+  .shader-site .grid { grid-template-columns: 1fr; gap: 19px; }
+  .shader-site .prod { display: grid; grid-template-columns: .8fr 1.2fr; }
+  .shader-site .prod .img { aspect-ratio: auto; min-height: 195px; }
+  .shader-site .prod .txt { padding: 24px 20px; }
+  .shader-site .prod h3 { font-size: 19px; }
+  .shader-site .steps { gap: 7px; }
+  .shader-site .step { padding-bottom: 10px; }
+  .shader-site .plans { grid-template-columns: 1fr; }
+  .shader-site .book { grid-template-columns: 1fr; gap: 24px; padding: 27px; }
+  .shader-site .book img { width: auto; max-width: 200px; }
+  .shader-site footer { gap: 12px 24px; }
+  .shader-footer-brand { flex-basis: 100%; }
+}
+@media (max-width: 480px) {
+  body.shader-site { padding-inline: 16px; }
+  .shader-brand { font-size: 18px; gap: 8px; }
+  .shader-brand-mark { font-size: 36px; width: 31px; }
+  .shader-brand small { font-size: 6px; letter-spacing: 2.3px; }
+  .shader-header-cta { gap: 13px!important; }
+  .shader-nav { gap: 25px; font-size: 11px; }
+  .shader-site .shader-hero { padding: 46px 1px 30px; }
+  .shader-eyebrow { font-size: 8px; letter-spacing: 1.4px; margin-bottom: 22px; }
+  .shader-hero h1 { font-size: clamp(33px, 10.5vw, 47px); letter-spacing: -2px; line-height: 1.09; }
+  .shader-intro { font-size: 12px; line-height: 1.8; max-width: 310px; margin-top: 20px; }
+  .shader-hero-actions { gap: 10px 20px; margin-top: 22px; }
+  .shader-hero-actions .btn, .shader-text-link { font-size: 11px; }
+  .shader-hero-actions .btn { gap: 11px; padding-inline: 12px; }
+  .shader-hero-note { font-size: 9px; max-width: 250px; margin: 13px auto 0; line-height: 1.7; }
+  .shader-frame { border-radius: 9px; }
+  .shader-frame-top { padding: 10px 13px; font-size: 8px; min-height: 39px; }
+  .shader-frame-caption { display: none; }
+  .shader-stage { height: 315px; }
+  .shader-scene-copy { left: 23px; bottom: 25px; }
+  .shader-scene-copy > span { font-size: 7px; letter-spacing: 1.5px; margin-bottom: 13px; }
+  .shader-scene-copy strong { font-size: 29px; letter-spacing: -.9px; }
+  .shader-scene-stamp { font-size: 8px; bottom: 27px; right: 17px; letter-spacing: 1px; }
+  .shader-controls { gap: 5px; padding: 6px; flex-wrap: wrap; }
+  .shader-theme-group { gap: 1px; }
+  .shader-theme-group button { gap: 5px; padding: 8px 7px; font-size: 10px; }
+  .shader-swatch { width: 10px; height: 10px; }
+  .shader-pause { font-size: 9px; padding-inline: 7px; margin-left: auto; }
+  .shader-showcase-caption { font-size: 8px; gap: 10px; }
+  .shader-showcase-caption > span { max-width: 180px; line-height: 1.6; }
+  .shader-site h2 { font-size: 29px; letter-spacing: -.9px; }
+  .shader-site .lead { font-size: 13px; }
+  .shader-studio-intro h2 { font-size: 33px; }
+  .shader-site .studio { padding: 16px; }
+  .shader-site .studio .bar { font-size: 8px; }
+  .shader-site .stage { aspect-ratio: 1.55; }
+  .shader-site .studio .btn { font-size: 11px; }
+  .shader-site .studio .note { font-size: 10px; }
+  .shader-site .prod { display: flex; }
+  .shader-site .prod .img { aspect-ratio: 1.4; min-height: 0; }
+  .shader-site .prod .txt { padding: 22px; }
+  .shader-site .qcard { padding: 19px; }
+  .shader-site .qcard .btn { font-size: 11px; }
+  .shader-site .total b { font-size: 31px; }
+  .shader-site .plan { padding: 25px; }
+  .shader-site .plan .price { font-size: 46px; }
+  .shader-site .book { padding: 23px; }
+  .shader-site .book h3 { font-size: 26px; }
+  .shader-site .contact { padding: 25px 21px; }
+  .shader-site .contact h2 { font-size: 30px; }
+  .shader-site .mail code { font-size: 12px; padding-inline: 10px; }
+  .shader-site .contact .btn { min-height: 44px; font-size: 11px; }
+  .shader-site footer { font-size: 9px; padding-bottom: 27px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shader-site *, .shader-site *::before, .shader-site *::after { animation: none!important; transition: none!important; scroll-behavior: auto!important; }
+}
