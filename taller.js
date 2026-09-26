@@ -14,7 +14,8 @@ let font=null, fontP=null;
 const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function clean(pts){const o=[];for(const p of pts){const l=o[o.length-1];if(!l||Math.hypot(p.x-l.x,p.y-l.y)>1e-4)o.push({x:p.x,y:p.y});}
-  while(o.length>2&&Math.hypot(o[0].x-o[o.length-1].x,o[0].y-o[o.length-1].y)<1e-4)o.pop();return o;}
+  while(o.length>2&&Math.hypot(o[0].x-o[o.length-1].x,o[0].y-o[o.length-1].y)<1e-4)o.pop();
+  for(let ch=true;ch&&o.length>3;){ch=false;for(let i=0;i<o.length;i++){const p=o[(i+o.length-1)%o.length],c=o[i],n=o[(i+1)%o.length];if(Math.abs((c.x-p.x)*(n.y-c.y)-(c.y-p.y)*(n.x-c.x))<1e-9){o.splice(i,1);ch=true;break;}}}return o;}
 const area=p=>{let s=0;for(let i=0,j=p.length-1;i<p.length;j=i++)s+=p[j].x*p[i].y-p[i].x*p[j].y;return s/2;};
 const ccw=p=>area(p)>0?p:p.slice().reverse(), cw=p=>area(p)<0?p:p.slice().reverse();
 function circ(cx,cy,r,n){const a=[];for(let i=0;i<n;i++){const t=i/n*Math.PI*2;a.push({x:cx+r*Math.cos(t),y:cy+r*Math.sin(t)});}return a;}
@@ -29,7 +30,7 @@ function text(str,size,cx,cy,mirror){
   const loops=font.generateShapes(str,size).map(s=>{const e=s.extractPoints(4);return{outer:clean(e.shape),holes:e.holes.map(clean).filter(h=>h.length>2)};}).filter(l=>l.outer.length>2);
   const b=bbox([].concat(...loops.map(l=>l.outer)));const dx=cx-(b.x0+b.x1)/2,dy=cy-(b.y0+b.y1)/2;
   const tf=p=>({x:mirror?2*cx-(p.x+dx):p.x+dx,y:p.y+dy});
-  loops.forEach(l=>{l.outer=l.outer.map(tf);l.holes=l.holes.map(h=>h.map(tf));});
+  loops.forEach((l,li)=>{const jx=(li%5)*7e-4,jy=(li%7)*1.1e-3,tj=p=>{const q=tf(p);return{x:q.x+jx,y:q.y+jy};};l.outer=l.outer.map(tj);l.holes=l.holes.map(h=>h.map(tj));});
   return{loops,w:b.x1-b.x0,h:b.y1-b.y0,box:{x0:cx-(b.x1-b.x0)/2,x1:cx+(b.x1-b.x0)/2,y0:cy-(b.y1-b.y0)/2,y1:cy+(b.y1-b.y0)/2}};
 }
 const measure=(s,size)=>text(s,size,0,0,false).w;
