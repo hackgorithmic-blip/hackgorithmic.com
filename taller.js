@@ -193,7 +193,7 @@ function renderCard(o,m){
    '<div class="tinfo"><b>'+esc(titulo)+' · “'+esc(o.texto)+'”</b><span>'+m.w.toFixed(0)+' × '+m.h.toFixed(0)+' × '+m.z.toFixed(1)+' mm · ~'+g+' g de PLA · marca grabada '+(m.g.top?'al frente y atrás':'atrás')+'</span></div>'+
    '<div class="tsw"><span>Base</span><span class="sb"></span><span style="margin-left:8px">Letras</span><span class="sl"></span></div>'+
    '<div class="trow"><button class="btn tdl" type="button">Descargar STL gratis</button><button class="btn alt tped" type="button">Pedirlo impreso · '+(o.tipo==='llavero'||o.tipo==='charm'?'$7':'aprox. '+$$($p))+'</button></div>'+
-   '<p class="tnote">Versión gratis: lleva la marca <b>hackgorithmic</b> grabada en la misma pieza. Sin marca: plan <a href="#precios">Creador</a> (muy pronto).</p>';
+   '<p class="tnote">Versión gratis: lleva la marca <b>hackgorithmic</b> grabada en la misma pieza. Sin marca: con el plan <a href="#precios">Creador</a>.</p>';
   const sw=(el,key,list)=>{el.innerHTML='';list.forEach(c=>{const b=document.createElement('button');b.type='button';b.title=c;b.setAttribute('aria-label',key+' '+c);b.style.background='#'+HEX[c].toString(16).padStart(6,'0');b.setAttribute('aria-pressed',String(o[key]===c));b.onclick=()=>{o[key]=c;sw(el,key,list);recolor(o);};el.appendChild(b);});};
   sw(card.querySelector('.sb'),'base',['rosa','negro','blanco','cian','rojo','amarillo']);sw(card.querySelector('.sl'),'letras',['blanco','negro','rosa','amarillo']);
   viewer(card.querySelector('.tview'),m,o);
