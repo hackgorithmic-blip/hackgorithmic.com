@@ -287,27 +287,33 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 </section>
 
 <section id="cotizar">
-  <h2>Cotiza tu pieza</h2>
-  <p class="lead" style="margin-top:4px">¿Ya tienes el archivo 3D? Explora un estimado de referencia según el material y las horas de máquina. El archivo no sale de tu teléfono o computadora.</p>
+  <h2>Estima el costo de tu impresión</h2>
+  <p class="lead" style="margin-top:4px">Selecciona un archivo STL y elige material y cantidad para obtener un precio aproximado de impresión. Revisaremos el modelo y la fabricación antes de confirmar el precio final. El envío se calcula aparte.</p>
   <div class="quote">
     <div class="qcard">
-      <label class="drop" id="drop"><input id="stl" type="file" accept=".stl"><b>Sube tu archivo .STL</b><br><span id="fname">o arrástralo aquí</span></label>
+      <label class="drop" id="drop"><input id="stl" type="file" accept=".stl" aria-describedby="qfile-help"><b>Selecciona tu archivo .STL</b><br><span id="fname">o arrástralo aquí</span></label>
+      <p class="note" id="qfile-help">El cálculo se realiza en tu teléfono o computadora. Seleccionar el archivo aquí no lo envía a Hackgorithmic. Para solicitar la revisión, tendrás que adjuntarlo a tu correo y pulsar Enviar.</p>
       <div class="qrow">
-        <div><label for="qmat">Material</label><select id="qmat"><option value="pla">PLA</option><option value="petg">PETG (más resistente)</option></select></div>
-        <div><label for="qinf">Resistencia</label><select id="qinf"><option value="0.35">Normal</option><option value="0.55">Resistente</option><option value="1">Sólida</option></select></div>
+        <div><label for="qmat">Material</label><select id="qmat"><option value="pla">PLA</option><option value="petg">PETG</option></select></div>
+        <div><label for="qinf">Relleno orientativo</label><select id="qinf" aria-describedby="qestimate-help"><option value="0.35">35 %</option><option value="0.55">55 %</option><option value="1">100 %</option></select></div>
         <div><label for="qcol">Colores</label><select id="qcol"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
-        <div><label for="qqty">Cantidad</label><input id="qqty" type="number" min="1" max="100" value="1"></div>
+        <div><label for="qqty">Cantidad</label><input id="qqty" type="number" min="1" max="100" step="1" value="1" aria-describedby="qmsg"></div>
       </div>
       <div id="qdims" class="specs"></div>
-      <div id="qwarn" class="warn"></div>
-      <p class="note" style="margin-top:14px">¿No tienes archivo? Descríbela en el <a href="#taller">Taller</a> de arriba o cuéntasela a Filo.</p>
+      <div id="qwarn" class="warn" aria-live="polite"></div>
+      <p class="note" id="qestimate-help">Interpretamos las medidas del STL en milímetros. El material y las horas son aproximaciones; el relleno no garantiza la resistencia de la pieza. La orientación y los soportes se revisan antes de confirmar el precio.</p>
+      <p class="note" style="margin-top:14px">¿No tienes archivo? Explora el <a href="#taller">Taller</a> o <a href="mailto:hackgorithmic@gmail.com">escríbenos tu idea</a>.</p>
     </div>
     <div class="qcard">
-      <span class="lbl">Tu cotización</span>
-      <table class="bk" id="qbk"><tr><td>Sube un archivo para calcular</td><td>—</td></tr></table>
-      <div class="total"><span>Total estimado</span><b id="qtot">—</b></div>
-      <p class="note">Estimado automático. Confirmamos el precio final y el tiempo de entrega antes de imprimir.</p>
-      <div class="row" style="margin-top:12px"><button class="btn" id="qsend" type="button" disabled>Copiar cotización para pedirla</button><span id="qmsg" style="font-size:14px;align-self:center" aria-live="polite"></span></div>
+      <span class="lbl">Estimado de impresión · USD</span>
+      <table class="bk" id="qbk"><tr><td>Selecciona un archivo para estimar</td><td>—</td></tr></table>
+      <div class="total"><span>Estimado sin envío</span><b id="qtot">—</b></div>
+      <p class="note">Este cálculo no confirma un pedido. Revisaremos el archivo, el precio final y el plazo de entrega antes de aceptar la impresión.</p>
+      <label class="lbl" for="qsummary">Resumen para solicitar revisión</label>
+      <textarea id="qsummary" rows="9" readonly placeholder="Aquí aparecerá el resumen cuando selecciones un STL válido." aria-describedby="qdelivery-help"></textarea>
+      <p class="note" id="qdelivery-help">Preparar correo abre un borrador con el resumen. Adjunta el STL y pulsa Enviar. Si no se abre, copia el resumen y envíalo con el archivo a <a href="mailto:hackgorithmic@gmail.com">hackgorithmic@gmail.com</a>.</p>
+      <div class="row" style="margin-top:12px"><button class="btn" id="qsend" type="button" disabled>Preparar correo</button><button class="btn" id="qcopy" type="button" disabled>Copiar resumen</button></div>
+      <p id="qmsg" style="font-size:14px" role="status" aria-live="polite"></p>
     </div>
   </div>
 </section>
@@ -498,44 +504,112 @@ function draw(){
 }
 $("#kq").addEventListener("input",draw);
 /* ---- cotizador STL ---- */
-let stl=null;
+let stl=null, stlLoadId=0;
+function clearQuote(message="Selecciona un archivo para estimar"){
+  $("#qdims").textContent="";
+  $("#qwarn").textContent="";
+  $("#qbk").innerHTML="<tr><td>"+message+"</td><td>—</td></tr>";
+  $("#qtot").textContent="—";
+  $("#qsummary").value="";
+  $("#qmsg").textContent="";
+  $("#qsend").disabled=true;
+  $("#qcopy").disabled=true;
+  window._q="";
+}
 function parseSTL(buf){
   const dv=new DataView(buf); let tris=[];
   const n=buf.byteLength>=84?dv.getUint32(80,true):0;
   if(buf.byteLength===84+n*50){ for(let i=0;i<n;i++){const o=84+i*50+12;const v=[];for(let k=0;k<9;k++)v.push(dv.getFloat32(o+k*4,true));tris.push(v);} }
   else{ const t=new TextDecoder().decode(buf); const re=/vertex\s+([-\d.eE+]+)\s+([-\d.eE+]+)\s+([-\d.eE+]+)/g; let m,v=[];
-    while((m=re.exec(t))){v.push(+m[1],+m[2],+m[3]); if(v.length===9){tris.push(v);v=[];}} }
-  let vol=0,mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];
-  for(const a of tris){ vol+=(a[0]*(a[4]*a[8]-a[5]*a[7])-a[1]*(a[3]*a[8]-a[5]*a[6])+a[2]*(a[3]*a[7]-a[4]*a[6]))/6;
+    while((m=re.exec(t))){v.push(+m[1],+m[2],+m[3]); if(v.length===9){tris.push(v);v=[];}} if(v.length) throw new Error("STL incompleto"); }
+  let vol=0,mn=[Infinity,Infinity,Infinity],mx=[-Infinity,-Infinity,-Infinity];
+  for(const a of tris){
+    if(!a.every(Number.isFinite)) throw new Error("Coordenadas no válidas");
+    vol+=(a[0]*(a[4]*a[8]-a[5]*a[7])-a[1]*(a[3]*a[8]-a[5]*a[6])+a[2]*(a[3]*a[7]-a[4]*a[6]))/6;
     for(let k=0;k<9;k++){const ax=k%3; if(a[k]<mn[ax])mn[ax]=a[k]; if(a[k]>mx[ax])mx[ax]=a[k];} }
-  return {tris:tris.length, cm3:Math.abs(vol)/1000, size:mx.map((x,i)=>x-mn[i])};
+  const result={tris:tris.length, cm3:Math.abs(vol)/1000, size:mx.map((x,i)=>x-mn[i])};
+  if(!result.tris||!Number.isFinite(result.cm3)||result.cm3<=0||!result.size.every(x=>Number.isFinite(x)&&x>0)) throw new Error("Geometría no válida");
+  return result;
 }
 function recalc(){
   if(!stl){return;}
-  const f=+$("#qinf").value, V=stl.cm3;
-  const fe=f+(1-f)*Math.exp(-V/8);                // piezas chicas son casi sólidas (paredes)
-  const dens=$("#qmat").value==="petg"?1.27:1.24;
+  const qty=Number($("#qqty").value);
+  const validQty=Number.isInteger(qty)&&qty>=1&&qty<=100;
+  $("#qqty").setCustomValidity(validQty?"":"Indica una cantidad entera entre 1 y 100.");
+  if(!validQty){clearQuote("Revisa la cantidad para calcular"); $("#qmsg").textContent="Indica una cantidad entera entre 1 y 100."; return;}
+  const f=Number($("#qinf").value), mat=$("#qmat").value, col=Number($("#qcol").value), V=stl.cm3;
+  if(![0.35,0.55,1].includes(f)||!["pla","petg"].includes(mat)||!Number.isInteger(col)||col<1||col>4){clearQuote("Revisa las opciones de impresión"); return;}
+  const fe=f+(1-f)*Math.exp(-V/8);                // aproximación de paredes y relleno, sin laminado
+  const dens=mat==="petg"?1.27:1.24;
   const g=V*dens*fe, h=g/T.gph+0.15;
-  const qty=Math.max(1,+$("#qqty").value||1), col=+$("#qcol").value;
-  const q=cotizar({g,h,mat:$("#qmat").value,colores:col,qty});
-  $("#qdims").innerHTML="<span><b>"+stl.size.map(x=>x.toFixed(0)).join(" × ")+"</b> mm</span><span>≈ <b>"+q.gT.toFixed(0)+"</b> g</span><span>≈ <b>"+q.hT.toFixed(1)+"</b> h de máquina</span>";
-  $("#qwarn").textContent=stl.size.some(x=>x>265)?"Esta pieza pasa de 26.5 cm: hay que dividirla en partes. Escríbenos y la cotizamos a mano.":"";
-  $("#qbk").innerHTML="<tr><td>Material ("+q.gT.toFixed(0)+" g "+$("#qmat").selectedOptions[0].text.split(" ")[0]+")</td><td>"+$$(q.mat$)+"</td></tr><tr><td>Máquina ("+q.hT.toFixed(1)+" h)</td><td>"+$$(q.maq$)+"</td></tr><tr><td>Preparación del pedido</td><td>"+$$(q.prep)+"</td></tr>"+(q.min?"<tr><td>Ajuste a precio mínimo</td><td>"+$$(q.total)+"</td></tr>":"");
-  $("#qtot").textContent=$$(q.total);
+  const q=cotizar({g,h,mat,colores:col,qty});
+  if(![q.gT,q.hT,q.mat$,q.maq$,q.prep,q.total].every(Number.isFinite)||!Number.isSafeInteger(Math.round(q.total*100))){clearQuote("Esta pieza necesita revisión manual"); $("#qmsg").textContent="No podemos estimar esta geometría. Envíala por correo para revisarla."; return;}
+  // Redondeamos el subtotal una sola vez y repartimos sus centavos entre las partidas.
+  const materialCents=Math.round(q.mat$*100), prepCents=Math.round(q.prep*100);
+  const subtotalCents=Math.round((q.mat$+q.maq$+q.prep)*100), totalCents=Math.round(q.total*100);
+  const machineCents=subtotalCents-materialCents-prepCents, adjustmentCents=totalCents-subtotalCents;
+  $("#qdims").innerHTML="<span><b>"+stl.size.map(x=>x.toFixed(1)).join(" × ")+"</b> mm</span><span>≈ <b>"+q.gT.toFixed(1)+"</b> g</span><span>≈ <b>"+q.hT.toFixed(1)+"</b> h de máquina</span>";
+  $("#qwarn").textContent=stl.size.some(x=>x>265)?"Una medida supera 265 mm. Debemos revisar orientación, máquina y viabilidad antes de confirmar la fabricación.":"";
+  $("#qbk").innerHTML="<tr><td>Material estimado ("+q.gT.toFixed(1)+" g "+mat.toUpperCase()+")</td><td>"+$$(materialCents/100)+"</td></tr><tr><td>Máquina estimada ("+q.hT.toFixed(1)+" h)</td><td>"+$$(machineCents/100)+"</td></tr><tr><td>Preparación del pedido</td><td>"+$$(prepCents/100)+"</td></tr>"+(adjustmentCents>0?"<tr><td>Ajuste al precio mínimo</td><td>"+$$(adjustmentCents/100)+"</td></tr>":"");
+  $("#qtot").textContent=$$(totalCents/100);
   $("#qsend").disabled=false;
-  window._q="Cotización hackgorithmic 3D\nArchivo: "+stl.name+"\nMedidas: "+stl.size.map(x=>x.toFixed(0)).join(" x ")+" mm\nMaterial: "+$("#qmat").value.toUpperCase()+" · "+$("#qinf").selectedOptions[0].text+" · "+col+" color(es)\nCantidad: "+qty+"\nEstimado: "+$$(q.total)+"\n(Adjunto el archivo STL)";
+  $("#qcopy").disabled=false;
+  $("#qmsg").textContent="";
+  window._q=[
+    "Solicitud de revisión de impresión — Hackgorithmic 3D",
+    "Archivo: "+stl.name,
+    "Medidas interpretadas en milímetros: "+stl.size.map(x=>x.toFixed(1)).join(" x ")+" mm",
+    "Material: "+mat.toUpperCase()+" · Relleno orientativo: "+$("#qinf").selectedOptions[0].text+" · "+col+" color(es)",
+    "Cantidad: "+qty,
+    "Estimado de impresión: "+$$(totalCents/100)+" USD (envío aparte)",
+    "Solicito revisión del archivo, precio final y plazo de entrega.",
+    "Este estimado no confirma un pedido ni garantiza la resistencia de la pieza.",
+    "",
+    "Antes de enviar: adjuntar manualmente el archivo STL e indicar destino del envío o recogida."
+  ].join("\n");
+  $("#qsummary").value=window._q;
 }
 async function loadFile(file){
-  if(!file) return; $("#fname").textContent="Leyendo "+file.name+"…";
-  try{ stl=parseSTL(await file.arrayBuffer()); stl.name=file.name;
-    if(!stl.tris||!stl.cm3){throw 0;} $("#fname").textContent=file.name+" · "+stl.tris.toLocaleString()+" triángulos"; $("#drop").classList.add("on"); recalc(); }
-  catch(e){ stl=null; $("#fname").textContent="No pude leer ese archivo. ¿Es un .STL?"; }
+  const loadId=++stlLoadId;
+  stl=null;
+  clearQuote();
+  $("#drop").classList.remove("on");
+  if(!file){$("#fname").textContent="o arrástralo aquí"; return;}
+  $("#fname").textContent="Leyendo "+file.name+"…";
+  try{
+    if(!/\.stl$/i.test(file.name)) throw new Error("Selecciona un STL");
+    const buffer=await file.arrayBuffer();
+    if(loadId!==stlLoadId) return;
+    const parsed=parseSTL(buffer);
+    parsed.name=file.name;
+    stl=parsed;
+    $("#fname").textContent=file.name+" · "+stl.tris.toLocaleString()+" triángulos";
+    $("#drop").classList.add("on");
+    recalc();
+  }catch(e){
+    if(loadId!==stlLoadId) return;
+    stl=null;
+    clearQuote();
+    $("#drop").classList.remove("on");
+    $("#fname").textContent="No pudimos calcular este archivo. Selecciona un STL válido con volumen y medidas en milímetros.";
+  }
 }
 $("#stl").addEventListener("change",e=>loadFile(e.target.files[0]));
 ["dragover","dragenter"].forEach(ev=>$("#drop").addEventListener(ev,e=>{e.preventDefault();$("#drop").classList.add("on");}));
 $("#drop").addEventListener("drop",e=>{e.preventDefault();loadFile(e.dataTransfer.files[0]);});
 ["qmat","qinf","qcol","qqty"].forEach(id=>$("#"+id).addEventListener("input",recalc));
-$("#qsend").onclick=async()=>{try{await navigator.clipboard.writeText(window._q);$("#qmsg").textContent="Copiada. Pégala en el chat con Filo (abajo a la derecha) y te ayudamos.";}catch(e){$("#qmsg").textContent="Ábrele el chat a Filo (abajo a la derecha) y cuéntale.";}};
+$("#qsend").onclick=()=>{
+  recalc();
+  if(!window._q||$("#qsend").disabled) return;
+  $("#qmsg").textContent="Borrador preparado. Adjunta el STL y pulsa Enviar en tu correo. Si no se abre, copia el resumen y envíalo con el archivo a hackgorithmic@gmail.com.";
+  window.location.href="mailto:hackgorithmic@gmail.com?cc="+encodeURIComponent("agent@hackgorithmic.com")+"&subject="+encodeURIComponent("Revisión de impresión 3D — "+stl.name)+"&body="+encodeURIComponent(window._q);
+};
+$("#qcopy").onclick=async()=>{
+  recalc();
+  if(!window._q||$("#qcopy").disabled) return;
+  try{await navigator.clipboard.writeText(window._q);$("#qmsg").textContent="Resumen copiado. Pégalo en tu correo a hackgorithmic@gmail.com, adjunta el STL y pulsa Enviar.";}
+  catch(e){$("#qsummary").focus();$("#qsummary").select();$("#qmsg").textContent="Selecciona y copia el resumen manualmente. Envíalo con el STL adjunto a hackgorithmic@gmail.com.";}
+};
 function syncOrder(){
   const n=Math.max(1,+$("#oq").value||1), sub=precioLlaveros(n);
   const requiereEnvio=$("#od").value==="envio";
@@ -643,7 +717,7 @@ const log=document.getElementById('filoLog'), chips=document.getElementById('fil
 const go=id=>{closeChat(); const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:reduce?'auto':'smooth'});};
 function add(who,html){const d=document.createElement('div'); d.className='fm '+who; d.innerHTML=html; log.appendChild(d); log.scrollTop=log.scrollHeight; return d;}
 function bot(html,actions){ mood.talk=1; setTimeout(()=>{ add('bot',html); setChips(actions||MAIN); },reduce?0:350); }
-const MAIN=[['Crear mi modelo','taller'],['Precios','precios'],['Hacer pedido','pedido'],['Cotizar pieza','cotizar'],['Envíos','envio'],['Planes app','planes'],['El libro','libro'],['Hablar con una persona','humano']];
+const MAIN=[['Crear mi modelo','taller'],['Precios','precios'],['Hacer pedido','pedido'],['Estimar impresión','cotizar'],['Envíos','envio'],['Planes app','planes'],['El libro','libro'],['Hablar con una persona','humano']];
 function setChips(list){chips.innerHTML=''; list.forEach(([label,key])=>{const b=document.createElement('button'); b.type='button'; b.textContent=label; b.onclick=()=>{add('me',label); answer(key,true);}; chips.appendChild(b);});}
 const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 const intents=[
@@ -664,11 +738,11 @@ const A={
  hola:()=>bot('¡Hola! 😊 Soy Filo, la impresora-asistente de hackgorithmic 3D. Puedo decirte precios, ayudarte a pedir tu llavero o cotizar tu pieza. ¿Qué necesitas?'),
  gracias:()=>bot('¡A ti! Si quieres, te llevo directo al pedido 👇',[['Hacer pedido','pedido'],['Más preguntas','menu']]),
  menu:()=>bot('¿En qué más te ayudo?'),
- precios:()=>bot('🔑 <b>Llaveros con nombre</b> (2 colores, letras en relieve):\n• 1 por <b>$7</b>\n• 3 por <b>$18</b>\n• 5 por <b>$25</b> (y $5 cada extra)\n\n📐 <b>Piezas a medida:</b> depende del material y las horas de máquina. Sube tu archivo en el cotizador y te sale el precio al instante.',[['Diseñar mi llavero','diseno'],['Cotizar pieza','cotizar'],['Envíos','envio']]),
+ precios:()=>bot('🔑 <b>Llaveros con nombre</b> (2 colores, letras en relieve):\n• 1 por <b>$7</b>\n• 3 por <b>$18</b>\n• 5 por <b>$25</b> (y $5 cada extra)\n\n📐 <b>Piezas a medida:</b> selecciona un STL para ver un estimado orientativo. Revisamos el archivo y confirmamos el precio final; el envío se calcula aparte.',[['Diseñar mi llavero','diseno'],['Estimar impresión','cotizar'],['Envíos','envio']]),
  diseno:()=>{bot('¡Vamos! Escribe tu nombre arriba y elige estilo y colores ✨');setTimeout(()=>go('nm'),900);},
  pedido:()=>{bot('Perfecto 🙌 Te llevo al formulario: pon el nombre, colores, cantidad y cómo lo quieres recibir. Te confirmamos con la vista previa y el link de pago.');setTimeout(()=>go('pedir'),1100);},
  taller:()=>{bot('Escríbelo en el <b>Taller</b> de arriba (“Escribe tu idea”): te armo el modelo 3D al instante. Lo descargas gratis con la marca hackgorithmic o lo imprimimos por ti.');setTimeout(()=>go('taller'),1300);},
- cotizar:()=>{bot('Sube tu archivo <b>.STL</b> en el cotizador y te calculo material + horas de máquina al instante. ¿No tienes archivo? Cuéntame tu idea aquí y se la paso al equipo.');setTimeout(()=>go('cotizar'),1300);},
+ cotizar:()=>{bot('Selecciona un <b>.STL</b> para obtener un estimado de impresión. El cálculo es local y no envía tu archivo. Para solicitar revisión, prepara el correo, adjunta el STL y pulsa Enviar. ¿No tienes archivo? Escribe tu idea a hackgorithmic@gmail.com.');setTimeout(()=>go('cotizar'),1300);},
  envio:()=>bot('📦 <b>Envío en EE.UU.:</b> se cotiza según tu dirección.\n📍 <b>Recoger en Florida:</b> gratis.\n⏱️ Te confirmamos el total y el plazo antes de cobrar.',[['Hacer pedido','pedido'],['Precios','precios']]),
  planes:()=>{bot('✨ Planes para crear tus propios modelos 3D (aún no se pueden contratar, pero puedes consultarlos):\n• Básico $4/mes\n• Creador $8/mes (el más popular)\n• Pro $24/mes\nMientras tanto, el Taller de arriba es gratis.');setTimeout(()=>go('precios'),1400);},
  libro:()=>{bot('📘 Tenemos el libro <b>"Montando tu agente desde 0"</b>, que será tu guía de emprendimiento.');setTimeout(()=>go('libro'),1300);},
