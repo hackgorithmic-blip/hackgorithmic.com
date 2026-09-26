@@ -25,6 +25,7 @@
 :root[data-theme="dark"]{ color-scheme:dark; --bed:#121418; --paper:#181b20; --ink:#eef0f3; --ink2:#a8afb8; --line:#2c3138;
   --pla:#f0578c; --cyan:#35b8c8; --card:#1d2127; }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{background:var(--bed); color:var(--ink); font:16px/1.55 var(--body); padding-inline:16px;
   background-image:repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in srgb, var(--ink) 4%, transparent) 3px 4px);}
 .wrap{max-width:1120px; margin:0 auto}
@@ -33,9 +34,9 @@ header.top{display:flex; align-items:center; gap:14px; padding-block:18px; flex-
 .logo b{color:var(--pla)}
 .tag{font:600 11px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--ink2); border:1px solid var(--line); padding:6px 9px; border-radius:4px}
 header.top .sp{flex:1}
-.btn{display:inline-flex; align-items:center; gap:8px; font:600 15px/1 var(--body); padding:13px 18px; border-radius:8px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); cursor:pointer; text-decoration:none}
+.btn{display:inline-flex; align-items:center; gap:8px; min-height:44px; font:600 15px/1.25 var(--body); padding:13px 18px; border-radius:8px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); cursor:pointer; text-decoration:none}
 .btn.alt{background:transparent; color:var(--ink)}
-.btn:focus-visible, input:focus-visible, button:focus-visible{outline:3px solid var(--cyan); outline-offset:2px}
+.btn:focus-visible, input:focus-visible, button:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible, .drop:focus-within{outline:3px solid var(--cyan); outline-offset:2px}
 h1{font:800 clamp(38px,6.4vw,76px)/.98 var(--display); letter-spacing:-.035em; margin:0; text-wrap:balance}
 h1 em{font-style:normal; color:var(--pla)}
 h2{font:700 clamp(26px,3.4vw,38px)/1.05 var(--display); letter-spacing:-.02em; margin:0 0 8px; text-wrap:balance}
@@ -91,16 +92,22 @@ section{padding-block:56px}
 .contact h2{color:var(--paper)}
 .contact p{margin:0; color:color-mix(in srgb, var(--paper) 75%, transparent)}
 .mail{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
-.mail code{font:600 17px/1 var(--mono); background:color-mix(in srgb, var(--paper) 10%, transparent); padding:12px 14px; border-radius:8px; user-select:all}
+.mail code{max-width:100%; overflow-wrap:anywhere; font:600 17px/1.5 var(--mono); background:color-mix(in srgb, var(--paper) 10%, transparent); padding:12px 14px; border-radius:8px; user-select:all}
 .contact .btn{background:var(--pla); border-color:var(--pla); color:#fff}
 /* ---- cotizador ---- */
-.quote{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:24px}
+.quote{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:18px; margin-top:24px}
 @media (max-width:860px){ .quote{grid-template-columns:1fr} }
-.qcard{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px}
+.qcard{min-width:0; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:20px}
+.qcard input:not([type=file]), .qcard textarea{width:100%; min-width:0; font:500 16px/1.5 var(--body); padding:11px 12px; border-radius:8px; border:1px solid var(--line); background:var(--paper); color:var(--ink)}
+.qcard textarea{resize:vertical}
+.qcard textarea[readonly]{font:400 13px/1.5 var(--mono); min-height:180px}
+.request-note{padding:12px 14px; border-left:3px solid var(--cyan); background:var(--paper); color:var(--ink2)}
 .drop{border:2px dashed var(--line); border-radius:10px; padding:22px; text-align:center; color:var(--ink2); cursor:pointer; display:block}
 .drop.on{border-color:var(--cyan); color:var(--ink)}
-.drop input{display:none}
-.qrow{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px}
+.drop input{position:absolute; width:1px; height:1px; margin:0; opacity:0}
+.qrow{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; margin-top:14px}
+.qrow>div{min-width:0}
+@media (max-width:600px){.qrow,.grid,.plans{grid-template-columns:minmax(0,1fr)} .row .btn{max-width:100%}}
 .qrow label, .qcard .lbl{font:600 12px/1 var(--mono); letter-spacing:.08em; text-transform:uppercase; color:var(--ink2); display:block; margin-bottom:6px}
 select, input[type=number]{width:100%; font:500 16px/1 var(--body); padding:11px 12px; border-radius:8px; border:1px solid var(--line); background:var(--paper); color:var(--ink)}
 .bk{width:100%; border-collapse:collapse; font:400 14px/1.4 var(--body); font-variant-numeric:tabular-nums}
@@ -124,6 +131,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 
 
 <div class="wrap">
+<noscript><p class="request-note">Puedes consultar planes o pedir una pieza escribiendo a <a href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com">hackgorithmic@gmail.com</a>. Indica tu idea, medidas, colores y forma de entrega.</p></noscript>
 <header class="top">
   <div class="logo">hack<b>gorithmic</b> 3D</div>
   <span class="tag">Florida · impresión 3D</span>
@@ -136,9 +144,9 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 
 <div class="hero">
   <div>
-    <span class="soon">App en camino</span>
+    <span class="soon">Diseño e impresión por encargo</span>
     <h1 style="margin-top:14px">Escribe tu idea.<br>La <em>imprimimos</em> en 3D.</h1>
-    <p class="lead">Llaveros con tu nombre, charms, accesorios para cámara y piezas a la medida. Nuestra app arma el modelo 3D por ti y lo imprimimos en PLA con la Snapmaker U1 de 4 colores.</p>
+    <p class="lead">Llaveros con tu nombre, charms, accesorios para cámara y piezas a la medida. Cuéntanos tu idea: revisamos el diseño, el precio y el plazo contigo antes de cobrar. Imprimimos en PLA con la Snapmaker U1 de 4 colores.</p>
     <div class="row" style="margin-top:22px">
       <a class="btn" href="#pedir">Pedir el mío</a>
       <a class="btn alt" href="#productos">Ver piezas</a>
@@ -237,46 +245,72 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 
 <section id="precios">
   <h2>Suscripciones de creación de modelos 3D</h2>
-  <p class="lead" style="margin-top:4px">Nuestros servicios de creación de modelos 3D cuestan $4, $8 o $24 USD al mes, según el plan. La vista previa de arriba es gratis. La impresión física y el envío se cobran por separado. <span class="soon">Muy pronto</span></p>
+  <p class="lead" style="margin-top:4px">Planes de creación de modelos 3D de $4, $8 o $24 USD al mes. La vista previa de arriba es gratis. La impresión física y el envío se cobran por separado. <span class="soon" data-subscription-pending>Consulta los planes</span></p>
+  <p class="request-note" data-subscription-pending>Estos planes todavía no se pueden contratar. Consulta los beneficios propuestos y cuéntanos tu idea para confirmar disponibilidad y forma de entrega.</p>
   <div class="plans">
     <div class="plan">
       <h3 style="font:700 22px var(--display); margin:0">Básico</h3>
       <div class="price">$4 <small>/ mes</small></div>
       <ul><li>3 descargas STL al mes</li><li>Llaveros y charms con nombre</li><li>Estilos básicos</li></ul>
-      <a class="btn alt" style="margin-top:14px" href="mailto:agent@hackgorithmic.com?subject=Lista%20de%20espera%20-%20Plan%20B%C3%A1sico%20%244">Apartar mi lugar</a>
+      <a class="btn alt" data-subscription-plan="basico" style="margin-top:14px" href="#solicitar-plan">Consultar Básico</a>
     </div>
     <div class="plan main">
-      <span class="soon">El más popular</span>
-      <h3 style="font:700 22px var(--display); margin:12px 0 0">Creador</h3>
+      <h3 style="font:700 22px var(--display); margin:0">Creador</h3>
       <div class="price">$8 <small>/ mes</small></div>
       <ul><li>Descargas ilimitadas</li><li>Todos los estilos y colores</li><li>Archivos multicolor listos para imprimir</li></ul>
-      <a class="btn" style="margin-top:14px" href="mailto:agent@hackgorithmic.com?subject=Lista%20de%20espera%20-%20Plan%20Creador%20%248">Apartar mi lugar</a>
+      <a class="btn" data-subscription-plan="creador" style="margin-top:14px" href="#solicitar-plan">Consultar Creador</a>
     </div>
     <div class="plan">
       <h3 style="font:700 22px var(--display); margin:0">Pro</h3>
       <div class="price">$24 <small>/ mes</small></div>
       <ul><li>Diseños a medida con nuestro agente</li><li>Uso comercial: vende lo que imprimas</li><li>Prioridad y 10% de descuento en impresiones</li></ul>
-      <a class="btn alt" style="margin-top:14px" href="mailto:agent@hackgorithmic.com?subject=Lista%20de%20espera%20-%20Plan%20Pro%20%2424">Apartar mi lugar</a>
+      <a class="btn alt" data-subscription-plan="pro" style="margin-top:14px" href="#solicitar-plan">Consultar Pro</a>
     </div>
   </div>
-  <p class="note" style="margin-top:12px">Pago anual: 2 meses gratis ($40, $80 o $240 al año). ¿Prefieres que lo imprimamos nosotros? Usa el <a href="#cotizar">cotizador</a>: material + horas de máquina + preparación.</p>
+  <p class="note" style="margin-top:12px" data-subscription-annual hidden>Pago anual: 2 meses gratis ($40, $80 o $240 al año).</p>
+  <p class="note" data-subscription-live hidden>Cobro mensual recurrente en USD. El importe y la frecuencia se muestran antes de confirmar el pago. Puedes gestionar o cancelar la renovación desde tu portal de suscripción. La impresión física y el envío se cobran aparte.</p>
+  <p class="note">¿Prefieres que lo imprimamos nosotros? Usa el <a href="#cotizar">cotizador</a>: material + horas de máquina + preparación.</p>
+  <p class="note"><a data-subscription-portal hidden>Gestionar o cancelar mi suscripción</a></p>
+</section>
+
+<section id="solicitar-plan" aria-labelledby="plan-request-title">
+  <h2 id="plan-request-title">Cuéntanos qué quieres crear</h2>
+  <p class="lead" style="margin-top:4px">Elige el plan que te interesa y describe tu idea. Te orientamos sobre el diseño y la entrega de tus modelos 3D.</p>
+  <div class="quote">
+    <form class="qcard" id="plan-request" onsubmit="return false" aria-describedby="plan-request-help">
+      <p class="note" id="plan-request-help">El plan, tu email y la idea son obligatorios. Puedes adjuntar fotos o referencias al enviar el correo.</p>
+      <div class="qrow">
+        <div style="grid-column:1/-1"><label for="splan">Plan que te interesa</label><select id="splan" name="plan" required><option value="basico">Básico — $4 USD al mes</option><option value="creador">Creador — $8 USD al mes</option><option value="pro">Pro — $24 USD al mes</option></select></div>
+        <div><label for="sname">Tu nombre (opcional)</label><input id="sname" name="name" type="text" autocomplete="name" maxlength="100"></div>
+        <div><label for="semail">Tu email</label><input id="semail" name="email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254" required></div>
+        <div style="grid-column:1/-1"><label for="sidea">Tu idea y las medidas que necesitas</label><textarea id="sidea" name="idea" rows="5" maxlength="3000" required placeholder="Describe la pieza, el nombre o el uso que le darás. Si conoces las medidas o el formato que necesitas, inclúyelos aquí."></textarea></div>
+      </div>
+    </form>
+    <div class="qcard">
+      <label class="lbl" for="ssummary">Resumen de tu consulta</label>
+      <textarea id="ssummary" rows="10" readonly aria-describedby="sdelivery">Completa el formulario para preparar tu consulta.</textarea>
+      <p class="note" id="sdelivery">«Preparar correo» abre un mensaje que debes enviar desde tu aplicación de correo. También puedes copiar o descargar el resumen y enviarlo a <a href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com">hackgorithmic@gmail.com</a>.</p>
+      <div class="row" style="margin-top:12px"><a class="btn" id="ssend" href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com">Preparar correo</a><button class="btn alt" id="scopy" type="button">Copiar resumen</button><button class="btn alt" id="sdownload" type="button">Descargar resumen</button></div>
+      <p class="note" id="smsg" role="status" aria-live="polite"></p>
+    </div>
+  </div>
 </section>
 
 <section id="pedir">
   <h2>Encarga tus llaveros impresos</h2>
-  <p class="lead" style="margin-top:4px">Llena esto y te llega la confirmación con la vista previa y el link de pago. Imprimimos en 1–3 días y te lo enviamos.</p>
+  <p class="lead" style="margin-top:4px">Prepara tu solicitud de llaveros personalizados. Te confirmamos el diseño, el total con envío y el plazo antes de cobrar.</p>
   <div class="quote">
     <form class="qcard" id="ord" onsubmit="return false">
       <div class="qrow">
-        <div style="grid-column:1/-1"><label for="on">Nombre(s) para los llaveros</label><input id="on" type="text" placeholder="Luna, Mateo, Sofía" style="width:100%;font:500 16px var(--body);padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></div>
+        <div style="grid-column:1/-1"><label for="on">Nombre(s) para los llaveros</label><input id="on" type="text" placeholder="Luna, Mateo, Sofía" maxlength="300" required style="width:100%;font:500 16px var(--body);padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></div>
         <div><label for="ost">Estilo</label><select id="ost"><option value="script">Firma</option><option value="round">Burbuja</option><option value="block">Bloque</option></select></div>
-        <div><label for="oq">Cantidad</label><input id="oq" type="number" min="1" max="50" value="1"></div>
+        <div><label for="oq">Cantidad</label><input id="oq" type="number" min="1" max="50" step="1" value="1" required></div>
         <div><label for="ob">Color base</label><select id="ob"><option>rosa</option><option>negro</option><option>cian</option><option>rojo</option><option>amarillo</option></select></div>
         <div><label for="ol">Color letras</label><select id="ol"><option>blanco</option><option>negro</option><option>rosa</option></select></div>
         <div style="grid-column:1/-1"><label for="od">Entrega</label><select id="od"><option value="envio">Envío en EE.UU. (se cotiza aparte)</option><option value="recoger">Recoger en Florida (gratis)</option></select></div>
-        <div><label for="ocn">Tu nombre</label><input id="ocn" type="text" autocomplete="name" style="width:100%;font:500 16px var(--body);padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></div>
-        <div><label for="oct">WhatsApp o email</label><input id="oct" type="text" autocomplete="email" style="width:100%;font:500 16px var(--body);padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></div>
-        <div style="grid-column:1/-1" id="oaddrw"><label for="oa">Dirección de envío</label><textarea id="oa" rows="2" autocomplete="street-address" style="width:100%;font:500 15px var(--body);padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></textarea></div>
+        <div><label for="ocn">Tu nombre (opcional)</label><input id="ocn" type="text" autocomplete="name" maxlength="100" style="width:100%;font:500 16px var(--body);padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></div>
+        <div><label for="oct">WhatsApp o email</label><input id="oct" type="text" autocomplete="email" maxlength="254" required style="width:100%;font:500 16px var(--body);padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></div>
+        <div style="grid-column:1/-1" id="oaddrw"><label for="oa">Dirección para cotizar el envío</label><textarea id="oa" rows="2" autocomplete="street-address" maxlength="500" required style="width:100%;font:500 15px var(--body);padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></textarea></div>
       </div>
     </form>
     <div class="qcard">
@@ -284,8 +318,10 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
       <table class="bk" id="obk"></table>
       <div class="total"><span id="ototal-label">Subtotal de llaveros</span><b id="otot">—</b></div>
       <p class="note">El precio incluye nombre, dos colores, argolla y empaque sencillo. El envío se cotiza aparte según la dirección; la recogida local es gratis. Confirmamos el total antes de enviarte el link de pago.</p>
-      <div class="row" style="margin-top:12px"><a class="btn" id="osend" href="#">Enviar pedido</a><button class="btn alt" id="ocopy" type="button">Copiar pedido</button></div>
-      <p class="note" id="omsg" aria-live="polite"></p>
+      <label class="lbl" for="osummary" style="margin-top:16px">Resumen para enviar</label><textarea id="osummary" rows="8" readonly></textarea>
+      <div class="row" style="margin-top:12px"><a class="btn" id="osend" href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com">Preparar correo</a><button class="btn alt" id="ocopy" type="button">Copiar pedido</button><button class="btn alt" id="odownload" type="button">Descargar pedido</button></div>
+      <p class="note">Abre el correo preparado y pulsa Enviar, o comparte el resumen con <a href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com">hackgorithmic@gmail.com</a>.</p>
+      <p class="note" id="omsg" role="status" aria-live="polite"></p>
     </div>
   </div>
 </section>
@@ -300,16 +336,16 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
       <h3>Montando tu agente desde 0</h3>
       <p style="margin:0;color:var(--ink2)">Crea un asistente de IA que atienda clientes, publique en redes y trabaje por ti, aunque no sepas programar. Por José González (hackgorithmic).</p>
       <ul><li>Paso a paso para emprendedores</li><li>Caso real: cómo montamos hackgorithmic 3D</li><li>Plantillas listas y un plan de 30 días</li></ul>
-      <a class="btn" style="margin-top:16px" href="mailto:agent@hackgorithmic.com?cc=hackgorithmic@gmail.com&amp;subject=Av%C3%ADsame%20cuando%20salga%20el%20libro">Avísame cuando salga</a>
+      <a class="btn" style="margin-top:16px" href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com&amp;subject=Av%C3%ADsame%20cuando%20salga%20el%20libro">Avísame cuando salga</a>
     </div>
   </div>
 </section>
 
 <section id="contacto">
   <div class="contact">
-    <h2>Haz tu pedido o apártate en la app</h2>
-    <p>Escríbenos con tu idea (nombre, colores, medidas). Te respondemos con la vista previa y el precio.</p>
-    <div class="mail"><code id="mail">agent@hackgorithmic.com</code><button class="btn" id="copy" type="button">Copiar correo</button><span id="copied" style="font-size:14px" aria-live="polite"></span></div>
+    <h2>Hablemos de tu idea</h2>
+    <p>Cuéntanos qué quieres crear o imprimir: nombre, colores y medidas. Confirmamos el alcance, el precio y el plazo antes de cobrar.</p>
+    <div class="mail"><code id="mail">hackgorithmic@gmail.com</code><button class="btn" id="copy" type="button">Copiar correo</button><span id="copied" style="font-size:14px" aria-live="polite"></span></div>
   </div>
 </section>
 
@@ -421,21 +457,21 @@ $("#stl").addEventListener("change",e=>loadFile(e.target.files[0]));
 ["dragover","dragenter"].forEach(ev=>$("#drop").addEventListener(ev,e=>{e.preventDefault();$("#drop").classList.add("on");}));
 $("#drop").addEventListener("drop",e=>{e.preventDefault();loadFile(e.dataTransfer.files[0]);});
 ["qmat","qinf","qcol","qqty"].forEach(id=>$("#"+id).addEventListener("input",recalc));
-$("#qsend").onclick=async()=>{try{await navigator.clipboard.writeText(window._q);$("#qmsg").textContent="Copiada. Pégala en tu correo a agent@hackgorithmic.com con el archivo.";}catch(e){$("#qmsg").textContent="Escríbenos a agent@hackgorithmic.com con el archivo.";}};
+$("#qsend").onclick=async()=>{try{await navigator.clipboard.writeText(window._q);$("#qmsg").textContent="Copiada. Pégala en tu correo a hackgorithmic@gmail.com con el archivo.";}catch(e){$("#qmsg").textContent="Escríbenos a hackgorithmic@gmail.com con el archivo.";}};
 function syncOrder(){
   const n=Math.max(1,+$("#oq").value||1), sub=precioLlaveros(n);
   const requiereEnvio=$("#od").value==="envio";
   $("#oaddrw").style.display=requiereEnvio?"":"none";
+  $("#oa").required=requiereEnvio;
   $("#obk").innerHTML="<tr><td>"+n+" llavero"+(n>1?"s":"")+" · "+$("#ob").value+" + "+$("#ol").value+"</td><td>"+$$(sub)+"</td></tr><tr><td>"+($("#od").value==="envio"?"Envío EE.UU.":"Recoger en Florida")+"</td><td>"+(requiereEnvio?"Por cotizar":"Gratis")+"</td></tr>";
   $("#ototal-label").textContent=requiereEnvio?"Subtotal de llaveros":"Total con recogida";
   $("#otot").textContent=$$(sub);
   const body="Pedido hackgorithmic 3D\nNombres: "+($("#on").value||"(falta)")+"\nEstilo: "+$("#ost").selectedOptions[0].text+"\nColores: base "+$("#ob").value+", letras "+$("#ol").value+"\nCantidad: "+n+"\nEntrega: "+$("#od").selectedOptions[0].text+"\nSubtotal de llaveros: "+$$(sub)+(requiereEnvio?"\nEnvío: por cotizar según la dirección\nTotal final: pendiente de confirmar":"\nRecogida local: gratis\nTotal: "+$$(sub))+"\nCliente: "+($("#ocn").value||"")+"\nContacto: "+($("#oct").value||"")+($("#od").value==="envio"?"\nDirección: "+($("#oa").value||""):"");
   window._ord=body;
-  $("#osend").href="mailto:agent@hackgorithmic.com?cc=hackgorithmic@gmail.com&subject="+encodeURIComponent("Pedido llaveros - "+($("#on").value||"nuevo"))+"&body="+encodeURIComponent(body);
+  $("#osummary").value=body+"\n\nSolicitud pendiente de revisión. Confirmamos diseño, precio final y plazo antes de cobrar.";
+  $("#osend").href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com&subject="+encodeURIComponent("Solicitud de llaveros - "+($("#on").value||"nuevo"))+"&body="+encodeURIComponent($("#osummary").value);
 }
 ["on","ost","oq","ob","ol","od","ocn","oct","oa"].forEach(id=>$("#"+id).addEventListener("input",syncOrder));
-$("#osend").addEventListener("click",e=>{ if(!$("#on").value.trim()||!$("#oct").value.trim()){e.preventDefault();$("#omsg").textContent="Pon el nombre del llavero y tu WhatsApp o email.";} else {$("#omsg").textContent="Se abrió tu correo con el pedido listo: dale Enviar. Si no se abrió, usa Copiar pedido y mándalo a agent@hackgorithmic.com.";}});
-$("#ocopy").onclick=async()=>{syncOrder();try{await navigator.clipboard.writeText(window._ord);$("#omsg").textContent="Copiado. Pégalo en un correo a agent@hackgorithmic.com o en un DM.";}catch(e){$("#omsg").textContent="Escríbenos a agent@hackgorithmic.com con estos datos.";}};
 $("#nm").addEventListener("input",e=>{st.name=e.target.value.trim()||"Tu nombre";draw();});
 document.querySelectorAll("#styles .chip").forEach(c=>c.onclick=()=>{st.f=c.dataset.f;document.querySelectorAll("#styles .chip").forEach(x=>x.setAttribute("aria-pressed",String(x===c)));draw();});
 swatches($("#base"),"base",["rosa","negro","cian","rojo","amarillo"]);
@@ -447,5 +483,8 @@ all();
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(all);
 </script>
 
+<script src="payments-config.js"></script>
+<script src="payments.js"></script>
+<script src="orders.js"></script>
 </body>
 </html>
