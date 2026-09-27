@@ -1,0 +1,6 @@
+# GitHub Pages (Jekyll): no publicar guías internas ni el código del servidor.
+exclude:
+  - entrega
+  - supabase
+  - README.md
+  - nuevo-diseno.html   # vista previa vieja, sin enlaces ni CSP: no se publica

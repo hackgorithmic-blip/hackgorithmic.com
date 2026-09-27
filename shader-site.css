@@ -92,10 +92,9 @@ body.shader-site {
 .shader-site .taller .tbar { font-size: 9px; letter-spacing: .5px; }
 .shader-site .tm.me, .shader-site .fm.me { color: #24321a; }
 .shader-site #tlog { max-height: 330px; font-size: 13px; }
-.shader-site #tchips button, .shader-site #filoChips button { font-size: 11px; font-weight: 400; min-height: 40px; }
+.shader-site #tchips button { font-size: 11px; font-weight: 400; min-height: 40px; }
 .shader-site #tform input { padding: 11px 10px; }
 .shader-site #tform .btn { padding-inline: 12px; }
-.shader-site #filoChat header a { color: #18210f; }
 .shader-site .studio .bar { font-size: 9px; letter-spacing: .6px; gap: 12px; line-height: 1.5; }
 .shader-site .stage { background: radial-gradient(ellipse at 50% 70%, #263022, transparent 75%), #111511; border: 1px solid #2c3526; aspect-ratio: 1.85; border-radius: 7px; }
 .shader-site .ctl { gap: 16px; margin-top: 18px; }

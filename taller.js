@@ -61,8 +61,10 @@ function layout(o){for(let k=0;k<6;k++){const g=tryLayout(o,1+k*.14);if(g)return
 function tryLayout(o,sc){
   const d=DIM[o.tipo],t=o.texto;let ol,holes=[],nC,nMax,nS,tC=null,bC,bMax;
   if(o.forma==='pill'){
-    nS=11*sc;const w=Math.max(measure(t,nS),30),H=26*sc,R=H/2,x0=R+6.5,W=x0+w+Math.max(10,R*.8);
-    ol=ccw(pill(W,H));holes=[{x:R*.9,y:R,r:2.6}];nC={x:x0+w/2,y:R+3.4*sc};nMax=w+.01;tC={x:x0+w/2,y:5.3*sc};bC={x:(x0-3+W-5)/2,y:R};bMax=W-x0-2;
+    nS=11*sc;const aro=o.aro||'izq',hl=aro!=='der',hr=aro!=='izq',w=Math.max(measure(t,nS),30),H=26*sc,R=H/2,side=R+6.5,plain=Math.max(10,R*.8);
+    const x0=hl?side:plain,W=x0+w+(hr?side:plain),e0=hl?x0-3:5,e1=hr?W-side+3:W-5;
+    ol=ccw(pill(W,H));holes=[];if(hl)holes.push({x:R*.9,y:R,r:2.6});if(hr)holes.push({x:W-R*.9,y:R,r:2.6});
+    nC={x:x0+w/2,y:R+3.4*sc};nMax=w+.01;tC={x:x0+w/2,y:5.3*sc};bC={x:(e0+e1)/2,y:R};bMax=e1-e0-1;
   }else if(o.forma==='rect'){
     nS=15*sc;const w=Math.max(measure(t,nS),60),W=w+34,H=44*sc;
     ol=ccw(rrect(W,H,6));holes=[{x:8,y:H/2,r:2.2},{x:W-8,y:H/2,r:2.2}];nC={x:W/2,y:H/2+4.5*sc};nMax=w+.01;tC={x:W/2,y:7.5*sc};bC={x:W/2,y:H/2};bMax=W-30;
@@ -130,12 +132,13 @@ function parse(p){
   const m1=p.match(/["“”«»]([^"“”«»]{1,24})["“”«»]/)||p.match(/'([^']{1,24})'/);if(m1)texto=m1[1];
   if(!texto){const m=p.match(/(?:que diga|que dice|que ponga|con el nombre(?: de)?|con nombre|con la palabra|con el texto|a nombre de|nombre:)\s+([^,.;!?\n]+)/i);
     if(m)texto=m[1].split(/\s+(?:en|de color|color|con|y|letras?|base|fondo|para|que)\s+/i)[0];}
-  if(!texto&&!tipo&&!forma&&/^[\p{L}\d .'&-]{1,16}$/u.test(p.trim()))texto=p.trim();
+  if(!texto&&!tipo&&!forma&&p.trim().length<=16&&/^\p{Lu}[\p{L}\d.'&-]*( \p{Lu}[\p{L}\d.'&-]*)?$/u.test(p.trim()))texto=p.trim();
   const lm=n.match(/letras?\s+(?:en\s+|de\s+color\s+|color\s+)?([a-z]+)/);if(lm&&COLS[lm[1]])letras=COLS[lm[1]];
   const bm=n.match(/(?:base|fondo)\s+(?:en\s+|de\s+color\s+|color\s+)?([a-z]+)/);if(bm&&COLS[bm[1]])base=COLS[bm[1]];
   if(!base)for(const w of n.split(/[^a-z]+/))if(COLS[w]&&COLS[w]!==letras){base=COLS[w];break;}
   const complejo=/soporte|figura|funda|repuesto|engran|maceta|holder|stand|juguete|miniatura|busto|logo|foto|carro|anillo|arete|caja|organizador|pieza/.test(n);
-  return{tipo,forma,texto:texto?texto.trim().replace(/\s+/g,' '):null,base,letras,complejo,raw:p};
+  const aro=/ambos|dos lados|dos orificios|dos argollas|2 argollas|2 orificios/.test(n)?'ambos':/derech/.test(n)?'der':/izquierd/.test(n)?'izq':null;
+  return{tipo,forma,texto:texto?texto.trim().replace(/\s+/g,' '):null,base,letras,aro,complejo,raw:p};
 }
 function completar(o){
   if(!o.tipo)o.tipo='llavero';
@@ -156,7 +159,7 @@ function viewer(host,m,o){
     el.addEventListener('pointermove',e=>{if(!V.drag)return;V.ry=V.drag.ry+(e.clientX-V.drag.x)*.012;V.rx=Math.max(-1.5,Math.min(1.5,V.drag.rx+(e.clientY-V.drag.y)*.012));});
     el.addEventListener('pointerup',()=>V.drag=null);
     (function loop(){if(V.auto)V.ry+=.007;V.grp.rotation.set(V.rx,V.ry,0);V.r.render(V.scene,V.cam);requestAnimationFrame(loop);})();}
-  while(V.grp.children.length){const c=V.grp.children.pop();c.geometry.dispose();}
+  clearView();
   const mk=(a,c)=>{const ge=new THREE.BufferGeometry();ge.setAttribute('position',new THREE.BufferAttribute(a,3));ge.computeVertexNormals();
     const me=new THREE.Mesh(ge,new THREE.MeshStandardMaterial({color:HEX[c],roughness:.55,metalness:.03}));V.grp.add(me);return me;};
   V.mb=mk(m.base,o.base);V.mn=mk(m.name,o.letras);const b=bbox(m.g.ol);
@@ -164,28 +167,114 @@ function viewer(host,m,o){
   const W=host.clientWidth||320,H=Math.round(W*.62);V.r.setSize(W,H);V.cam.aspect=W/H;V.cam.updateProjectionMatrix();
   V.cam.position.set(0,0,Math.max(m.w,m.h*1.5)*1.9+20);V.cam.lookAt(0,0,0);V.auto=!reduceM;host.appendChild(V.r.domElement);
 }
+function clearView(){while(V.grp.children.length){const c=V.grp.children.pop();c.traverse(n=>{if(n.geometry)n.geometry.dispose();});}}
+function ensureV(host){if(!V){const tmp={base:new Float32Array(9),name:new Float32Array(9),g:{ol:[{x:0,y:0},{x:1,y:0},{x:0,y:1}]},w:1,h:1,z:1};viewer(host,tmp,{base:'negro',letras:'negro'});}}
+function showObject(host,obj){
+  ensureV(host);clearView();const box=new THREE.Box3().setFromObject(obj),size=box.getSize(new THREE.Vector3()),c=box.getCenter(new THREE.Vector3());
+  obj.position.sub(c);const piv=new THREE.Group();piv.add(obj);V.grp.add(piv);
+  const W=host.clientWidth||320,H=Math.round(W*.62);V.r.setSize(W,H);V.cam.aspect=W/H;V.cam.updateProjectionMatrix();
+  const d=Math.max(size.x,size.y,size.z)||1;V.cam.near=d/100;V.cam.far=d*100;V.cam.updateProjectionMatrix();V.cam.position.set(0,0,d*2.2);V.cam.lookAt(0,0,0);V.rx=-.35;V.ry=.5;V.auto=!reduceM;host.appendChild(V.r.domElement);
+}
 function recolor(o){if(!V)return;V.mb.material.color.setHex(HEX[o.base]);V.mn.material.color.setHex(HEX[o.letras]);}
 
 /* ---------- chat ---------- */
 const ask={pend:null};
+let epoch=0;const who=()=>window.HGAuth&&HGAuth.uid?HGAuth.uid():null;
 function msg(who,html){const d=document.createElement('div');d.className='tm '+who;d.innerHTML=html;log.appendChild(d);log.scrollTop=log.scrollHeight;return d;}
-const EJ=[['Llavero que diga "Sofía"'],['Llavero de corazón "Luna" en rosa'],['Placa para perro "Max" en cian'],['Letrero "Oficina de Ana" base negra'],['Posavasos que diga "Casa López"']];
-function setChips(){chips.innerHTML='';EJ.forEach(([t])=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=()=>go(t);chips.appendChild(b);});}
+const EJ=[['Un dragón pequeño de juguete'],['Llavero que diga "Sofía"'],['Llavero de corazón "Luna" en rosa'],['Placa para perro "Max" en cian'],['Letrero "Oficina de Ana" base negra'],['Posavasos que diga "Casa López"']];
+const iaOn=()=>!!(AI.endpoint&&window.HGAuth&&HGAuth.online);
+function setChips(){chips.innerHTML='';EJ.filter(([t])=>iaOn()||!/^Un dragón/.test(t)).forEach(([t])=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=()=>run(t);chips.appendChild(b);});}
 const equipo=p=>'mailto:agent@hackgorithmic.com?subject='+encodeURIComponent('Idea para diseñar (Taller web)')+'&body='+encodeURIComponent('Mi idea: '+p+'\n\nMi nombre:\nWhatsApp o email:');
 function precio(m,o){if(o.tipo==='llavero'||o.tipo==='charm')return 7;const g=m.vol/1000*1.24*.8,h=Math.max(.3,g/T.gph*1.6);return cotizar({g,h,colores:2,prep:T.prep}).total;}
+/* ---------- generador 3D con IA (ideas libres) ---------- */
+const AI=(window.HACKGORITHMIC_ACCOUNTS||{}).ai||{};
+const EX='https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/';
+let exP=null;
+const SRI={'loaders/GLTFLoader.js':'sha384-fljlqkjWlmSFjkESkQvm77heIZpoWmXEOzlCA7kOpGUH+95Zk0yGfQieWM2q136E','exporters/STLExporter.js':'sha384-4hnpAxcCdErKDH3j3vbC5jLfELShp3G/uQ8o7uSSQomOoxn3G3o083Azy+tj0/VT'};
+function loadExtras(){if(exP)return exP;const add=src=>new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;const k=src.slice(EX.length);if(SRI[k]){s.integrity=SRI[k];s.crossOrigin='anonymous';}s.onload=res;s.onerror=()=>rej(new Error('three extras'));document.head.appendChild(s);});
+  exP=loadFont().then(()=>Promise.all([THREE.GLTFLoader?0:add(EX+'loaders/GLTFLoader.js'),THREE.STLExporter?0:add(EX+'exporters/STLExporter.js')]));exP.catch(()=>{exP=null;});return exP;}
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+async function aiFetch(path,opt={}){const tok=await HGAuth.token();const r=await fetch(AI.endpoint+path,{...opt,headers:{...(opt.headers||{}),Authorization:'Bearer '+tok}});
+  if(!r.ok){let j={};try{j=await r.json();}catch(e){}const e=new Error(j.error||('http '+r.status));e.code=j.error;e.limit=j.limit;throw e;}return r;}
+function iaReady(){return !!(AI.endpoint&&window.HGAuth&&HGAuth.online&&HGAuth.user&&HGAuth.token);}
+async function genIA(p,task){
+  const my=epoch,owner=who(),stale=()=>my!==epoch;
+  const titulo='Modelo 3D · “'+p+'”';
+  const ejemplos=d=>{const w=document.createElement('div');w.className='tp-ej';
+    ['Llavero que diga "Sofía"','Placa para perro "Max" en cian','Letrero "Oficina de Ana" base negra'].forEach(t=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=()=>run(t);w.appendChild(b);});d.appendChild(w);return d;};
+  if(!task&&(p.match(/[\p{L}\p{N}]/gu)||[]).length<4)
+    return ejemplos(msg('bot','Cuéntame un poco más de tu idea para poder modelarla, por ejemplo <b>un dragón pequeño</b> o <b>una maceta con hojas</b>. O prueba una pieza con texto:'));
+  /* Tarjeta de venta: la idea la modela el equipo. Se usa cuando la IA no está conectada o no puede atender ahora. */
+  const ideaCard=(nota)=>{
+    /* Sin IA conectada, la idea se convierte en un pedido para el equipo (no en un "no se puede"). */
+    if(!task&&window.HGAuth)HGAuth.saveModel({tipo:'idea',texto:p,raw:p},owner);
+    if(nota)msg('bot',esc(nota));
+    const u=(window.HGAuth&&HGAuth.user)||{},d=msg('bot tcard','');let tam='Mediano (~10 cm)';
+    d.innerHTML='<div class="tinfo"><b>¡Buena idea! “'+esc(p)+'”</b><span>Esta figura la modela nuestro equipo. Te mandamos la vista previa en 3D y el precio <b>antes de cobrar</b>: impresa y enviada, o solo el archivo.</span></div>'+
+      '<div class="tsw dctl" role="group" aria-label="Tamaño"><span>Tamaño</span>'+['Pequeño (~5 cm)','Mediano (~10 cm)','Grande (~15 cm)'].map(t=>'<button type="button" class="chip" data-tam="'+t+'" aria-pressed="'+(t===tam)+'">'+t+'</button>').join('')+'</div>'+
+      '<div class="trow"><button class="btn tpedir" type="button">Pedir este modelo</button><button class="btn alt tsolo" type="button">Solo el archivo 3D</button></div>'+
+      '<p class="tnote">Guardado en <b>Mis modelos</b>. Te respondemos por correo.</p>';
+    d.querySelectorAll('[data-tam]').forEach(b=>b.onclick=()=>{tam=b.dataset.tam;d.querySelectorAll('[data-tam]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));});
+    const pedir=impreso=>{const body='Quiero este modelo 3D: '+p+'\nTamaño: '+tam+'\nLo quiero: '+(impreso?'impreso y enviado':'solo el archivo 3D (STL)')+'\nColor(es):\nPara qué es (regalo, decoración, juguete…):\n\nNombre: '+(u.name||'')+'\nCorreo: '+(u.email||'')+'\nWhatsApp (opcional):\n'+(impreso?'Entrega (envío EE.UU. o recoger en Florida):\n':'')+'\nConfirmamos diseño, precio final y plazo antes de cobrar.';
+      location.href='mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com&subject='+encodeURIComponent('Pedido de modelo 3D: '+p.slice(0,60))+'&body='+encodeURIComponent(body);};
+    d.querySelector('.tpedir').onclick=()=>pedir(true);d.querySelector('.tsolo').onclick=()=>pedir(false);
+    log.scrollTop=log.scrollHeight;return d;};
+  if(!iaReady())return ideaCard();
+  const card=msg('bot tcard','');
+  card.innerHTML='<div class="tview" aria-label="Vista 3D: arrastra para girar"></div><div class="tinfo"><b>'+esc(titulo)+'</b><span class="tprog" role="status">Preparando…</span></div>';
+  const prog=card.querySelector('.tprog');
+  try{
+    await loadExtras();if(stale())return card.remove();
+    if(!task){const r=await aiFetch('',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:p})});task=(await r.json()).task;
+      if(window.HGAuth)HGAuth.saveModel({tipo:'ia',texto:p,raw:p,task},owner);if(stale())return card.remove();}
+    let st={status:'queued',progress:0};const t0=Date.now();
+    while(!/success/.test(st.status)){
+      if(/failed|cancel|banned|expired/.test(st.status))throw Object.assign(new Error('fail'),{code:'failed'});
+      if(Date.now()-t0>6*60e3)throw Object.assign(new Error('timeout'),{code:'timeout'});
+      prog.textContent='Generando tu modelo… '+Math.round(st.progress||0)+'%';await wait(3000);
+      st=await (await aiFetch('?task='+encodeURIComponent(task))).json();if(stale())return card.remove();
+    }
+    prog.textContent='Descargando modelo…';
+    const fr=await aiFetch('?task='+encodeURIComponent(task)+'&file=1');let buf;
+    if((fr.headers.get('content-type')||'').includes('application/json')){const j=await fr.json();if(!j.url||!/^https:\/\//.test(j.url))throw new Error('file');const f2=await fetch(j.url);if(!f2.ok)throw new Error('file');buf=await f2.arrayBuffer();}
+    else buf=await fr.arrayBuffer();
+    if(stale())return card.remove();
+    const gltf=await new Promise((res,rej)=>new THREE.GLTFLoader().parse(buf,'',res,rej));
+    const obj=gltf.scene;showObject(card.querySelector('.tview'),obj);
+    const size=new THREE.Box3().setFromObject(obj).getSize(new THREE.Vector3());
+    prog.textContent='Listo · arrástralo para girarlo. Medidas y escala se ajustan antes de imprimir.';
+    const row=document.createElement('div');row.className='trow';
+    row.innerHTML='<button class="btn tdl" type="button">Descargar STL</button><button class="btn alt tped" type="button">Pedirlo impreso</button>';card.appendChild(row);
+    row.querySelector('.tdl').onclick=()=>{obj.updateMatrixWorld(true);const data=new THREE.STLExporter().parse(obj,{binary:true});
+      const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'model/stl'}));a.download='hackgorithmic_'+norm(p).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40)+'.stl';
+      document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},4000);
+      msg('bot','¡Listo! 📥 Ábrelo en tu laminador y ajusta la escala al tamaño que quieras.');};
+    row.querySelector('.tped').onclick=()=>{const body='Quiero imprimir este modelo que generé en el Taller:\n'+titulo+'\nID del modelo: '+task+'\nProporciones: '+size.x.toFixed(2)+' x '+size.y.toFixed(2)+' x '+size.z.toFixed(2)+'\nTamaño que quiero (cm):\nColor(es):\n\nMi nombre:\nWhatsApp o email:\nEntrega (envío EE.UU. o recoger en Florida):';
+      location.href='mailto:agent@hackgorithmic.com?subject='+encodeURIComponent('Pedido del Taller - '+titulo)+'&body='+encodeURIComponent(body);};
+  }catch(e){
+    if(stale())return card.remove();
+    if(e.code==='confirm'){card.className='tm bot';card.innerHTML='Confirma tu correo para usar el generador 3D: revisa tu bandeja de entrada.';return;}
+    const nota={limit:'Llegaste al límite de modelos con IA de hoy ('+(e.limit||'')+').',new:'Tu cuenta es nueva: el generador con IA se activa 24 horas después de crearla.',busy:'El generador con IA está al máximo por hoy.',throttle:'Vas muy rápido: vuelve a abrir el modelo desde Mis modelos en un momento.',timeout:'El modelo está tardando más de lo normal; búscalo luego en Mis modelos.'}[e.code]||'';
+    card.remove();
+    if(task&&(e.code==='throttle'||e.code==='timeout')){msg('bot',esc(nota));return;}
+    task=null;ideaCard(nota);return;
+  }
+  log.scrollTop=log.scrollHeight;
+}
 async function go(p){
+  const my=epoch,owner=who();
   p=String(p||'').trim();if(!p)return;msg('me',esc(p));
   let o=parse(p);
   if(ask.pend){const pe=ask.pend;ask.pend=null;if(!o.tipo&&!o.forma){pe.texto=o.texto||p.replace(/["“”«»]/g,'').trim();o=pe;}}
-  if(o.complejo&&!o.texto){return msg('bot','Eso necesita modelado a mano 🛠️ y lo hace nuestro equipo. <a href="'+equipo(p)+'">Enviar mi idea al equipo</a> · Si ya tienes el archivo, <a href="#cotizar">cotízalo aquí</a>.\n\nAl instante creo: llaveros, charms, placas para mascota, letreros y posavasos con texto.');}
-  if(!o.tipo&&!o.forma&&!o.texto)return msg('bot','Cuéntame qué pieza quieres y qué texto lleva. Por ejemplo: <b>llavero de estrella que diga "Mía" en amarillo</b>.');
+  if(!o.tipo&&!o.forma&&(o.complejo||!o.texto||o.texto!==p.replace(/["“”«»']/g,'').trim()))return genIA(p);
   if(!o.texto){ask.pend=o;return msg('bot','¡Va! ¿Qué nombre o texto le pongo? ✍️');}
   const wait=msg('bot','Modelando tu pieza… 🖨️');
   try{await loadFont();}catch(e){wait.innerHTML='No pude abrir el generador 3D en este navegador 😕. <a href="'+equipo(p)+'">Mándanos tu idea</a> y te la diseñamos.';return;}
   completar(o);if(!o.texto){wait.textContent='Ese texto no lo puedo grabar. Prueba con letras y números.';return;}
   const m=build(o);
   if(!m){wait.innerHTML='Ese texto es muy largo para esa forma. Prueba uno más corto o pide un <b>letrero</b>.';return;}
-  wait.remove();renderCard(o,m);
+  if(my!==epoch)return wait.remove();
+  wait.remove();renderCard(o,m);if(window.HGAuth)HGAuth.saveModel({tipo:o.tipo,forma:o.forma,texto:o.texto,base:o.base,letras:o.letras,aro:o.aro||null,raw:o.raw},owner);
 }
 function renderCard(o,m){
   const card=msg('bot tcard','');const titulo=(TIPO[o.tipo]+' '+(FORMA[o.forma]||'')).trim();const $p=precio(m,o);
@@ -193,27 +282,30 @@ function renderCard(o,m){
   card.innerHTML='<div class="tview" aria-label="Vista 3D: arrastra para girar"></div>'+
    '<div class="tinfo"><b>'+esc(titulo)+' · “'+esc(o.texto)+'”</b><span>'+m.w.toFixed(0)+' × '+m.h.toFixed(0)+' × '+m.z.toFixed(1)+' mm · ~'+g+' g de PLA · marca grabada '+(m.g.top?'al frente y atrás':'atrás')+'</span></div>'+
    '<div class="tsw"><span>Base</span><span class="sb"></span><span style="margin-left:8px">Letras</span><span class="sl"></span></div>'+
+   (o.forma==='pill'?'<div class="tsw taro" role="group" aria-label="Posición de la argolla"><span>Argolla</span>'+[['izq','Izquierda'],['der','Derecha'],['ambos','Ambos lados']].map(([k,l])=>'<button type="button" class="chip" data-aro="'+k+'" aria-pressed="'+((o.aro||'izq')===k)+'">'+l+'</button>').join('')+'</div>':'')+
    '<div class="trow"><button class="btn tdl" type="button">Descargar STL gratis</button><button class="btn alt tped" type="button">Pedirlo impreso · '+(o.tipo==='llavero'||o.tipo==='charm'?'$7':'aprox. '+$$($p))+'</button></div>'+
    '<p class="tnote">Versión gratis: lleva la marca <b>hackgorithmic</b> grabada en la misma pieza. Sin marca: con el plan <a href="#precios">Creador</a>.</p>';
   const sw=(el,key,list)=>{el.innerHTML='';list.forEach(c=>{const b=document.createElement('button');b.type='button';b.title=c;b.setAttribute('aria-label',key+' '+c);b.style.background='#'+HEX[c].toString(16).padStart(6,'0');b.setAttribute('aria-pressed',String(o[key]===c));b.onclick=()=>{o[key]=c;sw(el,key,list);recolor(o);};el.appendChild(b);});};
   sw(card.querySelector('.sb'),'base',['rosa','negro','blanco','cian','rojo','amarillo']);sw(card.querySelector('.sl'),'letras',['blanco','negro','rosa','amarillo']);
   viewer(card.querySelector('.tview'),m,o);
-  card.querySelector('.tdl').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(stl([m.base,m.name]));
+  card.querySelectorAll('.taro [data-aro]').forEach(b=>b.onclick=()=>{if((o.aro||'izq')===b.dataset.aro)return;const prev=o.aro;o.aro=b.dataset.aro;const m2=build(o);
+    if(!m2){o.aro=prev;msg('bot','Con argolla en ambos lados el nombre no cabe. Prueba un texto más corto.');return;}card.remove();renderCard(o,m2);});
+  card.querySelector('.tdl').onclick=()=>{if(window.HGAuth&&!HGAuth.user)return HGAuth.require(()=>card.querySelector('.tdl').click(),'Crea tu cuenta gratis para descargar tus modelos y tenerlos siempre a la mano.');const a=document.createElement('a');a.href=URL.createObjectURL(stl([m.base,m.name]));
     a.download='hackgorithmic_'+o.tipo+'_'+norm(o.texto).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'.stl';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},4000);
     msg('bot','¡Listo! 📥 Ábrelo en tu laminador (Orca, Bambu, Prusa, Snapmaker). Para 2 colores usa “dividir en partes”: la base y las letras vienen separadas.');};
   card.querySelector('.tped').onclick=()=>{
-    if(o.tipo==='llavero'&&q('#on')){q('#on').value=o.texto;const ob=q('#ob'),ol=q('#ol');if([...ob.options].some(x=>x.value===o.base))ob.value=o.base;if([...ol.options].some(x=>x.value===o.letras))ol.value=o.letras;
-      ['#on','#ob','#ol'].forEach(s=>q(s).dispatchEvent(new Event('input',{bubbles:true})));q('#ob').dispatchEvent(new Event('change',{bubbles:true}));q('#pedir').scrollIntoView({behavior:reduceM?'auto':'smooth'});return;}
-    const body='Quiero imprimir esta pieza del Taller:\n'+titulo+' · "'+o.texto+'"\nMedidas: '+m.w.toFixed(0)+' x '+m.h.toFixed(0)+' x '+m.z.toFixed(1)+' mm\nColores: base '+o.base+', letras '+o.letras+'\nPrecio aprox.: '+$$($p)+'\nIdea original: '+o.raw+'\n\nMi nombre:\nWhatsApp o email:\nEntrega (envío EE.UU. o recoger en Florida):';
+    const body='Quiero imprimir este modelo que creé en el Taller:\n'+titulo+' · "'+o.texto+'"\nMedidas: '+m.w.toFixed(0)+' x '+m.h.toFixed(0)+' x '+m.z.toFixed(1)+' mm\nColores: base '+o.base+', letras '+o.letras+(o.forma==='pill'?'\nArgolla: '+({izq:'izquierda',der:'derecha',ambos:'ambos lados'}[o.aro||'izq']):'')+'\nPrecio aprox.: '+$$($p)+'\nIdea original: '+o.raw+'\n\nMi nombre:\nWhatsApp o email:\nEntrega (envío EE.UU. o recoger en Florida):';
     location.href='mailto:agent@hackgorithmic.com?subject='+encodeURIComponent('Pedido del Taller - '+titulo)+'&body='+encodeURIComponent(body);};
   log.scrollTop=log.scrollHeight;
 }
 function loadFont(){if(font)return Promise.resolve(font);if(fontP)return fontP;
   fontP=new Promise((res,rej)=>{let n=0;(function w(){if(window.THREE)return res();if(++n>120)return rej(new Error('three'));setTimeout(w,150);})();})
     .then(()=>new Promise((res,rej)=>new THREE.FontLoader().load(FONT_URL,f=>{font=f;res(f);},undefined,rej)));fontP.catch(()=>{fontP=null;});return fontP;}
-window.__taller={parse,completar,build,checkClosed,stl,loadFont};
+window.__taller={parse,completar,build,checkClosed,stl,loadFont,showObject,reset:()=>{ask.pend=null;epoch++;},show:async spec=>{const my=epoch,owner=who();spec=spec&&typeof spec==='object'?spec:{};const str=v=>typeof v==='string'?v:'';if(spec.tipo==='ia'||spec.tipo==='idea'){const p=str(spec.raw||spec.texto).slice(0,400);if(!p)return false;const task=/^[\w-]{6,80}$/.test(str(spec.task))?spec.task:null;msg('me',esc(p));if(task)return genIA(p,task);const d=msg('bot','Esta idea aún no tiene modelo 3D. Generarlo usa uno de tus modelos del día. ');const b=document.createElement('button');b.type='button';b.className='btn';b.textContent='Generar ahora';b.onclick=()=>{b.disabled=true;genIA(p);};d.appendChild(b);return true;}if(!TIPO[spec.tipo])return false;const safe={tipo:spec.tipo,texto:str(spec.texto).slice(0,40),raw:str(spec.raw).slice(0,400)};if(FORMA[spec.forma]!==undefined)safe.forma=spec.forma;if(HEX[spec.base])safe.base=spec.base;if(HEX[spec.letras])safe.letras=spec.letras;if(['izq','der','ambos'].includes(spec.aro))safe.aro=spec.aro;spec=safe;await loadFont();if(my!==epoch||who()!==owner)return false;const o=completar({...spec});const m=build(o);if(!m)return false;renderCard(o,m);return true;}};
 if(!log)return;
-msg('bot','Cuéntame qué quieres y te armo el modelo 3D al instante 👇\nEj.: <b>llavero de corazón que diga “Luna” en rosa</b>');setChips();
-form.addEventListener('submit',e=>{e.preventDefault();const v=inp.value;inp.value='';go(v);});
+setChips();if(!iaOn()&&inp){inp.placeholder='Escribe tu pieza: llavero que diga “Luna”, placa para perro “Max”, letrero “Oficina de Ana”…';const h=q('.tp-hint');if(h)h.lastChild.textContent='Piezas con texto al instante · figuras con IA: muy pronto';}
+/* Sin cuenta, la idea se queda escrita en la caja hasta que se genera (no se pierde al registrarse). */
+const run=v=>{if(!String(v||'').trim())return;if(window.HGAuth&&!HGAuth.user){if(inp)inp.value=v;return HGAuth.require(()=>{if(inp&&inp.value===v)inp.value='';go(v);},'Crea tu cuenta gratis para generar y guardar tus propios modelos 3D.');}if(inp&&inp.value===v)inp.value='';go(v);};
+form.addEventListener('submit',e=>{e.preventDefault();run(inp.value);});
 const warm=()=>{loadFont().catch(()=>{});};inp.addEventListener('focus',warm,{once:true});setTimeout(warm,4000);
 })();
