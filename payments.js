@@ -2,8 +2,6 @@
   "use strict";
 
   const MONTHLY_AMOUNTS = Object.freeze({ creador: 800, pro: 2400 });
-  const originalLinks = new WeakMap();
-  const guardedLinks = new WeakSet();
 
   function isRecord(value) {
     return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -52,47 +50,10 @@
     return result;
   }
 
-  function rememberLink(anchor) {
-    if (!originalLinks.has(anchor)) {
-      const href = anchor.getAttribute("href") || "";
-      originalLinks.set(anchor, {
-        // Preserve only email inquiries or this site's real inquiry form.
-        inquiryHref: /^mailto:/i.test(href.trim()) || (href === "#solicitar-plan" && document.getElementById("solicitar-plan")) ? href : "",
-        text: anchor.textContent
-      });
-    }
-    if (!guardedLinks.has(anchor)) {
-      anchor.addEventListener("click", function (event) {
-        if (anchor.getAttribute("aria-disabled") === "true") event.preventDefault();
-      });
-      guardedLinks.add(anchor);
-    }
-    return originalLinks.get(anchor);
-  }
-
+  // Plan buttons (a[data-plan]) open the site checkout (pedidos.js), which uses validateConfig()
+  // to send the person to Stripe only when every plan link is verified.
   function refresh() {
     const state = validateConfig(window.HACKGORITHMIC_PAYMENTS);
-    document.querySelectorAll("a[data-subscription-plan]").forEach(function (anchor) {
-      const original = rememberLink(anchor);
-      const plan = anchor.getAttribute("data-subscription-plan");
-      if (state.ready && Object.prototype.hasOwnProperty.call(MONTHLY_AMOUNTS, plan)) {
-        anchor.setAttribute("href", state.checkoutUrls[plan]);
-        anchor.removeAttribute("aria-disabled");
-        anchor.setAttribute("data-payment-state", "checkout-available");
-        anchor.textContent = "Suscribirme — $" + MONTHLY_AMOUNTS[plan] / 100 + "/mes";
-      } else {
-        anchor.textContent = original.text;
-        anchor.setAttribute("data-payment-state", "pending");
-        if (original.inquiryHref) {
-          anchor.setAttribute("href", original.inquiryHref);
-          anchor.removeAttribute("aria-disabled");
-        } else {
-          anchor.removeAttribute("href");
-          anchor.setAttribute("aria-disabled", "true");
-        }
-      }
-    });
-
     document.querySelectorAll("[data-subscription-portal]").forEach(function (anchor) {
       anchor.hidden = !state.portalReady;
       if (state.portalReady) {

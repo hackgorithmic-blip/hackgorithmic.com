@@ -6,7 +6,7 @@
 <!-- Seguridad: sin scripts en línea. Si agregas un servicio externo agrégalo aquí; al conectar Supabase cambia *.supabase.co por TU-PROYECTO.supabase.co. Ver entrega/SEGURIDAD.md -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/ https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/ https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/ https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' https://bovifetqjprdylrlldct.supabase.co wss://bovifetqjprdylrlldct.supabase.co https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/ data: blob:; frame-src https://challenges.cloudflare.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' mailto:; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta name="description" content="Hackgorithmic: un espacio para tus ideas en 3D. Explora diseños, personaliza piezas y consulta proyectos, fabricación y planes de creación de modelos.">
+<meta name="description" content="Hackgorithmic: crea tu modelo 3D, conviértelo desde un dibujo o sube tu STL, y pídelo impreso desde tu cuenta.">
 <meta property="og:title" content="hackgorithmic 3D">
 <meta property="og:description" content="Tu próxima idea. En otra dimensión. Diseño 3D y piezas por cotización.">
 <meta property="og:url" content="https://hackgorithmic.com/">
@@ -151,18 +151,19 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 #tform input{flex:1; min-width:0; font:500 16px/1.2 var(--body); padding:12px; border-radius:10px; border:1px solid var(--line); background:var(--paper); color:var(--ink)}
 </style>
 <link rel="stylesheet" href="./shader-site.css?v=2">
-<link rel="stylesheet" href="./tripo-theme.css?v=18">
+<link rel="stylesheet" href="./tripo-theme.css?v=19">
+<link rel="stylesheet" href="./pedidos.css?v=1">
 </head>
 <body class="shader-site">
 <a class="shader-skip" href="#inicio">Saltar al contenido</a>
 
 
 <div class="wrap">
-<noscript><p class="request-note">Puedes consultar planes o pedir una pieza por <a href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com">correo</a>. Indica tu idea, medidas, colores y forma de entrega.</p></noscript>
+<noscript><p class="request-note">Activa JavaScript para crear tus modelos y hacer tus pedidos desde tu cuenta.</p></noscript>
 <header class="top tp-top">
   <a class="shader-brand" href="#inicio" aria-label="Hackgorithmic, inicio"><span class="shader-brand-mark" aria-hidden="true">h<span>.</span></span><span>hackgorithmic<small>3D STUDIO</small></span></a>
   <a class="tp-workspace" href="#taller" data-auth>Estudio 3D <span aria-hidden="true">▾</span></a>
-  <nav class="shader-nav" aria-label="Principal"><a href="#inicio" data-nav="inicio">Inicio</a><a href="#taller" data-nav="taller">Taller</a><a href="#llaveros" data-nav="llaveros">Llaveros</a><a href="#cotizar" data-nav="cotizar">Cotizar</a><a href="#planes" data-nav="planes">Planes</a></nav>
+  <nav class="shader-nav" aria-label="Principal"><a href="#inicio" data-nav="inicio">Inicio</a><a href="#taller" data-nav="taller">Taller</a><a href="#cotizar" data-nav="cotizar">Cotizar</a><a href="#planes" data-nav="planes">Planes</a><a href="#pedidos" data-nav="pedidos">Mis pedidos</a><a href="#panel" data-nav="panel">Panel</a></nav>
   <a class="btn shader-header-cta" href="#contacto">Hablemos <span aria-hidden="true">↗</span></a>
 </header>
 
@@ -182,12 +183,12 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
       <div class="tp-draw" hidden>
         <label class="tp-drop" for="dfile"><input id="dfile" type="file" accept="image/*"><b>Sube la foto de tu dibujo</b><span>Papel y lápiz, con buena luz y de frente. Se procesa en tu dispositivo: la foto no se sube a internet.</span></label>
       </div>
-      <textarea id="tin" rows="3" maxlength="400" placeholder="Describe tu idea: un dragón pequeño, una maceta, un llavero que diga “Luna”…" aria-label="Describe tu idea"></textarea>
+      <textarea id="tin" rows="3" maxlength="400" placeholder="Describe tu idea: un dragón pequeño, una maceta con hojas, un letrero que diga “Casa López”…" aria-label="Describe tu idea"></textarea>
       <div class="tp-bar"><span class="tp-hint"><span class="tp-dot" aria-hidden="true"></span>Gratis · se guarda en tu cuenta</span><button class="btn tp-generate" type="submit">Generar <span aria-hidden="true">→</span></button></div>
     </form>
   </div>
   <div class="tp-try"><span>Prueba:</span><div id="tchips"></div></div>
-  <a class="tp-promo" href="#personalizar"><span class="tp-promo-tag">Nuevo</span><span><b>Llaveros con tu nombre</b> impresos · 1 por $7 · 3 por $18 · 5 por $25 · envío aparte o recogida gratis en Florida</span><span class="tp-promo-cta">Pídelo <span aria-hidden="true">→</span></span></a>
+  <a class="tp-promo" href="#taller" data-js data-mode-go="dibujo"><span class="tp-promo-tag">Nuevo</span><span><b>Tu dibujo en 3D</b> · sube la foto de un dibujo en papel y lo convertimos en una pieza que puedes imprimir</span><span class="tp-promo-cta">Probar <span aria-hidden="true">→</span></span></a>
 </section>
 
 <section class="tp-gallery" id="productos" data-view="inicio" aria-labelledby="gallery-title">
@@ -199,7 +200,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
     <button type="button" data-filter="hobby" aria-pressed="false">Hobby y mecánica</button>
     <button type="button" data-filter="regalos" aria-pressed="false">Regalos</button>
   </div>
-  <p class="tp-gallery-note">Piezas que podemos fabricar para tu casa y tus hobbies. Pulsa <b>Pídelo</b> y lo preparamos en el Taller; te confirmamos precio y plazo antes de cobrar. Las fotos son de referencia.</p>
+  <p class="tp-gallery-note">Piezas que podemos fabricar para tu casa y tus hobbies. Pulsa <b>Pídelo</b>, lo preparamos en el Taller y lo pides impreso desde tu cuenta; te confirmamos precio y plazo antes de cobrar. Las fotos son de referencia.</p>
   <div class="tp-grid">
   <article class="tp-feature" data-cat="featured">
   <div class="shader-frame" data-shader-stage data-shader-theme="lime">
@@ -210,27 +211,6 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
     <div class="shader-controls"><div class="shader-theme-group" role="group" aria-label="Paleta del efecto"><button type="button" data-shader-theme="lime" aria-pressed="true"><span class="shader-swatch lime" aria-hidden="true"></span>Lima</button><button type="button" data-shader-theme="pearl" aria-pressed="false"><span class="shader-swatch pearl" aria-hidden="true"></span>Perla</button><button type="button" data-shader-theme="ember" aria-pressed="false"><span class="shader-swatch ember" aria-hidden="true"></span>Cobre</button></div><button class="shader-pause" type="button" data-shader-pause aria-pressed="false">Pausar movimiento</button></div>
   </div>
   </article>
-  <article class="prod tp-card" data-cat="hobby">
-      <div class="img"><img src="data:image/webp;base64,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" alt="Kit de cámara de cine para iPhone: portafiltros, parasol, barras de 15 mm y empuñadura"></div>
-      <div class="txt"><h3>Kit cámara de cine para iPhone</h3>
-        <p>Convierte tu iPhone 13 Pro en una cámara estilo cine: cuerpo sellado, fuelle, portafiltros, parasol y barras de 15 mm.</p>
-        <div class="meta">14 piezas · PLA · rosca 1/4"-20 para trípode</div></div>
-      <a class="tp-view" href="#contacto" aria-label="Lo quiero: kit cámara de cine para iPhone">Lo quiero</a>
-    </article>
-  <article class="prod tp-card" data-cat="hobby">
-      <div class="img"><img src="data:image/webp;base64,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" alt="Empuñadura ergonómica negra con control Bluetooth integrado" class="fit"></div>
-      <div class="txt"><h3>Empuñadura con control Bluetooth</h3>
-        <p>Agarre ergonómico con ranuras para los dedos. Guarda un Moment Remote al ras: grabas con el pulgar.</p>
-        <div class="meta">60 × 59 × 108 mm · control 72 × 35 × 11.5 mm</div></div>
-      <a class="tp-view" href="#contacto" aria-label="Lo quiero: empuñadura con control Bluetooth">Lo quiero</a>
-    </article>
-  <article class="prod tp-card" data-cat="regalos">
-      <div class="img kc"><svg id="kc2" viewBox="0 0 600 240" style="width:88%" role="img" aria-label="Llavero de ejemplo con nombre"></svg></div>
-      <div class="txt"><h3>Llaveros y charms con nombre</h3>
-        <p>Llaveros con nombre, dos colores y letras en relieve. Los charms compatibles con pulseras tipo Pandora se cotizan aparte.</p>
-        <div class="meta">≈ 60 × 20 × 4 mm · argolla de 5.8 mm para charm</div></div>
-      <a class="tp-view" href="#personalizar" aria-label="Personalízalo: llaveros con nombre">Personalízalo</a>
-    </article>
   <article class="prod tp-card tp-idea tp-photo" data-cat="decoracion regalos">
       <div class="img"><img style="object-position:50% 82%" src="img/ideas/maceta.jpg" alt="Maceta amarilla impresa en 3D con forma de cara y una planta" width="800" height="1000" loading="lazy" decoding="async"></div>
       <div class="txt"><h3>Macetas y tiestos</h3>
@@ -299,56 +279,12 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
   </div>
 </section>
 
-<section class="shader-studio-section" id="personalizar" data-view="llaveros" aria-labelledby="studio-title">
-  <div class="shader-studio-intro"><p class="shader-section-label">HECHO A TU MANERA</p><h2 id="studio-title">Una idea pequeña.<br>Algo muy tuyo.</h2><p class="lead">Empieza con tu nombre. Prueba letras y colores, y comparte tu diseño para confirmar los detalles de fabricación.</p><p class="note">Esta vista previa es gratuita. Los productos físicos y su envío se cotizan por separado de los planes de diseño.</p><a class="shader-text-link" href="#taller">¿Otra idea? Descríbela en el Taller <span aria-hidden="true">↑</span></a>
-</div>
-
-  <div class="studio" aria-label="Prueba el llavero con tu nombre">
-    <div class="bar"><span>Pruébalo · llavero con nombre</span><span id="dims">—</span></div>
-    <div class="stage"><svg id="kc" viewBox="0 0 600 240" role="img" aria-label="Vista previa del llavero"></svg></div>
-    <div class="ctl">
-      <div>
-        <label for="nm">Tu nombre</label>
-        <input id="nm" type="text" maxlength="14" value="Sofía" autocomplete="off">
-      </div>
-      <div>
-        <label>Estilo</label>
-        <div class="row" id="styles">
-          <button class="chip" data-f="script" aria-pressed="true">Firma</button>
-          <button class="chip" data-f="round" aria-pressed="false">Burbuja</button>
-          <button class="chip" data-f="block" aria-pressed="false">Bloque</button>
-        </div>
-      </div>
-      <div>
-        <label>Argolla</label>
-        <div class="row" id="aros" role="group" aria-label="Posición de la argolla">
-          <button class="chip" data-aro="izq" aria-pressed="true">Izquierda</button>
-          <button class="chip" data-aro="der" aria-pressed="false">Derecha</button>
-          <button class="chip" data-aro="ambos" aria-pressed="false">Ambos lados</button>
-        </div>
-      </div>
-      <div class="row" style="gap:22px">
-        <div><label>Base</label><div class="row" id="base"></div></div>
-        <div><label>Letras</label><div class="row" id="letter"></div></div>
-      </div>
-    </div>
-    <div class="specs" id="specs"></div>
-    <div class="row" style="align-items:center;margin-top:10px;gap:10px"><label for="kq" style="font:600 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)">Cantidad</label><input id="kq" type="number" min="1" max="50" value="1" style="width:84px"><div class="price-kc" id="kprice" aria-live="polite"></div></div>
-    <div class="note">Llaveros impresos: 1 por $7 · 3 por $18 · 5 por $25 USD. Envío en EE.UU. cotizado aparte. Recogida local en Florida gratis.</div>
-    <div class="note">Incluye nombre, dos colores, argolla y empaque sencillo.</div>
-    <div class="note">Diseños especiales, grandes o con logo desde $10 USD, según el trabajo. <a href="#contacto">Solicitar cotización</a>.</div>
-    <a class="btn" id="kpedir" href="#pedir" style="margin-top:12px">Pedir este llavero</a>
-  </div>
-</section>
-
-
-
-<section data-view="llaveros">
-  <h2>Cómo funciona</h2>
+<section id="como-funciona" data-view="inicio" aria-labelledby="how-title">
+  <h2 id="how-title">Cómo funciona</h2>
   <div class="steps">
-    <div class="step"><div class="n">PASO 1</div><h3>Dinos qué quieres</h3><p>Un nombre, una foto o la idea de la pieza. Para accesorios, las medidas de tu equipo.</p></div>
-    <div class="step"><div class="n">PASO 2</div><h3>Te mostramos el modelo</h3><p>Lo diseñamos en 3D y te enviamos una vista previa para aprobar colores y tamaño.</p></div>
-    <div class="step"><div class="n">PASO 3</div><h3>Confirmamos la entrega</h3><p>Revisamos fabricación, proveedor y envío antes de aceptar el pedido.</p></div>
+    <div class="step"><div class="n">PASO 1</div><h3>Crea tu modelo</h3><p>Descríbelo en el Taller, sube la foto de un dibujo o trae tu archivo STL.</p></div>
+    <div class="step"><div class="n">PASO 2</div><h3>Pídelo impreso</h3><p>Elige envío o recogida y realiza tu pedido desde tu cuenta, sin correos.</p></div>
+    <div class="step"><div class="n">PASO 3</div><h3>Aprueba y recíbelo</h3><p>Te confirmamos el total en Mis pedidos, lo pagas, lo fabricamos y sigues cada paso.</p></div>
   </div>
 </section>
 
@@ -358,27 +294,24 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
   <div class="quote">
     <div class="qcard">
       <label class="drop" id="drop"><input id="stl" type="file" accept=".stl" aria-describedby="qfile-help"><b>Selecciona tu archivo .STL</b><br><span id="fname">o arrástralo aquí</span></label>
-      <p class="note" id="qfile-help">El cálculo se realiza en tu teléfono o computadora. Seleccionar el archivo aquí no lo envía a Hackgorithmic. Para solicitar la revisión, tendrás que adjuntarlo a tu correo y pulsar Enviar.</p>
+      <p class="note" id="qfile-help">El cálculo se hace en tu teléfono o computadora. El archivo solo se sube cuando realizas tu pedido.</p>
       <div class="qrow">
         <div><label for="qmat">Material</label><select id="qmat"><option value="pla">PLA</option><option value="petg">PETG</option></select></div>
         <div><label for="qinf">Relleno orientativo</label><select id="qinf" aria-describedby="qestimate-help"><option value="0.35">35 %</option><option value="0.55">55 %</option><option value="1">100 %</option></select></div>
         <div><label for="qcol">Colores</label><select id="qcol"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
-        <div><label for="qqty">Cantidad</label><input id="qqty" type="number" min="1" max="100" step="1" value="1" aria-describedby="qmsg"></div>
+        <div><label for="qqty">Cantidad</label><input id="qqty" type="number" min="1" max="50" step="1" value="1" aria-describedby="qmsg"></div>
       </div>
       <div id="qdims" class="specs"></div>
       <div id="qwarn" class="warn" aria-live="polite"></div>
       <p class="note" id="qestimate-help">Interpretamos las medidas del STL en milímetros. El material y las horas son aproximaciones; el relleno no garantiza la resistencia de la pieza. La orientación y los soportes se revisan antes de confirmar el precio.</p>
-      <p class="note" style="margin-top:14px">¿No tienes archivo? Explora el <a href="#taller">Taller</a> o <a href="mailto:hackgorithmic@gmail.com">escríbenos tu idea</a>.</p>
+      <p class="note" style="margin-top:14px">¿No tienes archivo? Crea uno en el <a href="#taller">Taller</a> o <a href="#checkout" data-js data-order="idea">pide un diseño a medida</a>.</p>
     </div>
     <div class="qcard">
       <span class="lbl">Estimado de impresión · USD</span>
       <table class="bk" id="qbk"><tr><td>Selecciona un archivo para estimar</td><td>—</td></tr></table>
       <div class="total"><span>Estimado sin envío</span><b id="qtot">—</b></div>
-      <p class="note">Este cálculo no confirma un pedido. Revisaremos el archivo, el precio final y el plazo de entrega antes de aceptar la impresión.</p>
-      <label class="lbl" for="qsummary">Resumen para solicitar revisión</label>
-      <textarea id="qsummary" rows="9" readonly placeholder="Aquí aparecerá el resumen cuando selecciones un STL válido." aria-describedby="qdelivery-help"></textarea>
-      <p class="note" id="qdelivery-help">Preparar correo abre un borrador con el resumen. Adjunta el STL y pulsa Enviar. Si no se abre, copia el resumen y envíalo con el archivo a <a href="mailto:hackgorithmic@gmail.com">hackgorithmic@gmail.com</a>.</p>
-      <div class="row" style="margin-top:12px"><button class="btn" id="qsend" type="button" disabled>Preparar correo</button><button class="btn" id="qcopy" type="button" disabled>Copiar resumen</button></div>
+      <p class="note">Es un estimado. Al pedir, revisamos tu archivo y te confirmamos el precio final y el plazo antes de cobrar.</p>
+      <button class="btn q-order" id="qorder" type="button" disabled>Pedir esta impresión <span aria-hidden="true">→</span></button>
       <p id="qmsg" style="font-size:14px" role="status" aria-live="polite"></p>
     </div>
   </div>
@@ -386,108 +319,59 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 
 <section id="precios" data-view="planes">
   <h2>Suscripciones de creación de modelos 3D</h2>
-  <p class="lead" style="margin-top:4px">Planes de creación de modelos 3D de $8 o $24 USD al mes. La vista previa del <a href="#taller">Taller</a> y del <a href="#personalizar">llavero</a> es gratis. La impresión física y el envío se cobran por separado. <span class="soon" data-subscription-pending>Consulta los planes</span></p>
-  <p class="request-note" data-subscription-pending>Estos planes todavía no se pueden contratar. Consulta los beneficios propuestos y cuéntanos tu idea para confirmar disponibilidad y forma de entrega.</p>
+  <p class="lead" style="margin-top:4px">Planes de creación de modelos 3D de $8 o $24 USD al mes. Crear en el <a href="#taller">Taller</a> es gratis. La impresión física y el envío se cobran por separado.</p>
+  <p class="request-note" data-subscription-pending>El pago con tarjeta se activa muy pronto. Ya puedes reservar tu plan desde tu cuenta y te avisamos en Mis pedidos cómo activarlo.</p>
   <div class="plans plans-2">
     <div class="plan main">
       <h3 style="font:700 22px var(--display); margin:0">Creador</h3>
       <div class="price">$8 <small>/ mes</small></div>
       <ul><li>Archivos sin marca</li><li>Descargas ilimitadas</li><li>Todos los estilos y colores</li><li>Archivos multicolor listos para imprimir</li></ul>
-      <a class="btn" data-subscription-plan="creador" style="margin-top:14px" href="#solicitar-plan">Consultar Creador</a>
+      <a class="btn" data-js data-plan="creador" style="margin-top:14px" href="#checkout">Elegir Creador</a>
     </div>
     <div class="plan">
       <h3 style="font:700 22px var(--display); margin:0">Pro</h3>
       <div class="price">$24 <small>/ mes</small></div>
       <ul><li>Diseños a medida con nuestro agente</li><li>Uso comercial: vende lo que imprimas</li><li>Prioridad y 10% de descuento en impresiones</li></ul>
-      <a class="btn alt" data-subscription-plan="pro" style="margin-top:14px" href="#solicitar-plan">Consultar Pro</a>
+      <a class="btn alt" data-js data-plan="pro" style="margin-top:14px" href="#checkout">Elegir Pro</a>
     </div>
   </div>
   <p class="note" style="margin-top:12px" data-subscription-annual hidden>Pago anual: 2 meses gratis ($80 o $240 al año).</p>
   <p class="note" data-subscription-live hidden>Cobro mensual recurrente en USD. El importe y la frecuencia se muestran antes de confirmar el pago. Puedes gestionar o cancelar la renovación desde tu portal de suscripción. La impresión física y el envío se cobran aparte.</p>
-  <p class="note">¿Buscas una pieza física? Usa el <a href="#cotizar">cotizador</a> de referencia: confirmaremos fabricación, entrega y precio final.</p>
+  <p class="note">¿Buscas una pieza física? Sube tu archivo en <a href="#cotizar">Cotizar</a> y pídela impresa: te confirmamos fabricación, entrega y precio final.</p>
   <p class="note"><a data-subscription-portal hidden>Gestionar o cancelar mi suscripción</a></p>
-</section>
-
-<section id="solicitar-plan" data-view="planes" aria-labelledby="plan-request-title">
-  <h2 id="plan-request-title">Cuéntanos qué quieres crear</h2>
-  <p class="lead" style="margin-top:4px">Elige el plan que te interesa y describe tu idea. Te orientamos sobre el diseño y la entrega de tus modelos 3D.</p>
-  <div class="quote">
-    <form class="qcard" id="plan-request" aria-describedby="plan-request-help">
-      <p class="note" id="plan-request-help">El plan, tu email y la idea son obligatorios. Puedes adjuntar fotos o referencias al enviar el correo.</p>
-      <div class="qrow">
-        <div style="grid-column:1/-1"><label for="splan">Plan que te interesa</label><select id="splan" name="plan" required><option value="creador">Creador — $8 USD al mes</option><option value="pro">Pro — $24 USD al mes</option></select></div>
-        <div><label for="sname">Tu nombre (opcional)</label><input id="sname" name="name" type="text" autocomplete="name" maxlength="100"></div>
-        <div><label for="semail">Tu email</label><input id="semail" name="email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254" required></div>
-        <div style="grid-column:1/-1"><label for="sidea">Tu idea y las medidas que necesitas</label><textarea id="sidea" name="idea" rows="5" maxlength="3000" required placeholder="Describe la pieza, el nombre o el uso que le darás. Si conoces las medidas o el formato que necesitas, inclúyelos aquí."></textarea></div>
-      </div>
-    </form>
-    <div class="qcard">
-      <label class="lbl" for="ssummary">Resumen de tu consulta</label>
-      <textarea id="ssummary" rows="10" readonly aria-describedby="sdelivery">Completa el formulario para preparar tu consulta.</textarea>
-      <p class="note" id="sdelivery">«Preparar correo» abre un mensaje que debes enviar desde tu aplicación de correo. También puedes copiar o descargar el resumen y enviarlo <a href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com">por correo</a>.</p>
-      <div class="row" style="margin-top:12px"><a class="btn" id="ssend" href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com">Preparar correo</a><button class="btn alt" id="scopy" type="button">Copiar resumen</button><button class="btn alt" id="sdownload" type="button">Descargar resumen</button></div>
-      <p class="note" id="smsg" role="status" aria-live="polite"></p>
-    </div>
-  </div>
-</section>
-
-<section id="pedir" data-view="llaveros">
-  <h2>Encarga tus llaveros impresos</h2>
-  <p class="lead" style="margin-top:4px">Prepara tu solicitud de llaveros personalizados. Te confirmamos el diseño, el total con envío y el plazo antes de cobrar.</p>
-  <div class="quote">
-    <form class="qcard" id="ord">
-      <div class="qrow">
-        <div style="grid-column:1/-1"><label for="on">Nombre(s) para los llaveros</label><input id="on" type="text" placeholder="Luna, Mateo, Sofía" maxlength="300" required style="width:100%;font:500 16px var(--body);padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></div>
-        <div><label for="ost">Estilo</label><select id="ost"><option value="script">Firma</option><option value="round">Burbuja</option><option value="block">Bloque</option></select></div>
-        <div><label for="oaro">Argolla</label><select id="oaro"><option value="izq">Izquierda</option><option value="der">Derecha</option><option value="ambos">Ambos lados</option></select></div>
-        <div><label for="oq">Cantidad</label><input id="oq" type="number" min="1" max="50" step="1" value="1" required></div>
-        <div><label for="ob">Color base</label><select id="ob"><option>rosa</option><option>negro</option><option>cian</option><option>rojo</option><option>amarillo</option></select></div>
-        <div><label for="ol">Color letras</label><select id="ol"><option>blanco</option><option>negro</option><option>rosa</option></select></div>
-        <div style="grid-column:1/-1"><label for="od">Entrega</label><select id="od"><option value="envio">Envío en EE.UU. (se cotiza aparte)</option><option value="recoger">Recoger en Florida (gratis)</option></select></div>
-        <div><label for="ocn">Tu nombre (opcional)</label><input id="ocn" type="text" autocomplete="name" maxlength="100" style="width:100%;font:500 16px var(--body);padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></div>
-        <div><label for="oct">WhatsApp o email</label><input id="oct" type="text" autocomplete="email" maxlength="254" required style="width:100%;font:500 16px var(--body);padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></div>
-        <div style="grid-column:1/-1" id="oaddrw"><label for="oa">Dirección para cotizar el envío</label><textarea id="oa" rows="2" autocomplete="street-address" maxlength="500" required style="width:100%;font:500 15px var(--body);padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)"></textarea></div>
-      </div>
-    </form>
-    <div class="qcard">
-      <span class="lbl">Tu pedido</span>
-      <table class="bk" id="obk"></table>
-      <div class="total"><span id="ototal-label">Subtotal de llaveros</span><b id="otot">—</b></div>
-      <p class="note">El precio incluye nombre, dos colores, argolla y empaque sencillo. El envío se cotiza aparte según la dirección; la recogida local es gratis. Confirmamos el total antes de enviarte el link de pago.</p>
-      <label class="lbl" for="osummary" style="margin-top:16px">Resumen para enviar</label><textarea id="osummary" rows="8" readonly></textarea>
-      <div class="row" style="margin-top:12px"><a class="btn" id="osend" href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com">Preparar correo</a><button class="btn alt" id="ocopy" type="button">Copiar pedido</button><button class="btn alt" id="odownload" type="button">Descargar pedido</button></div>
-      <p class="note">Abre el correo preparado y pulsa Enviar. Si no se abre, copia el resumen y mándalo a hackgorithmic@gmail.com.</p>
-      <p class="note" id="omsg" role="status" aria-live="polite"></p>
-    </div>
-  </div>
 </section>
 
 
 <section id="contacto" data-view="contacto">
   <div class="contact">
-    <h2>¿Dudas o una idea a medida?</h2>
-    <p>Escríbenos con tu idea, medidas o fotos de referencia. Te respondemos con diseño, precio y plazo antes de cobrar.</p>
-    <div class="mail"><a class="btn" href="mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com&amp;subject=Idea%20a%20medida">Escribir a hackgorithmic@gmail.com</a></div>
+    <h2>¿Una idea a medida?</h2>
+    <p>Cuéntanos qué quieres crear, con medidas o fotos de referencia. Tu pedido queda en tu cuenta: te mostramos el diseño y el precio antes de cobrar, y lo sigues desde Mis pedidos.</p>
+    <div class="mail"><a class="btn" href="#checkout" data-js data-order="idea">Pedir un diseño a medida</a></div>
+    <p class="contact-fine">¿Solo una pregunta? Escríbenos a <a href="mailto:hackgorithmic@gmail.com">hackgorithmic@gmail.com</a>. Los pedidos se hacen siempre desde la web.</p>
   </div>
 </section>
 
+<section id="checkout" data-view="checkout" aria-label="Finalizar pedido"></section>
+<section id="pedidos" data-view="pedidos" aria-label="Mis pedidos"></section>
+<section id="panel" data-view="panel" aria-label="Panel de la tienda"></section>
+
 </main>
-<footer><a class="shader-footer-brand" href="#inicio">hackgorithmic<span>.</span></a><nav class="tp-foot" aria-label="Pie"><a href="#llaveros">Llaveros</a><a href="#cotizar">Cotizar</a><a href="#planes">Planes</a><a href="#contacto">Contacto</a><a href="privacidad.html">Privacidad</a></nav><span>© 2026 · Diseño y proyectos 3D · Florida</span><span>Una red de creación en desarrollo.</span></footer>
+<footer><a class="shader-footer-brand" href="#inicio">hackgorithmic<span>.</span></a><nav class="tp-foot" aria-label="Pie"><a href="#taller">Taller</a><a href="#cotizar">Cotizar</a><a href="#planes">Planes</a><a href="#contacto">Contacto</a><a href="#pedidos" data-foot-orders>Mis pedidos</a><a href="privacidad.html">Privacidad</a></nav><span>© 2026 · Diseño y proyectos 3D · Florida</span><span>Una red de creación en desarrollo.</span></footer>
 </div>
 
 
-<script src="app.js?v=3"></script>
+<script src="app.js?v=4"></script>
 
 <script src="payments-config.js?v=2"></script>
-<script src="payments.js?v=2"></script>
-<script src="orders.js?v=3"></script>
-<script src="galeria.js?v=2"></script>
-<script src="vistas.js?v=3"></script>
+<script src="payments.js?v=3"></script>
+<script src="galeria.js?v=3"></script>
+<script src="vistas.js?v=4"></script>
 <script src="accounts-config.js?v=10"></script>
-<script src="auth.js?v=12"></script>
+<script src="auth.js?v=13"></script>
+<script src="pedidos.js?v=1"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous" defer></script>
-<script src="taller.js?v=16"></script>
-<script src="dibujo.js?v=4"></script>
+<script src="taller.js?v=17"></script>
+<script src="dibujo.js?v=5"></script>
 <script defer src="./shader-scene.js"></script>
 </body>
 </html>

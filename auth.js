@@ -68,7 +68,7 @@ function cleanSpec(s){
 
 let sb=null,sbP=null,pendingAction=null,note='',capToken='',capWidget=null,capP=null,lastUserId=null;
 const uid=()=>A.user?(A.user.id||A.user.email):null;
-const A={user:null,online:ONLINE,mode:MODE,require,open,saveModel,signOut,token,uid};
+const A={user:null,owner:false,online:ONLINE,mode:MODE,require,open,saveModel,signOut,token,uid,client};
 async function token(){if(!ONLINE)return '';const c=await client();const{data}=await c.auth.getSession();return (data.session&&data.session.access_token)||'';}
 window.HGAuth=A;
 
@@ -91,7 +91,7 @@ if(MODE==='prueba'&&!BROKEN){const t=document.createElement(TEST?'button':'span'
   btn.before(t);}
 
 function paintButton(){
-  if(A.user){const n=(A.user.name||A.user.email||'?').trim();btn.innerHTML='<span class="hg-avatar" aria-hidden="true">'+esc(n[0].toUpperCase())+'</span>Mis modelos';btn.classList.add('in');}
+  if(A.user){const n=(A.user.name||A.user.email||'?').trim();btn.innerHTML='<span class="hg-avatar" aria-hidden="true">'+esc(n[0].toUpperCase())+'</span>Mi cuenta';btn.classList.add('in');}
   else{btn.textContent='Crear cuenta';btn.classList.remove('in');}
 }
 function shell(title,body){
@@ -139,7 +139,9 @@ function open(view='signup',msg){
   }else if(view==='check'){
     shell('Revisa tu correo','<p class="hg-sub">Te enviamos un enlace para confirmar tu cuenta. Ábrelo <b>en este mismo navegador</b> y vuelve a esta pestaña: tu idea sigue escrita en el Taller.</p><form method="dialog"><button class="btn">Entendido</button></form>');
   }else if(view==='models'){
-    shell('Mis modelos','<p class="hg-sub">Hola, '+esc(A.user.name||A.user.email)+'. Aquí están los modelos que has creado en el Taller.</p><ul class="hg-models"><li class="hg-empty">Cargando…</li></ul>'+
+    shell('Mi cuenta','<p class="hg-sub">Hola, '+esc(A.user.name||A.user.email)+'.</p>'+
+      '<div class="hg-links"><a class="btn alt" href="#pedidos" data-go>Mis pedidos</a>'+(A.owner?'<a class="btn alt" href="#panel" data-go>Panel de la tienda</a>':'')+'</div>'+
+      '<h3 class="hg-h3">Mis modelos</h3><p class="hg-sub">Los modelos que has creado en el Taller.</p><ul class="hg-models"><li class="hg-empty">Cargando…</li></ul>'+
       '<div class="hg-actions"><a class="btn" href="#taller" data-close>Crear un modelo nuevo</a><button type="button" class="btn alt hg-out">Cerrar sesión</button></div>'+
       (A.user.local?'<p class="hg-fine">Modo prueba: cuenta guardada en este navegador.</p>':''));
     renderModels();
@@ -167,6 +169,7 @@ const capOpt=()=>CAP?{captchaToken:capToken}:{};
 
 function wire(view){
   dlg.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>open(b.dataset.view));
+  dlg.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click',()=>dlg.close()));
   dlg.querySelectorAll('[data-close]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();dlg.close();toTaller();setTimeout(()=>document.getElementById('tin')?.focus({preventScroll:true}),350);}));
   dlg.querySelector('.hg-google')?.addEventListener('click',async()=>{try{const c=await client();const{error}=await c.auth.signInWithOAuth({provider:'google',options:{redirectTo:redirect()}});if(error)throw error;}catch(e){status(human(e),true);}});
   dlg.querySelector('.hg-out')?.addEventListener('click',signOut);
@@ -229,7 +232,8 @@ function clearWorkspace(){const log=document.getElementById('tlog');if(log)log.i
 function setUser(u){
   const id=u?(u.id||u.email):null;
   if(lastUserId!==null&&id!==lastUserId)clearWorkspace();
-  lastUserId=id;A.user=u;paintButton();document.documentElement.toggleAttribute('data-signed-in',!!u);
+  const changed=id!==lastUserId;lastUserId=id;A.user=u;if(changed)A.owner=false;paintButton();document.documentElement.toggleAttribute('data-signed-in',!!u);
+  if(changed)window.dispatchEvent(new CustomEvent('hg:user'));
 }
 function client(){
   if(sb)return Promise.resolve(sb);

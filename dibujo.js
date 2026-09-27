@@ -1,5 +1,6 @@
 /* ===== Tu dibujo en 3D: foto de un dibujo en papel → placa con los trazos en relieve =====
- * Todo se procesa en el dispositivo de la persona: la foto no se sube a ningún servidor. */
+ * Todo se procesa en el dispositivo de la persona. La foto solo se sube si la persona pide la figura 3D
+ * (y el modelo en relieve si pide la placa impresa), al confirmar su pedido en el checkout. */
 (function(){
 const q=s=>document.querySelector(s);
 const form=q('#tform'),log=q('#tlog'),file=q('#dfile'),panel=q('.tp-draw'),text=q('#tin');
@@ -116,7 +117,7 @@ async function process(f){
     '<div class="tsw dctl"><label for="'+id+'">Trazo</label><input id="'+id+'" type="range" min="-2" max="2" step="1" value="0"><span class="dhint">menos ← → más</span></div>'+
     '<div class="tsw"><span>Base</span><span class="sb"></span><span style="margin-left:8px">Trazo</span><span class="sl"></span></div>'+
     '<div class="trow"><button class="btn tdl" type="button">Descargar STL</button><button class="btn alt tped" type="button">Pedirlo impreso · desde $10</button><button class="btn alt tfig" type="button">Figura 3D completa</button></div>'+
-    '<p class="tnote">Se imprime en dos colores cambiando el filamento a los 2 mm. ¿Lo quieres como figura completa (no solo relieve)? Nuestro equipo la modela y te cotiza antes de cobrar.</p>';
+    '<p class="tnote">Se imprime en dos colores cambiando el filamento a los 2 mm. ¿Lo quieres como figura completa (no solo relieve)? Nuestro equipo la modela y te confirma el precio antes de cobrar.</p>';
   const view=card.querySelector('.tview'),info=card.querySelector('.dinfo');
   let mesh=null,cur=null;
   function paint(){if(!mesh)return;const cA=new THREE.Color(COL[st.base]),cB=new THREE.Color(COL[st.trazo]),p=mesh.geometry.attributes.position,c=mesh.geometry.attributes.color;
@@ -140,11 +141,13 @@ async function process(f){
       document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},4000);
       say('¡Listo! 📥 En tu laminador pon un cambio de color a los 2 mm para que el trazo salga de otro color.');};
     if(window.HGAuth&&!HGAuth.user)return HGAuth.require(dl,'Crea tu cuenta gratis para descargar tus modelos.');dl();};
-  const mail=(subject,body)=>{location.href='mailto:hackgorithmic@gmail.com?cc=agent%40hackgorithmic.com&subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);};
-  card.querySelector('.tped').onclick=()=>mail('Pedido: mi dibujo en 3D (relieve)',
-    'Quiero imprimir mi dibujo en 3D (placa en relieve).\nTamaño: '+st.size/10+' cm (lado mayor)'+(cur?' · '+cur.w.toFixed(0)+' x '+cur.h.toFixed(0)+' mm':'')+'\nColores: base '+st.base+', trazo '+st.trazo+'\nCantidad: 1\n\nIMPORTANTE: adjunta a este correo la foto de tu dibujo.\n\nMi nombre:\nWhatsApp o email:\nEntrega (envío EE.UU. o recoger en Florida):\n\nPrecio desde $10 USD. Confirmamos diseño, precio final y plazo antes de cobrar.');
-  card.querySelector('.tfig').onclick=()=>mail('Cotización: figura 3D de mi dibujo',
-    'Quiero una figura 3D completa hecha a partir de mi dibujo (no solo relieve).\nTamaño aproximado (cm):\nColor(es):\nPara qué es (regalo, decoración, llavero, juguete…):\n\nIMPORTANTE: adjunta a este correo la foto de tu dibujo (y, si puedes, fotos desde otros ángulos o notas).\n\nMi nombre:\nWhatsApp o email:\nEntrega (envío EE.UU. o recoger en Florida):');
+  const pedir=o=>{if(window.HGCheckout)HGCheckout.start(o);};
+  card.querySelector('.tped').onclick=()=>{if(!cur)return;const r=cur,size=st.size,base=st.base,trazo=st.trazo;
+    pedir({kind:'dibujo',title:'Placa en relieve de '+size/10+' cm',specs:[r.w.toFixed(0)+' × '+r.h.toFixed(0)+' × '+r.z.toFixed(1)+' mm','Base '+base+' · trazo '+trazo,'Dos colores con cambio de filamento'],
+      price:q=>1000*q,fileKind:'stl',fileLabel:'Al realizar el pedido subimos el modelo 3D de tu dibujo (no la foto).',file:()=>__taller.stl([r.pos]),
+      custom:{size:size/10+' cm',mm:r.w.toFixed(0)+' × '+r.h.toFixed(0)+' × '+r.z.toFixed(1),colors:'base '+base+', trazo '+trazo}});};
+  card.querySelector('.tfig').onclick=()=>pedir({kind:'dibujo-figura',title:'Figura 3D de mi dibujo',specs:['Nuestro equipo la modela a partir de tu dibujo','Te mostramos la vista previa antes de cobrar','Cuéntanos tamaño y colores en los detalles'],
+    fileKind:'photo',file:f,fileLabel:'Al realizar el pedido subimos la foto de tu dibujo para que el equipo la modele.',custom:{}});
   rebuild();
   file.value='';
   log.scrollTop=log.scrollHeight;
