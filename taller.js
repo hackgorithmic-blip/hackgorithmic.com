@@ -305,7 +305,9 @@ window.__taller={parse,completar,build,checkClosed,stl,loadFont,showObject,reset
 if(!log)return;
 setChips();if(!iaOn()&&inp){inp.placeholder='Escribe tu pieza: llavero que diga “Luna”, placa para perro “Max”, letrero “Oficina de Ana”…';const h=q('.tp-hint');if(h)h.lastChild.textContent='Piezas con texto al instante · figuras con IA: muy pronto';}
 /* Sin cuenta, la idea se queda escrita en la caja hasta que se genera (no se pierde al registrarse). */
-const run=v=>{if(!String(v||'').trim())return;if(window.HGAuth&&!HGAuth.user){if(inp)inp.value=v;return HGAuth.require(()=>{if(inp&&inp.value===v)inp.value='';go(v);},'Crea tu cuenta gratis para generar y guardar tus propios modelos 3D.');}if(inp&&inp.value===v)inp.value='';go(v);};
+/* "Generar" lleva al Taller (espacio de trabajo) y ahí arranca el modelo. */
+const toWorkspace=()=>{if(window.hgRoute&&document.body.dataset.view!=='taller')hgRoute('taller');};
+const run=v=>{if(!String(v||'').trim())return;if(window.HGAuth&&!HGAuth.user){if(inp)inp.value=v;return HGAuth.require(()=>{if(inp&&inp.value===v)inp.value='';toWorkspace();go(v);},'Crea tu cuenta gratis para generar y guardar tus propios modelos 3D.');}if(inp&&inp.value===v)inp.value='';toWorkspace();go(v);};
 form.addEventListener('submit',e=>{e.preventDefault();run(inp.value);});
 const warm=()=>{loadFont().catch(()=>{});};inp.addEventListener('focus',warm,{once:true});setTimeout(warm,4000);
 })();

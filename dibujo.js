@@ -34,7 +34,7 @@ function say(html,cls='bot'){const d=document.createElement('div');d.className='
 function start(f){
   if(!/^image\//.test(f.type))return say('Ese archivo no es una imagen. Sube una foto en JPG o PNG.');
   if(f.size>25*1024*1024)return say('La foto pesa demasiado (máximo 25 MB).');
-  const go=()=>process(f);
+  const go=()=>{if(window.hgRoute&&document.body.dataset.view!=='taller')hgRoute('taller');process(f);};
   if(window.HGAuth&&!HGAuth.user)return HGAuth.require(go,'Crea tu cuenta gratis para convertir tus dibujos en 3D.');
   go();
 }
