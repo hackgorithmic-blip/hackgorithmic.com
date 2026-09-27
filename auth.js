@@ -8,6 +8,18 @@ const SB_SRC='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/um
 const SB_SRI='sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok';
 const CAP_SRC='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
 
+/* ---------- acceso de prueba del dueño (solo esta pestaña, nunca toca Supabase) ---------- */
+const TEST_KEY='hg_test_tab';
+const TEST=(()=>{try{return sessionStorage.getItem(TEST_KEY)==='1';}catch(e){return false;}})();
+(async()=>{
+  const q=new URLSearchParams(location.search),c=q.get('prueba');if(c===null)return;
+  q.delete('prueba');history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:'')+location.hash);
+  const want=CFG.testAccess&&CFG.testAccess.codeHash;if(!want||!window.crypto||!crypto.subtle)return;
+  const h=[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(c)))].map(b=>b.toString(16).padStart(2,'0')).join('');
+  if(h===want){try{sessionStorage.setItem(TEST_KEY,'1');}catch(e){}location.reload();}
+  else console.warn('[hackgorithmic] código de prueba incorrecto');
+})();
+
 /* ---------- modo (falla cerrado) ---------- */
 const rawMode=String(CFG.mode||'').normalize('NFD').replace(/[̀-ͯ]/g,'').trim().toLowerCase();
 const HAS_KEYS=!!(CFG.url||CFG.anonKey);
@@ -18,7 +30,8 @@ function keyProblem(k){
   return '';
 }
 let MODE='produccion',problem='';
-if(rawMode==='prueba'){MODE='prueba';if(HAS_KEYS)problem='mode "prueba" con url/anonKey puestos. Para usar Supabase pon mode "produccion".';}
+if(TEST){MODE='prueba';}
+else if(rawMode==='prueba'){MODE='prueba';if(HAS_KEYS)problem='mode "prueba" con url/anonKey puestos. Para usar Supabase pon mode "produccion".';}
 else if(rawMode==='produccion'){
   if(!CFG.url||!CFG.anonKey)problem='mode "produccion" requiere url y anonKey.';
   else if(!/^https:\/\/[^\s/]+\/?$/.test(CFG.url))problem='url de Supabase inválida (debe ser https://TU-PROYECTO.supabase.co).';
@@ -71,7 +84,11 @@ btn.type='button';btn.className='btn hg-account-btn';
 const cta=document.querySelector('.tp-top .shader-header-cta');
 if(cta)cta.before(btn);else document.querySelector('header.top')?.appendChild(btn);
 btn.addEventListener('click',()=>A.user?open('models'):open('signup'));
-if(MODE==='prueba'&&!BROKEN){const t=document.createElement('span');t.className='hg-test-badge';t.textContent='Modo prueba';t.title='Las cuentas se guardan solo en este navegador. Cambiar a modo producción antes del lanzamiento.';btn.before(t);}
+if(MODE==='prueba'&&!BROKEN){const t=document.createElement(TEST?'button':'span');t.className='hg-test-badge';
+  if(TEST){t.type='button';t.textContent='Modo prueba · Salir';t.title='Acceso de prueba solo en esta pestaña. Pulsa para salir.';
+    t.addEventListener('click',()=>{try{sessionStorage.removeItem(TEST_KEY);}catch(e){}drop(K.acc);location.reload();});}
+  else{t.textContent='Modo prueba';t.title='Las cuentas se guardan solo en este navegador. Cambiar a modo producción antes del lanzamiento.';}
+  btn.before(t);}
 
 function paintButton(){
   if(A.user){const n=(A.user.name||A.user.email||'?').trim();btn.innerHTML='<span class="hg-avatar" aria-hidden="true">'+esc(n[0].toUpperCase())+'</span>Mis modelos';btn.classList.add('in');}
@@ -301,5 +318,7 @@ if(ONLINE){
     /* PKCE: quitar ?code=… / errores de la URL después del canje. */
     if(/[?&](code|error|error_code|error_description)=/.test(location.search))history.replaceState(null,'',location.pathname+location.hash);
   }).catch(e=>console.error('[hackgorithmic] servicio de cuentas',e));
-}else if(!BROKEN){const acc=read(K.acc,null);if(acc&&acc.email)setUser({name:String(acc.name||'').slice(0,60),email:acc.email,local:true});}
+}else if(!BROKEN){let acc=read(K.acc,null);
+  if(TEST&&!(acc&&acc.email)){acc={name:'Modo prueba',email:'prueba@hackgorithmic.test',created:new Date().toISOString()};write(K.acc,acc);}
+  if(acc&&acc.email)setUser({name:String(acc.name||'').slice(0,60),email:acc.email,local:true});}
 })();

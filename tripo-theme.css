@@ -313,3 +313,6 @@ body[data-view="llaveros"] .shader-site main > section#personalizar { border-top
   background: rgba(255, 255, 255, .05); color: #e0e0da; font: 500 12px/1.2 var(--body); text-transform: none; letter-spacing: 0; outline: 0; }
 .shader-site .tsw.dctl button[aria-pressed="true"] { background: #cafa78; border-color: #cafa78; color: #16210d; }
 .shader-site .tsw.dctl { gap: 6px; }
+button.hg-test-badge { cursor: pointer; font-family: var(--body); }
+button.hg-test-badge:hover { background: rgba(240, 163, 138, .2); }
+@media (max-width: 480px) { button.hg-test-badge { display: inline-flex; } }

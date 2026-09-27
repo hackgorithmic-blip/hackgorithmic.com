@@ -59,6 +59,11 @@ Proyecto Supabase `hackgorithmic-marketplace` (ref `bovifetqjprdylrlldct`) conec
 - Generador: cupo reservado de forma atómica antes de gastar créditos; límites por persona, por IP y global; cuentas con menos de 24 h no usan la IA; solo correos confirmados; los usuarios no pueden escribir en la tabla de trabajos; consultas medidas (1 cada 2 s, 400 por trabajo); el modelo se descarga de Tripo una vez, se guarda en Storage privado y se entrega con enlaces firmados de 5 minutos (máx. 5 descargas); errores genéricos hacia el navegador.
 - Al cerrar sesión o cambiar de cuenta se borra el trabajo en pantalla y se descarta cualquier proceso en curso del usuario anterior; los modelos solo se guardan en la cuenta de quien los empezó.
 
+## Acceso de prueba del dueño
+- Enlace `https://hackgorithmic.com/?prueba=CÓDIGO` (el código lo tiene el dueño; en `accounts-config.js` solo está su huella SHA-256).
+- Entra a una cuenta de prueba **solo en esa pestaña**, sin registrarse; todo queda en el navegador y **nunca toca Supabase** ni cuentas reales. "Modo prueba · Salir" lo apaga y borra los datos de prueba.
+- Para desactivarlo: borrar `testAccess` de `accounts-config.js`. Para cambiar el código: generar uno nuevo y poner su SHA-256.
+
 ## Mejoras futuras (no bloquean el lanzamiento)
 - Quitar `'unsafe-inline'` también de estilos (mover los `style="..."` a clases).
 - Revisar `privacidad.html` con un abogado antes de activar Google (`google: true`).
