@@ -4,7 +4,6 @@
   const CONTACT = "hackgorithmic@gmail.com";
   const COPY_TO = "agent@hackgorithmic.com";
   const PLANS = Object.freeze({
-    basico: "Básico — $4 USD al mes",
     creador: "Creador — $8 USD al mes",
     pro: "Pro — $24 USD al mes"
   });
@@ -91,7 +90,7 @@
     const refreshPlan = function () {
       const selectedPlan = byId("splan").value;
       const validPlan = Object.prototype.hasOwnProperty.call(PLANS, selectedPlan);
-      byId("splan").setCustomValidity(validPlan ? "" : "Elige uno de los tres planes.");
+      byId("splan").setCustomValidity(validPlan ? "" : "Elige uno de los dos planes.");
       const label = validPlan ? PLANS[selectedPlan] : "(elige un plan)";
       const body = [
         "Consulta de plan — hackgorithmic 3D",

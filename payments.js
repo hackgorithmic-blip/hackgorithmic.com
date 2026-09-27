@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const MONTHLY_AMOUNTS = Object.freeze({ basico: 400, creador: 800, pro: 2400 });
+  const MONTHLY_AMOUNTS = Object.freeze({ creador: 800, pro: 2400 });
   const originalLinks = new WeakMap();
   const guardedLinks = new WeakSet();
 

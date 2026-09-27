@@ -151,7 +151,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 #tform input{flex:1; min-width:0; font:500 16px/1.2 var(--body); padding:12px; border-radius:10px; border:1px solid var(--line); background:var(--paper); color:var(--ink)}
 </style>
 <link rel="stylesheet" href="./shader-site.css?v=2">
-<link rel="stylesheet" href="./tripo-theme.css?v=17">
+<link rel="stylesheet" href="./tripo-theme.css?v=18">
 </head>
 <body class="shader-site">
 <a class="shader-skip" href="#inicio">Saltar al contenido</a>
@@ -386,15 +386,9 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 
 <section id="precios" data-view="planes">
   <h2>Suscripciones de creación de modelos 3D</h2>
-  <p class="lead" style="margin-top:4px">Planes de creación de modelos 3D de $4, $8 o $24 USD al mes. La vista previa del <a href="#taller">Taller</a> y del <a href="#personalizar">llavero</a> es gratis. La impresión física y el envío se cobran por separado. <span class="soon" data-subscription-pending>Consulta los planes</span></p>
+  <p class="lead" style="margin-top:4px">Planes de creación de modelos 3D de $8 o $24 USD al mes. La vista previa del <a href="#taller">Taller</a> y del <a href="#personalizar">llavero</a> es gratis. La impresión física y el envío se cobran por separado. <span class="soon" data-subscription-pending>Consulta los planes</span></p>
   <p class="request-note" data-subscription-pending>Estos planes todavía no se pueden contratar. Consulta los beneficios propuestos y cuéntanos tu idea para confirmar disponibilidad y forma de entrega.</p>
-  <div class="plans">
-    <div class="plan">
-      <h3 style="font:700 22px var(--display); margin:0">Básico</h3>
-      <div class="price">$4 <small>/ mes</small></div>
-      <ul><li>3 descargas STL al mes</li><li>Llaveros y charms con nombre</li><li>Estilos básicos</li></ul>
-      <a class="btn alt" data-subscription-plan="basico" style="margin-top:14px" href="#solicitar-plan">Consultar Básico</a>
-    </div>
+  <div class="plans plans-2">
     <div class="plan main">
       <h3 style="font:700 22px var(--display); margin:0">Creador</h3>
       <div class="price">$8 <small>/ mes</small></div>
@@ -408,7 +402,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
       <a class="btn alt" data-subscription-plan="pro" style="margin-top:14px" href="#solicitar-plan">Consultar Pro</a>
     </div>
   </div>
-  <p class="note" style="margin-top:12px" data-subscription-annual hidden>Pago anual: 2 meses gratis ($40, $80 o $240 al año).</p>
+  <p class="note" style="margin-top:12px" data-subscription-annual hidden>Pago anual: 2 meses gratis ($80 o $240 al año).</p>
   <p class="note" data-subscription-live hidden>Cobro mensual recurrente en USD. El importe y la frecuencia se muestran antes de confirmar el pago. Puedes gestionar o cancelar la renovación desde tu portal de suscripción. La impresión física y el envío se cobran aparte.</p>
   <p class="note">¿Buscas una pieza física? Usa el <a href="#cotizar">cotizador</a> de referencia: confirmaremos fabricación, entrega y precio final.</p>
   <p class="note"><a data-subscription-portal hidden>Gestionar o cancelar mi suscripción</a></p>
@@ -421,7 +415,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
     <form class="qcard" id="plan-request" aria-describedby="plan-request-help">
       <p class="note" id="plan-request-help">El plan, tu email y la idea son obligatorios. Puedes adjuntar fotos o referencias al enviar el correo.</p>
       <div class="qrow">
-        <div style="grid-column:1/-1"><label for="splan">Plan que te interesa</label><select id="splan" name="plan" required><option value="basico">Básico — $4 USD al mes</option><option value="creador">Creador — $8 USD al mes</option><option value="pro">Pro — $24 USD al mes</option></select></div>
+        <div style="grid-column:1/-1"><label for="splan">Plan que te interesa</label><select id="splan" name="plan" required><option value="creador">Creador — $8 USD al mes</option><option value="pro">Pro — $24 USD al mes</option></select></div>
         <div><label for="sname">Tu nombre (opcional)</label><input id="sname" name="name" type="text" autocomplete="name" maxlength="100"></div>
         <div><label for="semail">Tu email</label><input id="semail" name="email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254" required></div>
         <div style="grid-column:1/-1"><label for="sidea">Tu idea y las medidas que necesitas</label><textarea id="sidea" name="idea" rows="5" maxlength="3000" required placeholder="Describe la pieza, el nombre o el uso que le darás. Si conoces las medidas o el formato que necesitas, inclúyelos aquí."></textarea></div>
@@ -484,9 +478,9 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 
 <script src="app.js?v=3"></script>
 
-<script src="payments-config.js"></script>
-<script src="payments.js"></script>
-<script src="orders.js?v=2"></script>
+<script src="payments-config.js?v=2"></script>
+<script src="payments.js?v=2"></script>
+<script src="orders.js?v=3"></script>
 <script src="galeria.js?v=2"></script>
 <script src="vistas.js?v=3"></script>
 <script src="accounts-config.js?v=10"></script>

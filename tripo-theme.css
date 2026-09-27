@@ -361,3 +361,7 @@ body.shader-site[data-view="taller"] .tp-try { max-width: 1100px; }
 .tp-credit { position: absolute; right: 10px; bottom: 8px; z-index: 3; font-size: 10px; color: rgba(255, 255, 255, .6)!important; text-decoration: none; text-shadow: 0 1px 6px rgba(0, 0, 0, .8); }
 .tp-credit:hover { color: #fff!important; text-decoration: underline; }
 .shader-site .tp-card.tp-photo .txt { padding-bottom: 26px; }
+
+/* Planes: solo Creador y Pro, dos tarjetas de ancho cómodo */
+.shader-site .plans.plans-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 860px; }
+@media (max-width: 760px) { .shader-site .plans.plans-2 { grid-template-columns: minmax(0, 1fr); } }
