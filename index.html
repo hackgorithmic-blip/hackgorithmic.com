@@ -6,11 +6,11 @@
 <!-- Seguridad: sin scripts en línea. Si agregas un servicio externo agrégalo aquí; al conectar Supabase cambia *.supabase.co por TU-PROYECTO.supabase.co. Ver entrega/SEGURIDAD.md -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/ https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/ https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/ https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' https://bovifetqjprdylrlldct.supabase.co wss://bovifetqjprdylrlldct.supabase.co https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/ data: blob:; frame-src https://challenges.cloudflare.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' mailto:; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta name="description" content="Hackgorithmic: crea tu modelo 3D, conviértelo desde un dibujo o sube tu STL, y pídelo impreso desde tu cuenta.">
+<meta name="description" content="hackgorithmic Studio: crea tu modelo 3D, conviértelo desde un dibujo o sube tu STL, y pídelo impreso desde tu cuenta.">
 <meta property="og:title" content="hackgorithmic 3D">
 <meta property="og:description" content="Tu próxima idea. En otra dimensión. Diseño 3D y piezas por cotización.">
 <meta property="og:url" content="https://hackgorithmic.com/">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%2315171b%27/%3E%3Ctext x=%2732%27 y=%2746%27 font-family=%27Arial%27 font-weight=%27900%27 font-size=%2742%27 text-anchor=%27middle%27 fill=%27%23e0457b%27%3Eh%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%23141414'/%3E%3Ctext%20x='32'%20y='46'%20font-family='Arial%2CHelvetica%2Csans-serif'%20font-weight='900'%20font-size='40'%20text-anchor='middle'%20fill='%23f1f1ed'%3Eh%3Ctspan%20fill='%23cafa78'%3E:%3C/tspan%3E%3C/text%3E%3C/svg%3E">
 <title>hackgorithmic 3D</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600;700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Pacifico&family=Baloo+2:wght@800&family=Bungee&display=swap">
@@ -152,7 +152,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 </style>
 <link rel="stylesheet" href="./shader-site.css?v=2">
 <link rel="stylesheet" href="./tripo-theme.css?v=19">
-<link rel="stylesheet" href="./pedidos.css?v=1">
+<link rel="stylesheet" href="./pedidos.css?v=3">
 </head>
 <body class="shader-site">
 <a class="shader-skip" href="#inicio">Saltar al contenido</a>
@@ -161,19 +161,19 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 <div class="wrap">
 <noscript><p class="request-note">Activa JavaScript para crear tus modelos y hacer tus pedidos desde tu cuenta.</p></noscript>
 <header class="top tp-top">
-  <a class="shader-brand" href="#inicio" aria-label="Hackgorithmic, inicio"><span class="shader-brand-mark" aria-hidden="true">h<span>.</span></span><span>hackgorithmic<small>3D STUDIO</small></span></a>
-  <a class="tp-workspace" href="#taller" data-auth>Estudio 3D <span aria-hidden="true">▾</span></a>
-  <nav class="shader-nav" aria-label="Principal"><a href="#inicio" data-nav="inicio">Inicio</a><a href="#taller" data-nav="taller">Taller</a><a href="#cotizar" data-nav="cotizar">Cotizar</a><a href="#planes" data-nav="planes">Planes</a><a href="#pedidos" data-nav="pedidos">Mis pedidos</a><a href="#panel" data-nav="panel">Panel</a></nav>
+  <a class="shader-brand" href="#inicio" aria-label="hackgorithmic, inicio"><span class="shader-brand-mark hg-logo" aria-hidden="true">h<b>:</b></span><span class="hg-word" aria-hidden="true">hackgor<span class="hg-i">ı</span>thm<span class="hg-i">ı</span>c<small>3D STUDIO</small></span></a>
+  <a class="tp-workspace" href="#studio" data-auth>Abrir Studio <span aria-hidden="true">→</span></a>
+  <nav class="shader-nav" aria-label="Principal"><a href="#inicio" data-nav="inicio">Inicio</a><a href="#studio" data-nav="taller">Studio</a><a href="#cotizar" data-nav="cotizar">Cotizar</a><a href="#planes" data-nav="planes">Planes</a><a href="#pedidos" data-nav="pedidos">Mis pedidos</a><a href="#panel" data-nav="panel">Panel</a></nav>
   <a class="btn shader-header-cta" href="#contacto">Hablemos <span aria-hidden="true">↗</span></a>
 </header>
 
 <main id="inicio" tabindex="-1">
 <section class="tp-hero" data-view="inicio taller" aria-labelledby="hero-title">
-  <div class="tp-ws-head"><div><p class="tp-ws-kicker">Taller</p><h2 class="tp-ws-title">Aquí nace tu modelo</h2><p class="tp-ws-sub">Describe una pieza o sube tu dibujo. Gíralo, cambia colores y descárgalo o pídelo impreso. Todo queda en <b>Mis modelos</b>.</p></div><a class="btn alt tp-ws-back" href="#inicio">← Inicio</a></div>
+  <div class="tp-ws-head"><div><p class="tp-ws-kicker">hackgorithmic Studio</p><h2 class="tp-ws-title">Aquí nace tu modelo</h2><p class="tp-ws-sub">Describe una pieza o sube tu dibujo. Gíralo, cambia colores y descárgalo o pídelo impreso. Todo queda en <b>Mis modelos</b>.</p></div><a class="btn alt tp-ws-back" href="#inicio">← Inicio</a></div>
   <div class="tp-hero-bg" data-shader-stage data-shader-theme="lime" aria-hidden="true"><canvas data-shader-scene></canvas></div>
   <h1 id="hero-title">¿Qué quieres llevar a 3D?</h1>
   <p class="tp-sub">Escribe tu pieza o sube la foto de un dibujo, y te armamos el modelo. Lo descargas o te lo imprimimos.</p>
-  <div class="taller tp-prompt" id="taller" aria-label="Taller: describe tu pieza y te armamos el modelo 3D">
+  <div class="taller tp-prompt" id="taller" aria-label="hackgorithmic Studio: describe tu pieza y te armamos el modelo 3D">
     <div id="tlog" aria-live="polite"></div>
     <form id="tform" autocomplete="off">
       <div class="tp-modes" role="tablist" aria-label="Qué quieres crear">
@@ -188,7 +188,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
     </form>
   </div>
   <div class="tp-try"><span>Prueba:</span><div id="tchips"></div></div>
-  <a class="tp-promo" href="#taller" data-js data-mode-go="dibujo"><span class="tp-promo-tag">Nuevo</span><span><b>Tu dibujo en 3D</b> · sube la foto de un dibujo en papel y lo convertimos en una pieza que puedes imprimir</span><span class="tp-promo-cta">Probar <span aria-hidden="true">→</span></span></a>
+  <a class="tp-promo" href="#studio" data-js data-mode-go="dibujo"><span class="tp-promo-tag">Nuevo</span><span><b>Tu dibujo en 3D</b> · sube la foto de un dibujo en papel y lo convertimos en una pieza que puedes imprimir</span><span class="tp-promo-cta">Probar <span aria-hidden="true">→</span></span></a>
 </section>
 
 <section class="tp-gallery" id="productos" data-view="inicio" aria-labelledby="gallery-title">
@@ -200,7 +200,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
     <button type="button" data-filter="hobby" aria-pressed="false">Hobby y mecánica</button>
     <button type="button" data-filter="regalos" aria-pressed="false">Regalos</button>
   </div>
-  <p class="tp-gallery-note">Piezas que podemos fabricar para tu casa y tus hobbies. Pulsa <b>Pídelo</b>, lo preparamos en el Taller y lo pides impreso desde tu cuenta; te confirmamos precio y plazo antes de cobrar. Las fotos son de referencia.</p>
+  <p class="tp-gallery-note">Piezas que podemos fabricar para tu casa y tus hobbies. Pulsa <b>Pídelo</b>, lo preparamos en Studio y lo pides impreso desde tu cuenta; te confirmamos precio y plazo antes de cobrar. Las fotos son de referencia.</p>
   <div class="tp-grid">
   <article class="tp-feature" data-cat="featured">
   <div class="shader-frame" data-shader-stage data-shader-theme="lime">
@@ -216,7 +216,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
       <div class="txt"><h3>Macetas y tiestos</h3>
         <p>Macetas con carácter para tus plantas: geométricas, con caras divertidas o del color de tu sala. Con drenaje y plato.</p>
         <div class="meta">PLA o PETG · de 8 a 25 cm</div></div>
-      <a class="tp-view" href="#taller" data-prompt="Maceta geométrica con plato para una planta pequeña" aria-label="Pídelo: macetas y tiestos">Pídelo</a>
+      <a class="tp-view" href="#studio" data-prompt="Maceta geométrica con plato para una planta pequeña" aria-label="Pídelo: macetas y tiestos">Pídelo</a>
       <a class="tp-credit" href="https://unsplash.com/photos/7Ax5meAjpBo" target="_blank" rel="noopener">Foto: Vertex Designs / Unsplash</a>
     </article>
   <article class="prod tp-card tp-idea tp-photo" data-cat="decoracion regalos">
@@ -224,7 +224,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
       <div class="txt"><h3>Jarrones decorativos</h3>
         <p>Jarrones en espiral o facetados para flores naturales o secas. Una pieza única para tu mesa.</p>
         <div class="meta">Hasta 25 cm · colores a elegir</div></div>
-      <a class="tp-view" href="#taller" data-prompt="Jarrón decorativo en espiral de 20 cm" aria-label="Pídelo: jarrones decorativos">Pídelo</a>
+      <a class="tp-view" href="#studio" data-prompt="Jarrón decorativo en espiral de 20 cm" aria-label="Pídelo: jarrones decorativos">Pídelo</a>
       <a class="tp-credit" href="https://unsplash.com/photos/lDQdKDwdx0M" target="_blank" rel="noopener">Foto: Christine Tan / Unsplash</a>
     </article>
   <article class="prod tp-card tp-idea tp-photo" data-cat="decoracion">
@@ -232,7 +232,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
       <div class="txt"><h3>Lámparas de diseño</h3>
         <p>Pantallas que proyectan texturas al encenderse. Con base y luz LED cálida.</p>
         <div class="meta">Pantalla + base · luz LED</div></div>
-      <a class="tp-view" href="#taller" data-prompt="Lámpara de mesa con pantalla ondulada" aria-label="Pídelo: lámparas de diseño">Pídelo</a>
+      <a class="tp-view" href="#studio" data-prompt="Lámpara de mesa con pantalla ondulada" aria-label="Pídelo: lámparas de diseño">Pídelo</a>
       <a class="tp-credit" href="https://unsplash.com/photos/pgegshOgpvA" target="_blank" rel="noopener">Foto: Alexey Demidov / Unsplash</a>
     </article>
   <article class="prod tp-card tp-idea tp-photo" data-cat="decoracion">
@@ -240,7 +240,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
       <div class="txt"><h3>Decoración geométrica</h3>
         <p>Pantallas, paneles y piezas de pared con patrones que cambian con la luz.</p>
         <div class="meta">Piezas modulares · medidas a pedido</div></div>
-      <a class="tp-view" href="#taller" data-prompt="Panel decorativo geométrico para la pared" aria-label="Pídelo: decoración geométrica">Pídelo</a>
+      <a class="tp-view" href="#studio" data-prompt="Panel decorativo geométrico para la pared" aria-label="Pídelo: decoración geométrica">Pídelo</a>
       <a class="tp-credit" href="https://unsplash.com/photos/3IMCV7FUG7A" target="_blank" rel="noopener">Foto: Ken Okum / Unsplash</a>
     </article>
   <article class="prod tp-card tp-idea tp-photo" data-cat="figuras decoracion">
@@ -248,7 +248,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
       <div class="txt"><h3>Figuras y esculturas</h3>
         <p>Esculturas caladas, bustos y piezas de arte para repisas, escritorios y regalos.</p>
         <div class="meta">Escala a pedido · acabado mate</div></div>
-      <a class="tp-view" href="#taller" data-prompt="Escultura decorativa de calavera calada" aria-label="Pídelo: figuras y esculturas">Pídelo</a>
+      <a class="tp-view" href="#studio" data-prompt="Escultura decorativa de calavera calada" aria-label="Pídelo: figuras y esculturas">Pídelo</a>
       <a class="tp-credit" href="https://unsplash.com/photos/38XhGPwzI3U" target="_blank" rel="noopener">Foto: Quilia / Unsplash</a>
     </article>
   <article class="prod tp-card tp-idea tp-photo" data-cat="figuras regalos">
@@ -256,7 +256,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
       <div class="txt"><h3>Figuras de animales</h3>
         <p>Figuras de tu mascota o animales en estilo low-poly, en el color que quieras.</p>
         <div class="meta">De 5 a 20 cm · un color o varios</div></div>
-      <a class="tp-view" href="#taller" data-prompt="Figura low-poly de un conejo en negro" aria-label="Pídelo: figuras de animales">Pídelo</a>
+      <a class="tp-view" href="#studio" data-prompt="Figura low-poly de un conejo en negro" aria-label="Pídelo: figuras de animales">Pídelo</a>
       <a class="tp-credit" href="https://unsplash.com/photos/gJwaMow_bjA" target="_blank" rel="noopener">Foto: Mo Darasi / Unsplash</a>
     </article>
   <article class="prod tp-card tp-idea tp-photo" data-cat="hobby">
@@ -264,7 +264,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
       <div class="txt"><h3>Piezas mecánicas</h3>
         <p>Engranajes, turbinas, diferenciales y mecanismos que funcionan de verdad para tus proyectos.</p>
         <div class="meta">PETG o PLA+ · tolerancias ajustadas</div></div>
-      <a class="tp-view" href="#taller" data-prompt="Juego de engranajes y un diferencial para un proyecto de hobby" aria-label="Pídelo: piezas mecánicas">Pídelo</a>
+      <a class="tp-view" href="#studio" data-prompt="Juego de engranajes y un diferencial para un proyecto de hobby" aria-label="Pídelo: piezas mecánicas">Pídelo</a>
       <a class="tp-credit" href="https://unsplash.com/photos/ICfKwi-47tE" target="_blank" rel="noopener">Foto: Snapmaker 3D Printer / Unsplash</a>
     </article>
   <article class="prod tp-card tp-idea tp-photo" data-cat="hobby regalos">
@@ -272,17 +272,17 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
       <div class="txt"><h3>Hobby y miniaturas</h3>
         <p>Miniaturas, piezas para maquetas, juegos de mesa y proyectos de fin de semana.</p>
         <div class="meta">Detalle fino · varios colores</div></div>
-      <a class="tp-view" href="#taller" data-prompt="Miniaturas y piezas para un juego de mesa" aria-label="Pídelo: hobby y miniaturas">Pídelo</a>
+      <a class="tp-view" href="#studio" data-prompt="Miniaturas y piezas para un juego de mesa" aria-label="Pídelo: hobby y miniaturas">Pídelo</a>
       <a class="tp-credit" href="https://unsplash.com/photos/RNi-41epEh4" target="_blank" rel="noopener">Foto: Locanam 3D Printing / Unsplash</a>
     </article>
-  <a class="tp-create" href="#taller" data-cat="*" data-auth><b>Tu idea, aquí</b><span>Crea tu cuenta gratis, describe tu idea y guarda tus modelos 3D.</span><i>Crear mi cuenta</i></a>
+  <a class="tp-create" href="#studio" data-cat="*" data-auth><b>Tu idea, aquí</b><span>Crea tu cuenta gratis, describe tu idea y guarda tus modelos 3D.</span><i>Crear mi cuenta</i></a>
   </div>
 </section>
 
 <section id="como-funciona" data-view="inicio" aria-labelledby="how-title">
   <h2 id="how-title">Cómo funciona</h2>
   <div class="steps">
-    <div class="step"><div class="n">PASO 1</div><h3>Crea tu modelo</h3><p>Descríbelo en el Taller, sube la foto de un dibujo o trae tu archivo STL.</p></div>
+    <div class="step"><div class="n">PASO 1</div><h3>Crea tu modelo</h3><p>Descríbelo en hackgorithmic Studio, sube la foto de un dibujo o trae tu archivo STL.</p></div>
     <div class="step"><div class="n">PASO 2</div><h3>Pídelo impreso</h3><p>Elige envío o recogida y realiza tu pedido desde tu cuenta, sin correos.</p></div>
     <div class="step"><div class="n">PASO 3</div><h3>Aprueba y recíbelo</h3><p>Te confirmamos el total en Mis pedidos, lo pagas, lo fabricamos y sigues cada paso.</p></div>
   </div>
@@ -304,7 +304,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
       <div id="qdims" class="specs"></div>
       <div id="qwarn" class="warn" aria-live="polite"></div>
       <p class="note" id="qestimate-help">Interpretamos las medidas del STL en milímetros. El material y las horas son aproximaciones; el relleno no garantiza la resistencia de la pieza. La orientación y los soportes se revisan antes de confirmar el precio.</p>
-      <p class="note" style="margin-top:14px">¿No tienes archivo? Crea uno en el <a href="#taller">Taller</a> o <a href="#checkout" data-js data-order="idea">pide un diseño a medida</a>.</p>
+      <p class="note" style="margin-top:14px">¿No tienes archivo? Crea uno en <a href="#studio">Studio</a> o <a href="#checkout" data-js data-order="idea">pide un diseño a medida</a>.</p>
     </div>
     <div class="qcard">
       <span class="lbl">Estimado de impresión · USD</span>
@@ -319,7 +319,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 
 <section id="precios" data-view="planes">
   <h2>Suscripciones de creación de modelos 3D</h2>
-  <p class="lead" style="margin-top:4px">Planes de creación de modelos 3D de $8 o $24 USD al mes. Crear en el <a href="#taller">Taller</a> es gratis. La impresión física y el envío se cobran por separado.</p>
+  <p class="lead" style="margin-top:4px">Planes de creación de modelos 3D de $8 o $24 USD al mes. Crear en <a href="#studio">hackgorithmic Studio</a> es gratis. La impresión física y el envío se cobran por separado.</p>
   <p class="request-note" data-subscription-pending>El pago con tarjeta se activa muy pronto. Ya puedes reservar tu plan desde tu cuenta y te avisamos en Mis pedidos cómo activarlo.</p>
   <div class="plans plans-2">
     <div class="plan main">
@@ -356,7 +356,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 <section id="panel" data-view="panel" aria-label="Panel de la tienda"></section>
 
 </main>
-<footer><a class="shader-footer-brand" href="#inicio">hackgorithmic<span>.</span></a><nav class="tp-foot" aria-label="Pie"><a href="#taller">Taller</a><a href="#cotizar">Cotizar</a><a href="#planes">Planes</a><a href="#contacto">Contacto</a><a href="#pedidos" data-foot-orders>Mis pedidos</a><a href="privacidad.html">Privacidad</a></nav><span>© 2026 · Diseño y proyectos 3D · Florida</span><span>Una red de creación en desarrollo.</span></footer>
+<footer><a class="shader-footer-brand" href="#inicio" aria-label="hackgorithmic, inicio"><span class="hg-logo hg-logo-sm" aria-hidden="true">h<b>:</b></span><span class="hg-word" aria-hidden="true">hackgor<span class="hg-i">ı</span>thm<span class="hg-i">ı</span>c</span></a><nav class="tp-foot" aria-label="Pie"><a href="#studio">Studio</a><a href="#cotizar">Cotizar</a><a href="#planes">Planes</a><a href="#contacto">Contacto</a><a href="#pedidos" data-foot-orders>Mis pedidos</a><a href="privacidad.html">Privacidad</a></nav><span>© 2026 · Diseño y proyectos 3D · Florida</span><span>Una red de creación en desarrollo.</span></footer>
 </div>
 
 
@@ -365,10 +365,10 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 <script src="payments-config.js?v=2"></script>
 <script src="payments.js?v=3"></script>
 <script src="galeria.js?v=3"></script>
-<script src="vistas.js?v=4"></script>
+<script src="vistas.js?v=5"></script>
 <script src="accounts-config.js?v=10"></script>
-<script src="auth.js?v=13"></script>
-<script src="pedidos.js?v=1"></script>
+<script src="auth.js?v=14"></script>
+<script src="pedidos.js?v=2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous" defer></script>
 <script src="taller.js?v=17"></script>
 <script src="dibujo.js?v=5"></script>

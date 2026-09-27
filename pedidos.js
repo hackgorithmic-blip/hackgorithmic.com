@@ -15,7 +15,7 @@ const fmtT=d=>{try{return new Date(d).toLocaleString('es',{day:'numeric',month:'
 const uuid=()=>crypto.randomUUID?crypto.randomUUID():'10000000-1000-4000-8000-100000000000'.replace(/[018]/g,c=>(c^crypto.getRandomValues(new Uint8Array(1))[0]&15>>c/4).toString(16));
 const MAX_FILE=25*1024*1024;
 
-const KIND={taller:'Pieza del Taller',ia:'Modelo 3D con IA',idea:'Diseño a medida',dibujo:'Tu dibujo en 3D','dibujo-figura':'Figura 3D de tu dibujo',stl:'Impresión de tu archivo','plan-creador':'Suscripción mensual','plan-pro':'Suscripción mensual'};
+const KIND={taller:'Pieza de Studio',ia:'Modelo 3D con IA',idea:'Diseño a medida',dibujo:'Tu dibujo en 3D','dibujo-figura':'Figura 3D de tu dibujo',stl:'Impresión de tu archivo','plan-creador':'Suscripción mensual','plan-pro':'Suscripción mensual'};
 const ICON={cube:'<path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="m3 7 9 5 9-5M12 12v10"/>',pen:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13 7 4 4"/>',spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>',file:'<path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/>',star:'<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',lock:'<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',check:'<path d="m5 12.5 4.5 4.5L19 7.5"/>',box:'<path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/>'};
 const ICON_OF={taller:'cube',ia:'spark',idea:'spark',dibujo:'pen','dibujo-figura':'pen',stl:'file','plan-creador':'star','plan-pro':'star'};
 const svg=n=>'<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">'+(ICON[n]||ICON.cube)+'</svg>';
@@ -156,14 +156,14 @@ function summaryHTML(){
 function renderCheckout(){
   const el=$id('checkout');if(!el)return;const a=A();
   if(last){el.innerHTML=doneHTML(last);return;}
-  if(!item){el.innerHTML='<div class="co-empty">'+svg('box')+'<h1>Tu pedido está vacío</h1><p>Crea una pieza en el Taller, convierte tu dibujo en 3D o sube tu archivo STL y pulsa <b>Pedirlo impreso</b>.</p><div class="co-empty-a"><a class="btn" href="#taller">Ir al Taller</a><a class="btn alt" href="#cotizar">Subir mi STL</a></div></div>';return;}
+  if(!item){el.innerHTML='<div class="co-empty">'+svg('box')+'<h1>Tu pedido está vacío</h1><p>Crea una pieza en hackgorithmic Studio, convierte tu dibujo en 3D o sube tu archivo STL y pulsa <b>Pedirlo impreso</b>.</p><div class="co-empty-a"><a class="btn" href="#studio">Abrir Studio</a><a class="btn alt" href="#cotizar">Subir mi STL</a></div></div>';return;}
   if(!a||!a.user){el.innerHTML='<div class="co-empty">'+svg('lock')+'<h1>Entra para terminar tu pedido</h1><p>Tu pedido queda guardado en tu cuenta y lo sigues desde Mis pedidos.</p><div class="co-empty-a"><button class="btn" type="button" data-co-login>Entrar o crear cuenta</button></div></div>';
     el.querySelector('[data-co-login]').onclick=()=>a&&a.require(renderCheckout,'Entra o crea tu cuenta para completar tu pedido.');return;}
   const u=a.user,plan=!!item.plan,ps=payState(),stripe=plan&&ps.ready?ps.checkoutUrls[item.plan]:'';
   const opts=item.delivery.map((d,i)=>'<label class="co-opt"><input type="radio" name="delivery" value="'+d+'"'+(i===0?' checked':'')+'><span><b>'+DELIV[d][0]+'</b><small>'+DELIV[d][1]+'</small></span><em>'+DELIV[d][2]+'</em></label>').join('');
   const fileNote=item.file?'<p class="co-filenote">'+svg('file')+'<span>'+esc(item.fileLabel||(item.fileKind==='photo'?'Al realizar el pedido subimos la foto de tu dibujo para que el equipo la modele.':'Al realizar el pedido subimos tu modelo 3D para fabricarlo.'))+' Solo lo ve hackgorithmic.</span></p>':'';
   el.innerHTML='<div class="co">'+
-    '<div class="co-head"><a class="co-back" href="'+(plan?'#planes':'#taller')+'">← '+(plan?'Volver a planes':'Seguir creando')+'</a><ol class="co-steps" aria-label="Pasos"><li class="done">'+(plan?'Plan':'Diseño')+'</li><li class="on" aria-current="step">'+(plan?'Datos':'Entrega')+'</li><li>Confirmación</li></ol></div>'+
+    '<div class="co-head"><a class="co-back" href="'+(plan?'#planes':'#studio')+'">← '+(plan?'Volver a planes':'Seguir creando')+'</a><ol class="co-steps" aria-label="Pasos"><li class="done">'+(plan?'Plan':'Diseño')+'</li><li class="on" aria-current="step">'+(plan?'Datos':'Entrega')+'</li><li>Confirmación</li></ol></div>'+
     '<div class="co-grid">'+
     '<form class="co-main" novalidate>'+
       '<h1 class="co-title">'+(plan?'Activa tu plan':'Finalizar pedido')+'</h1>'+
@@ -179,7 +179,7 @@ function renderCheckout(){
           '<label>Código postal<input name="zip" autocomplete="postal-code" inputmode="numeric" maxlength="10"></label></div>'+
           '<p class="co-fine">Por ahora enviamos dentro de Estados Unidos.</p></div>':'')+
       '</fieldset>'+
-      '<fieldset class="co-box"><legend>'+(item.needNote?'Tu idea':'Detalles para el taller <small>(opcional)</small>')+'</legend>'+
+      '<fieldset class="co-box"><legend>'+(item.needNote?'Tu idea':'Detalles para el equipo <small>(opcional)</small>')+'</legend>'+
         '<label class="co-sr" for="coNote">'+(item.needNote?'Describe tu idea':'Detalles')+'</label><textarea id="coNote" name="note" rows="3" maxlength="1000" placeholder="'+(item.needNote?'Qué quieres crear, medidas, colores, para cuándo lo necesitas…':'Colores, tamaño, fecha en que lo necesitas…')+'"'+(item.needNote?' required':'')+'></textarea>'+fileNote+'</fieldset>'+
       '<fieldset class="co-box co-pay"><legend>Pago</legend><div class="co-paynote">'+svg('lock')+'<div>'+
         (stripe?'<b>Pago seguro con tarjeta</b><span>Te llevamos a la página de pago de Stripe para completar tu suscripción.</span>'
@@ -255,7 +255,7 @@ function doneHTML(o){
   return '<div class="co-done"><div class="co-check">'+svg('check')+'</div><p class="co-kicker">Pedido '+esc(num(o.id))+'</p>'+
     '<h1>'+(o.plan?'¡Listo! Reservamos tu plan':'¡Gracias! Recibimos tu pedido')+'</h1>'+
     '<p>'+(o.plan?'Te avisamos en <b>Mis pedidos</b> cómo activarlo.':'Revisamos <b>'+esc(o.title)+'</b> y te confirmamos el total con envío en <b>Mis pedidos</b>. No se cobra nada hasta que lo apruebes.')+'</p>'+
-    progress('awaiting_quote')+'<div class="co-done-a"><a class="btn" href="#pedidos">Ver mis pedidos</a><a class="btn alt" href="#taller">Seguir creando</a></div></div>';
+    progress('awaiting_quote')+'<div class="co-done-a"><a class="btn" href="#pedidos">Ver mis pedidos</a><a class="btn alt" href="#studio">Seguir creando</a></div></div>';
 }
 
 /* ---------- tarjetas de pedido (cliente y tienda) ---------- */
@@ -286,7 +286,7 @@ function card(o,own){
   const who=e=>e.actor==='tienda'?(own?'Tú · tienda':'hackgorithmic'):e.actor==='cliente'?(own?'Cliente':'Tú'):e.actor;
   const extra=own?(
       (c.file?'<button class="btn alt" type="button" data-file="'+esc(c.file)+'">'+svg('file')+'Descargar archivo</button>':'')+
-      (c.spec&&c.spec.tipo?'<button class="btn alt" type="button" data-open>Abrir en el Taller</button>':'')+
+      (c.spec&&c.spec.tipo?'<button class="btn alt" type="button" data-open>Abrir en Studio</button>':'')+
       (c.task?'<span class="od-meta">Modelo IA: '+esc(c.task)+'</span>':'')):'';
   return '<article class="od" data-id="'+esc(o.id)+'">'+
     '<header class="od-h"><div class="od-thumb">'+icon(k)+'</div><div class="od-t"><b>'+esc(it.title||'Pedido')+'</b><span>'+esc(num(o.id))+' · '+esc(fmt(o.created_at))+' · '+(it.quantity||1)+' u.</span></div><span class="od-pill s-'+esc(o.status)+'">'+esc((ST[o.status]||[o.status])[0])+'</span></header>'+
@@ -355,7 +355,7 @@ async function renderMine(){
   const box=el.querySelector('.od-list');let list;
   try{list=await api.mine();}catch(e){if(my===gen)box.innerHTML='<p class="od-empty bad">'+esc(human(e))+'</p>';return;}
   if(my!==gen)return;
-  if(!list.length){box.innerHTML='<div class="co-empty">'+svg('box')+'<h1>Aún no tienes pedidos</h1><p>Crea una pieza en el Taller, convierte tu dibujo en 3D o sube tu STL y pídela impresa.</p><div class="co-empty-a"><a class="btn" href="#taller">Ir al Taller</a></div></div>';return;}
+  if(!list.length){box.innerHTML='<div class="co-empty">'+svg('box')+'<h1>Aún no tienes pedidos</h1><p>Crea una pieza en hackgorithmic Studio, convierte tu dibujo en 3D o sube tu STL y pídela impresa.</p><div class="co-empty-a"><a class="btn" href="#studio">Abrir Studio</a></div></div>';return;}
   box.innerHTML=list.map(o=>card(o,false)).join('');bindCards(box,list,false,renderMine);
 }
 const TABS=[['nuevos','Por cotizar',['awaiting_quote']],['cobrar','Por cobrar',['awaiting_payment']],['curso','En curso',['paid','processing','shipped']],['cerrados','Cerrados',['completed','cancelled']],['todos','Todos',null]];

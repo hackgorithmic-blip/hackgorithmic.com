@@ -6,6 +6,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Privacidad · hackgorithmic</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%23141414'/%3E%3Ctext%20x='32'%20y='46'%20font-family='Arial%2CHelvetica%2Csans-serif'%20font-weight='900'%20font-size='40'%20text-anchor='middle'%20fill='%23f1f1ed'%3Eh%3Ctspan%20fill='%23cafa78'%3E:%3C/tspan%3E%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap">
 <style>
   :root { color-scheme: dark; }
@@ -15,21 +16,24 @@
   h1 { font-size: 34px; line-height: 1.15; margin: 18px 0 8px; color: #fff; }
   h2 { font-size: 19px; margin: 32px 0 6px; color: #fff; }
   p, li { color: #c9c9c3; }
-  .brand { font-weight: 800; font-size: 20px; text-decoration: none; color: #fff; }
-  .brand span { color: #cafa78; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; letter-spacing: -.5px; text-decoration: none; color: #fff; }
+  .hg-logo { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 11px; background: #161616; border: 1px solid rgba(202, 250, 120, .45); font: 800 22px/1 "Inter", Arial, sans-serif; letter-spacing: -1px; color: #f1f1ed; }
+  .hg-logo b { color: #cafa78; font-weight: 800; }
+  .hg-i { position: relative; }
+  .hg-i::after { content: ""; position: absolute; left: 50%; top: .1em; width: .19em; height: .19em; margin-left: -.095em; border-radius: 50%; background: #cafa78; }
   small { color: #8d8d87; }
 </style>
 </head>
 <body>
 <main>
-  <a class="brand" href="./">hackgorithmic<span>.</span></a>
+  <a class="brand" href="./" aria-label="hackgorithmic, inicio"><span class="hg-logo" aria-hidden="true">h<b>:</b></span><span aria-hidden="true">hackgor<span class="hg-i">ı</span>thm<span class="hg-i">ı</span>c</span></a>
   <h1>Privacidad</h1>
   <p><small>Última actualización: septiembre de 2026</small></p>
 
   <h2>Qué guardamos</h2>
   <ul>
     <li><b>Tu cuenta:</b> nombre y correo, para que puedas entrar y recuperar tu contraseña.</li>
-    <li><b>Tus modelos:</b> las piezas que creas en el Taller (texto, forma, colores) y las ideas que escribes.</li>
+    <li><b>Tus modelos:</b> las piezas que creas en hackgorithmic Studio (texto, forma, colores) y las ideas que escribes.</li>
     <li><b>Uso del generador con IA:</b> la descripción que escribes, la fecha y la dirección IP desde la que se pidió, para aplicar los límites diarios y evitar abusos.</li>
     <li><b>Pedidos:</b> lo que pides desde tu cuenta para fabricar y entregar tu pieza: nombre, teléfono si lo das, dirección si pides envío, notas, el estado del pedido y los mensajes con la tienda.</li>
     <li><b>Archivos del pedido:</b> el modelo 3D o el archivo STL que pides imprimir y, si pides una figura hecha a partir de tu dibujo, la foto de ese dibujo. Se guardan en un espacio privado: solo los ves tú y hackgorithmic.</li>

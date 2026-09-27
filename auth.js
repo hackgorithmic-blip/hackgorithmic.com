@@ -55,7 +55,7 @@ const cut=(s,n)=>{s=String(s??'');return s.length>n?s.slice(0,n-1)+'…':s;};
 const titleOf=s=>(TIPO[s.tipo]||'Modelo')+' · “'+cut(s.texto,80)+'”';
 /* Debe coincidir EXACTO con Authentication → URL Configuration (sin barra final en la raíz). */
 const redirect=()=>location.origin+(location.pathname==='/'?'':location.pathname);
-/* Ir al Taller siempre en modo "Pieza con texto" (en modo dibujo la caja de texto está oculta). */
+/* Ir a hackgorithmic Studio siempre en modo "Pieza con texto" (en modo dibujo la caja de texto está oculta). */
 const toTaller=()=>{const tt=document.querySelector('.tp-modes [data-mode="texto"]');if(tt&&tt.getAttribute('aria-selected')!=='true')tt.click();if(window.hgRoute)hgRoute('taller');else document.getElementById('taller')?.scrollIntoView();};
 /* Solo guardamos campos conocidos y cortos: el spec vuelve a la página al abrir el modelo. */
 function cleanSpec(s){
@@ -112,7 +112,7 @@ function open(view='signup',msg){
     shell('Cuentas no disponibles','<p class="hg-sub">Estamos ajustando el acceso a las cuentas. Vuelve a intentarlo en unos minutos o escríbenos a hackgorithmic@gmail.com.</p><form method="dialog"><button class="btn">Entendido</button></form>');
   }else if(view==='signup'){
     shell('Crea tu cuenta',lead+
-      '<p class="hg-sub">Guarda los modelos que creas en el Taller y descárgalos cuando quieras.</p>'+
+      '<p class="hg-sub">Guarda los modelos que creas en hackgorithmic Studio y descárgalos cuando quieras.</p>'+
       (ONLINE&&CFG.google?'<button type="button" class="btn alt hg-google">Continuar con Google</button><div class="hg-or"><span>o con tu correo</span></div>':'')+
       '<form class="hg-form" novalidate>'+field('hgName','Nombre','text','autocomplete="name" maxlength="60" required')+
       field('hgEmail','Correo','email','autocomplete="email" maxlength="120" required')+
@@ -137,12 +137,12 @@ function open(view='signup',msg){
       field('hgPass2','Repítela','password','autocomplete="new-password" minlength="8" maxlength="72" required')+
       '<button class="btn" type="submit">Guardar contraseña</button><p class="hg-status" role="status" aria-live="polite"></p></form>');
   }else if(view==='check'){
-    shell('Revisa tu correo','<p class="hg-sub">Te enviamos un enlace para confirmar tu cuenta. Ábrelo <b>en este mismo navegador</b> y vuelve a esta pestaña: tu idea sigue escrita en el Taller.</p><form method="dialog"><button class="btn">Entendido</button></form>');
+    shell('Revisa tu correo','<p class="hg-sub">Te enviamos un enlace para confirmar tu cuenta. Ábrelo <b>en este mismo navegador</b> y vuelve a esta pestaña: tu idea sigue escrita en Studio.</p><form method="dialog"><button class="btn">Entendido</button></form>');
   }else if(view==='models'){
     shell('Mi cuenta','<p class="hg-sub">Hola, '+esc(A.user.name||A.user.email)+'.</p>'+
       '<div class="hg-links"><a class="btn alt" href="#pedidos" data-go>Mis pedidos</a>'+(A.owner?'<a class="btn alt" href="#panel" data-go>Panel de la tienda</a>':'')+'</div>'+
-      '<h3 class="hg-h3">Mis modelos</h3><p class="hg-sub">Los modelos que has creado en el Taller.</p><ul class="hg-models"><li class="hg-empty">Cargando…</li></ul>'+
-      '<div class="hg-actions"><a class="btn" href="#taller" data-close>Crear un modelo nuevo</a><button type="button" class="btn alt hg-out">Cerrar sesión</button></div>'+
+      '<h3 class="hg-h3">Mis modelos</h3><p class="hg-sub">Los modelos que has creado en Studio.</p><ul class="hg-models"><li class="hg-empty">Cargando…</li></ul>'+
+      '<div class="hg-actions"><a class="btn" href="#studio" data-close>Crear un modelo nuevo</a><button type="button" class="btn alt hg-out">Cerrar sesión</button></div>'+
       (A.user.local?'<p class="hg-fine">Modo prueba: cuenta guardada en este navegador.</p>':''));
     renderModels();
   }
@@ -291,7 +291,7 @@ async function renderModels(){
   const ul=dlg.querySelector('.hg-models');if(!ul)return;
   let items;try{items=await listModels();}catch(e){ul.innerHTML='<li class="hg-empty">'+esc(human(e))+'</li>';return;}
   if(!dlg.querySelector('.hg-models'))return;
-  if(!items.length){ul.innerHTML='<li class="hg-empty">Aún no tienes modelos. Describe tu idea en el Taller y aparecerá aquí.</li>';return;}
+  if(!items.length){ul.innerHTML='<li class="hg-empty">Aún no tienes modelos. Describe tu idea en Studio y aparecerá aquí.</li>';return;}
   const fmt=d=>{try{return new Date(d).toLocaleDateString('es',{day:'numeric',month:'short',year:'numeric'});}catch(e){return '';}};
   ul.innerHTML=items.map(m=>'<li data-id="'+esc(m.id)+'"><div><b>'+esc(titleOf(m.spec))+'</b><span>'+esc([m.spec.base&&('base '+m.spec.base),m.spec.letras&&('letras '+m.spec.letras),fmt(m.created)].filter(Boolean).join(' · '))+'</span></div>'+
     '<button type="button" class="btn hg-open">Abrir</button><button type="button" class="hg-del" aria-label="Quitar '+esc(titleOf(m.spec))+'">Quitar</button></li>').join('');

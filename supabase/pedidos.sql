@@ -262,7 +262,7 @@ begin
     update public.stores set owner_id = v_owner, status = 'active' where id = v_store;
   end if;
   for r in select * from (values
-      ('taller',        'Pieza del Taller',             700),
+      ('taller',        'Pieza de Studio',              700),
       ('ia',            'Modelo 3D con IA impreso',     100),
       ('idea',          'Diseño a medida',              100),
       ('dibujo',        'Tu dibujo en 3D (relieve)',   1000),

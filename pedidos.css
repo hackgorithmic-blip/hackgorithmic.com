@@ -177,3 +177,15 @@ html:not([data-signed-in]) [data-nav="pedidos"], html:not([data-signed-in]) [dat
   .co-steps li:not(:last-child)::after { width: 12px; }
   .od-h { flex-wrap: wrap; }
 }
+
+/* ===== Logo "h:" — los dos puntos son los puntitos de las dos "i" de hackgorithmic ===== */
+.shader-site .hg-logo { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 40px; height: 40px; border-radius: 11px; background: #161616;
+  border: 1px solid rgba(202, 250, 120, .45); color: #f1f1ed; font: 800 23px/1 var(--display); letter-spacing: -1px; }
+.shader-site .hg-logo b { color: #cafa78; font-weight: 800; margin-left: 1px; }
+.shader-site .tp-top .shader-brand-mark.hg-logo { width: 40px; font-size: 23px; letter-spacing: -1px; }
+.shader-site .hg-logo-sm { width: 30px; height: 30px; border-radius: 8px; font-size: 17px; }
+.shader-site .shader-footer-brand { display: inline-flex; align-items: center; gap: 10px; }
+.hg-i { position: relative; }
+.hg-i::after { content: ""; position: absolute; left: 50%; top: .1em; width: .19em; height: .19em; margin-left: -.095em; border-radius: 50%; background: #cafa78; }
+.shader-site .shader-footer-brand .hg-word, .shader-site .shader-footer-brand .hg-word span { color: #e6e6df; }
+.shader-site .shader-footer-brand .hg-logo { color: #f1f1ed; }

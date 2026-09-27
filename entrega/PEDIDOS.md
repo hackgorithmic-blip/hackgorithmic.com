@@ -5,7 +5,7 @@ Todos los pedidos se hacen desde hackgorithmic.com con una cuenta. Ya no hay ped
 ## Cómo pide un cliente
 
 1. Crea algo y pulsa **Pedirlo impreso** (o **Pedir esta impresión** / **Elegir plan** / **Pedir un diseño a medida**):
-   - Taller: pieza con texto, modelo con IA o idea que modela el equipo.
+   - hackgorithmic Studio: pieza con texto, modelo con IA o idea que modela el equipo.
    - Tu dibujo en 3D: placa en relieve o figura completa.
    - Cotizar: su archivo STL.
    - Planes: Creador $8 o Pro $24.
@@ -28,7 +28,7 @@ Menú **Panel** (solo aparece para la cuenta dueña de la tienda):
 | Cerrados | Entregado o cancelado | — |
 
 - **Descargar archivo**: baja el STL o la foto del cliente (enlace de 5 minutos).
-- **Abrir en el Taller**: vuelve a generar la pieza con texto del cliente.
+- **Abrir en Studio**: vuelve a generar la pieza con texto del cliente.
 - **Enviar mensaje**: le escribe al cliente dentro de su pedido.
 - El cliente puede cancelar mientras no haya pagado.
 
