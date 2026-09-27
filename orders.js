@@ -26,13 +26,13 @@
   function summaryFallback(summary, message) {
     summary.focus();
     summary.select();
-    message.textContent = "Selecciona y copia el resumen, o descárgalo. Después envíalo por correo o pégalo en el chat con Filo.";
+    message.textContent = "Selecciona y copia el resumen, o descárgalo. Después envíalo por correo a hackgorithmic@gmail.com.";
   }
 
   async function copySummary(summary, message) {
     try {
       await navigator.clipboard.writeText(summary.value);
-      message.textContent = "Resumen copiado. Pégalo en un correo y envíalo, o en el chat con Filo.";
+      message.textContent = "Resumen copiado. Pégalo en un correo a hackgorithmic@gmail.com y envíalo.";
     } catch (_) {
       summaryFallback(summary, message);
     }
@@ -48,7 +48,7 @@
       anchor.download = filename;
       document.body.appendChild(anchor);
       anchor.click();
-      message.textContent = "Descarga preparada. Envíalo por correo o compártelo en el chat con Filo.";
+      message.textContent = "Descarga preparada. Adjúntala en un correo a hackgorithmic@gmail.com y envíalo.";
     } catch (_) {
       summaryFallback(summary, message);
     } finally {

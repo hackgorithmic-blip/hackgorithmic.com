@@ -56,15 +56,20 @@ function keychain(svg,name,f,base,letter,aro="izq"){
   }
   try{const b=g.getBBox(); const pad=14; svg.setAttribute("viewBox",[b.x-pad,b.y-pad,b.width+2*pad,b.height+2*pad].join(" ")); return b;}catch(e){return bb;}
 }
+/* Cantidad válida de llaveros: entero de 1 a 50 (lo mismo que acepta el pedido). */
+const cantidad=v=>Math.min(50,Math.max(1,Math.floor(+v)||1));
 function draw(){
+  const raw=+$("#kq").value, okQ=Number.isInteger(raw)&&raw>=1&&raw<=50, n=cantidad(raw);
+  $("#kprice").innerHTML=okQ?"Precio: <b>"+$$(precioLlaveros(n))+"</b>"+(n>1?" <small style='font:500 13px var(--body);color:var(--ink2)'>("+$$(precioLlaveros(n)/n)+" c/u)</small>":""):"Indica de 1 a 50 llaveros. Para más, escríbenos a hackgorithmic@gmail.com.";
+  if(typeof syncOrder==="function") syncOrder();
+  /* Si la vista del llavero está oculta, no se mide (getBBox daría 0): se redibuja al mostrarla. */
+  if(!$("#kc").getClientRects().length)return;
   const b=keychain($("#kc"),st.name,st.f,st.base,st.letter,st.aro);
+  if(!b||!b.width||!b.height)return;
   const hmm=20, wmm=Math.max(25,Math.round(b.width/b.height*hmm)); const tmm=4;
   const grams=Math.max(2,(wmm*hmm*tmm*0.45*1.24/1000)).toFixed(1);
   const mins=Math.round(12+wmm*0.35);
   $("#dims").textContent=wmm+" × "+hmm+" mm";
-  const n=Math.max(1,+$("#kq").value||1);
-  $("#kprice").innerHTML="Precio: <b>"+$$(precioLlaveros(n))+"</b>"+(n>1?" <small style='font:500 13px var(--body);color:var(--ink2)'>("+$$(precioLlaveros(n)/n)+" c/u)</small>":"");
-  if(typeof syncOrder==="function") syncOrder();
   $("#specs").innerHTML="<span><b>"+wmm+" × "+hmm+" × "+tmm+"</b> mm</span><span>≈ <b>"+grams+"</b> g PLA</span><span>≈ <b>"+mins+"</b> min</span><span><b>2</b> colores</span>";
 }
 $("#kq").addEventListener("input",draw);
@@ -83,8 +88,10 @@ function clearQuote(message="Selecciona un archivo para estimar"){
 }
 function parseSTL(buf){
   const dv=new DataView(buf); let tris=[];
-  const n=buf.byteLength>=84?dv.getUint32(80,true):0;
-  if(buf.byteLength===84+n*50){ for(let i=0;i<n;i++){const o=84+i*50+12;const v=[];for(let k=0;k<9;k++)v.push(dv.getFloat32(o+k*4,true));tris.push(v);} }
+  const n0=buf.byteLength>=84?dv.getUint32(80,true):0, fit=Math.max(0,Math.floor((buf.byteLength-84)/50));
+  const head=new TextDecoder().decode(buf.slice(0,Math.min(1024,buf.byteLength))), ascii=/^\s*solid/.test(head)&&/facet|vertex/.test(head);
+  const n=(n0>0&&n0<=fit)?n0:fit;
+  if(buf.byteLength>=134&&(buf.byteLength===84+n0*50||!ascii)){ for(let i=0;i<n;i++){const o=84+i*50+12;const v=[];for(let k=0;k<9;k++)v.push(dv.getFloat32(o+k*4,true));tris.push(v);} }
   else{ const t=new TextDecoder().decode(buf); const re=/vertex\s+([-\d.eE+]+)\s+([-\d.eE+]+)\s+([-\d.eE+]+)/g; let m,v=[];
     while((m=re.exec(t))){v.push(+m[1],+m[2],+m[3]); if(v.length===9){tris.push(v);v=[];}} if(v.length) throw new Error("STL incompleto"); }
   let vol=0,mn=[Infinity,Infinity,Infinity],mx=[-Infinity,-Infinity,-Infinity];
@@ -176,7 +183,7 @@ $("#qcopy").onclick=async()=>{
   catch(e){$("#qsummary").focus();$("#qsummary").select();$("#qmsg").textContent="Selecciona y copia el resumen manualmente. Envíalo con el STL adjunto a hackgorithmic@gmail.com.";}
 };
 function syncOrder(){
-  const n=Math.max(1,+$("#oq").value||1), sub=precioLlaveros(n);
+  const n=cantidad($("#oq").value), sub=precioLlaveros(n);
   const requiereEnvio=$("#od").value==="envio";
   $("#oaddrw").style.display=requiereEnvio?"":"none";
   $("#oa").required=requiereEnvio;
@@ -191,12 +198,17 @@ function syncOrder(){
 ["on","ost","oaro","oq","ob","ol","od","ocn","oct","oa"].forEach(id=>$("#"+id).addEventListener("input",syncOrder));
 $("#nm").addEventListener("input",e=>{st.name=e.target.value.trim()||"Tu nombre";draw();});
 document.querySelectorAll("#aros .chip").forEach(c=>c.onclick=()=>{st.aro=c.dataset.aro;document.querySelectorAll("#aros .chip").forEach(x=>x.setAttribute("aria-pressed",String(x===c)));draw();});
-document.querySelectorAll("#styles .chip").forEach(c=>c.onclick=()=>{st.f=c.dataset.f;document.querySelectorAll("#styles .chip").forEach(x=>x.setAttribute("aria-pressed",String(x===c)));draw();});
+document.querySelectorAll("#styles .chip").forEach(c=>c.onclick=()=>{st.f=c.dataset.f;document.querySelectorAll("#styles .chip").forEach(x=>x.setAttribute("aria-pressed",String(x===c)));draw();
+  /* la fuente del estilo puede tardar en cargar: se vuelve a medir cuando llega */
+  if(document.fonts&&document.fonts.load)document.fonts.load((st.f==="block"?"96px ":"118px ")+FONT[st.f]).then(()=>draw()).catch(()=>{});});
 swatches($("#base"),"base",["rosa","negro","cian","rojo","amarillo"]);
 swatches($("#letter"),"letter",["blanco","negro","rosa"]);
-$("#kpedir").addEventListener("click",()=>{ $("#on").value=st.name; $("#ost").value=st.f; $("#oaro").value=st.aro; $("#ob").value=st.base; $("#ol").value=st.letter; $("#oq").value=$("#kq").value; syncOrder(); });
-function all(){draw();syncOrder();keychain($("#kc2"),"Luna","round","negro","rosa");}
+$("#kpedir").addEventListener("click",()=>{ $("#on").value=$("#nm").value.trim(); $("#ost").value=st.f; $("#oaro").value=st.aro; $("#ob").value=st.base; $("#ol").value=st.letter; $("#oq").value=cantidad($("#kq").value); syncOrder(); });
+/* Dibuja lo que esté visible. vistas.js lo llama cada vez que cambia de sección. */
+function all(){const vis=el=>el&&el.getClientRects().length>0;draw();syncOrder();if(vis($("#kc2")))keychain($("#kc2"),"Luna","round","negro","rosa");}
+window.hgRedraw=all;
 all();
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(all);
+if(document.fonts&&document.fonts.addEventListener) document.fonts.addEventListener("loadingdone",all);
 /* Los formularios de planes y pedido se manejan con JavaScript: nunca navegan. */
 ['plan-request','ord'].forEach(id=>{const f=document.getElementById(id);if(f)f.addEventListener('submit',e=>e.preventDefault());});
