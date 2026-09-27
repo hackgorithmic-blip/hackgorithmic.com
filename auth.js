@@ -55,7 +55,7 @@ const cut=(s,n)=>{s=String(s??'');return s.length>n?s.slice(0,n-1)+'…':s;};
 const titleOf=s=>(TIPO[s.tipo]||'Modelo')+' · “'+cut(s.texto,80)+'”';
 /* Debe coincidir EXACTO con Authentication → URL Configuration (sin barra final en la raíz). */
 const redirect=()=>location.origin+(location.pathname==='/'?'':location.pathname);
-/* Ir a hackgorithmic Studio siempre en modo "Pieza con texto" (en modo dibujo la caja de texto está oculta). */
+/* Ir a hackgorithmic Studio siempre en modo "Describe tu idea" (en modo dibujo la caja de texto está oculta). */
 const toTaller=()=>{const tt=document.querySelector('.tp-modes [data-mode="texto"]');if(tt&&tt.getAttribute('aria-selected')!=='true')tt.click();if(window.hgRoute)hgRoute('taller');else document.getElementById('taller')?.scrollIntoView();};
 /* Solo guardamos campos conocidos y cortos: el spec vuelve a la página al abrir el modelo. */
 function cleanSpec(s){

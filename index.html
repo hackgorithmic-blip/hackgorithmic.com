@@ -11,6 +11,7 @@
 <meta property="og:description" content="Tu próxima idea. En otra dimensión. Diseño 3D y piezas por cotización.">
 <meta property="og:url" content="https://hackgorithmic.com/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%23141414'/%3E%3Ctext%20x='32'%20y='46'%20font-family='Arial%2CHelvetica%2Csans-serif'%20font-weight='900'%20font-size='40'%20text-anchor='middle'%20fill='%23f1f1ed'%3Eh%3Ctspan%20fill='%23cafa78'%3E:%3C/tspan%3E%3C/text%3E%3C/svg%3E">
+<script src="tema.js?v=1"></script>
 <title>hackgorithmic 3D</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600;700;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Pacifico&family=Baloo+2:wght@800&family=Bungee&display=swap">
@@ -153,6 +154,7 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 <link rel="stylesheet" href="./shader-site.css?v=2">
 <link rel="stylesheet" href="./tripo-theme.css?v=19">
 <link rel="stylesheet" href="./pedidos.css?v=3">
+<link rel="stylesheet" href="./estilo.css?v=5">
 </head>
 <body class="shader-site">
 <a class="shader-skip" href="#inicio">Saltar al contenido</a>
@@ -163,13 +165,21 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 <header class="top tp-top">
   <a class="shader-brand" href="#inicio" aria-label="hackgorithmic, inicio"><span class="shader-brand-mark hg-logo" aria-hidden="true">h<b>:</b></span><span class="hg-word" aria-hidden="true">hackgor<span class="hg-i">ı</span>thm<span class="hg-i">ı</span>c<small>3D STUDIO</small></span></a>
   <a class="tp-workspace" href="#studio" data-auth>Abrir Studio <span aria-hidden="true">→</span></a>
-  <nav class="shader-nav" aria-label="Principal"><a href="#inicio" data-nav="inicio">Inicio</a><a href="#studio" data-nav="taller">Studio</a><a href="#cotizar" data-nav="cotizar">Cotizar</a><a href="#planes" data-nav="planes">Planes</a><a href="#pedidos" data-nav="pedidos">Mis pedidos</a><a href="#panel" data-nav="panel">Panel</a></nav>
+  <nav class="shader-nav" aria-label="Principal"><a href="#inicio" data-nav="inicio">Inicio</a><a href="#studio" data-nav="taller">Studio</a><a href="#cotizar" data-nav="cotizar">Imprimir</a><a href="#planes" data-nav="planes">Planes</a><a href="#pedidos" data-nav="pedidos">Mis pedidos</a><a href="#panel" data-nav="panel">Panel</a></nav>
+  <button class="hg-theme" type="button" aria-label="Cambiar tema"><svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
   <a class="btn shader-header-cta" href="#contacto">Hablemos <span aria-hidden="true">↗</span></a>
+  <form class="hg-search" id="hsearch" role="search" autocomplete="off">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <label class="co-sr" for="hq">Describe lo que quieres en 3D</label>
+    <input id="hq" type="search" maxlength="400" enterkeyhint="go" placeholder="Describe lo que quieres en 3D: una maceta, un dragón, un letrero…">
+    <button class="hg-search-draw" type="button" data-mode-go="dibujo" aria-label="Subir la foto de un dibujo">✏️ <span>Mi dibujo</span></button>
+    <button class="btn hg-search-go" type="submit">Generar <span aria-hidden="true">→</span></button>
+  </form>
 </header>
 
 <main id="inicio" tabindex="-1">
-<section class="tp-hero" data-view="inicio taller" aria-labelledby="hero-title">
-  <div class="tp-ws-head"><div><p class="tp-ws-kicker">hackgorithmic Studio</p><h2 class="tp-ws-title">Aquí nace tu modelo</h2><p class="tp-ws-sub">Describe una pieza o sube tu dibujo. Gíralo, cambia colores y descárgalo o pídelo impreso. Todo queda en <b>Mis modelos</b>.</p></div><a class="btn alt tp-ws-back" href="#inicio">← Inicio</a></div>
+<section class="tp-hero" data-view="taller" aria-labelledby="hero-title">
+  <div class="tp-ws-head"><div><p class="tp-ws-kicker">hackgorithmic Studio</p><h2 class="tp-ws-title">Aquí nace tu modelo</h2><p class="tp-ws-sub">Describe tu idea o sube la foto de tu dibujo y te armamos el modelo 3D. Descárgalo o pídelo impreso. Todo queda en <b>Mis modelos</b>.</p></div><a class="btn alt tp-ws-back" href="#inicio">← Inicio</a></div>
   <div class="tp-hero-bg" data-shader-stage data-shader-theme="lime" aria-hidden="true"><canvas data-shader-scene></canvas></div>
   <h1 id="hero-title">¿Qué quieres llevar a 3D?</h1>
   <p class="tp-sub">Escribe tu pieza o sube la foto de un dibujo, y te armamos el modelo. Lo descargas o te lo imprimimos.</p>
@@ -177,22 +187,49 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
     <div id="tlog" aria-live="polite"></div>
     <form id="tform" autocomplete="off">
       <div class="tp-modes" role="tablist" aria-label="Qué quieres crear">
-        <button type="button" role="tab" data-mode="texto" aria-selected="true">Pieza con texto</button>
+        <button type="button" role="tab" data-mode="texto" aria-selected="true">Describe tu idea</button>
         <button type="button" role="tab" data-mode="dibujo" aria-selected="false">✏️ Tu dibujo en 3D</button>
       </div>
       <div class="tp-draw" hidden>
         <label class="tp-drop" for="dfile"><input id="dfile" type="file" accept="image/*"><b>Sube la foto de tu dibujo</b><span>Papel y lápiz, con buena luz y de frente. Se procesa en tu dispositivo: la foto no se sube a internet.</span></label>
       </div>
-      <textarea id="tin" rows="3" maxlength="400" placeholder="Describe tu idea: un dragón pequeño, una maceta con hojas, un letrero que diga “Casa López”…" aria-label="Describe tu idea"></textarea>
+      <textarea id="tin" rows="3" maxlength="400" placeholder="Describe tu idea: un dragón pequeño, una maceta con hojas, una lámpara ondulada…" aria-label="Describe tu idea"></textarea>
       <div class="tp-bar"><span class="tp-hint"><span class="tp-dot" aria-hidden="true"></span>Gratis · se guarda en tu cuenta</span><button class="btn tp-generate" type="submit">Generar <span aria-hidden="true">→</span></button></div>
     </form>
   </div>
   <div class="tp-try"><span>Prueba:</span><div id="tchips"></div></div>
-  <a class="tp-promo" href="#studio" data-js data-mode-go="dibujo"><span class="tp-promo-tag">Nuevo</span><span><b>Tu dibujo en 3D</b> · sube la foto de un dibujo en papel y lo convertimos en una pieza que puedes imprimir</span><span class="tp-promo-cta">Probar <span aria-hidden="true">→</span></span></a>
 </section>
 
-<section class="tp-gallery" id="productos" data-view="inicio" aria-labelledby="gallery-title">
-  <h2 id="gallery-title">Lo que podemos hacer</h2>
+<section class="hg-intro" data-view="inicio" aria-labelledby="home-title">
+  <h1 id="home-title">Crea, imprime y recibe tus piezas 3D</h1>
+  <p>Describe tu idea, sube la foto de un dibujo o trae tu archivo. Lo modelamos, lo imprimimos en Florida y lo sigues desde tu cuenta.</p>
+</section>
+
+<section class="hg-doors" data-view="inicio" aria-label="Qué puedes hacer">
+  <a class="hg-door d-studio" href="#studio">
+    <div class="hg-door-pics"><img src="img/ideas/maceta.jpg" alt="" width="800" height="1000" style="object-position:50% 82%"><img src="img/ideas/lampara.jpg" alt="" width="666" height="1000"><img src="img/ideas/conejo.jpg" alt="" width="1000" height="563"></div>
+    <div class="hg-door-body"><span class="hg-door-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="m3 7 9 5 9-5M12 12v10"/></svg></span><span class="hg-door-go" aria-hidden="true">›</span><h2>hackgorithmic Studio</h2><p>Describe tu idea con palabras y te armamos el modelo 3D. Gratis con tu cuenta.</p></div>
+  </a>
+  <a class="hg-door d-dibujo" href="#studio" data-js data-mode-go="dibujo">
+    <div class="hg-door-pics art"><svg viewBox="0 0 320 210" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="320" height="210" fill="#fff1d6"/>
+          <g transform="rotate(-6 92 108)"><rect x="34" y="34" width="118" height="150" rx="6" fill="#fff" stroke="#f3dcb4" stroke-width="2"/>
+            <path d="M93 72c22 0 36 16 36 36s-14 36-36 36-36-16-36-36 14-36 36-36z M80 100v4 M106 100v4 M78 120c8 10 22 10 30 0" fill="none" stroke="#2b2b2b" stroke-width="3.2" stroke-linecap="round"/></g>
+          <path d="M168 105h30m-9-9 9 9-9 9" fill="none" stroke="#e0761f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="214" y="48" width="84" height="116" rx="12" fill="#d9761c"/><rect x="210" y="42" width="84" height="116" rx="12" fill="#f7a531"/>
+          <path d="M252 72c20 0 32 14 32 32s-12 32-32 32-32-14-32-32 12-32 32-32z M240 97v4 M264 97v4 M239 114c7 9 19 9 26 0" fill="none" stroke="#b4530f" stroke-width="7" stroke-linecap="round" transform="translate(2 3)"/>
+          <path d="M252 72c20 0 32 14 32 32s-12 32-32 32-32-14-32-32 12-32 32-32z M240 97v4 M264 97v4 M239 114c7 9 19 9 26 0" fill="none" stroke="#fff4ee" stroke-width="7" stroke-linecap="round"/>
+        </svg></div>
+    <div class="hg-door-body"><span class="hg-door-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13 7 4 4"/></svg></span><span class="hg-door-go" aria-hidden="true">›</span><h2>Tu dibujo en 3D</h2><p>Sube la foto de un dibujo en papel y lo convertimos en una pieza que puedes imprimir.</p></div>
+  </a>
+  <a class="hg-door d-print" href="#cotizar">
+    <div class="hg-door-pics"><img src="img/ideas/engranajes.jpg" alt="" width="1000" height="562"><img src="img/ideas/hobby.jpg" alt="" width="1000" height="562"><img src="img/ideas/geometrica.jpg" alt="" width="1000" height="667"></div>
+    <div class="hg-door-body"><span class="hg-door-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg></span><span class="hg-door-go" aria-hidden="true">›</span><h2>Imprime tu archivo</h2><p>Sube tu STL, mira el precio al instante y recíbelo en casa o recógelo en Florida.</p></div>
+  </a>
+</section>
+
+<section class="hg-shelf" id="productos" data-view="inicio" aria-labelledby="gallery-title">
+  <div class="hg-shelf-head"><h2 id="gallery-title">Lo que podemos hacer</h2><div class="hg-arrows"><button type="button" data-dir="-1" aria-label="Ver anteriores">‹</button><button type="button" data-dir="1" aria-label="Ver siguientes">›</button></div></div>
   <div class="tp-filters" role="group" aria-label="Filtrar galería">
     <button type="button" data-filter="all" aria-pressed="true">Todo</button>
     <button type="button" data-filter="decoracion" aria-pressed="false">Decoración</button>
@@ -200,83 +237,62 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
     <button type="button" data-filter="hobby" aria-pressed="false">Hobby y mecánica</button>
     <button type="button" data-filter="regalos" aria-pressed="false">Regalos</button>
   </div>
+  <div class="hg-row" aria-label="Ideas de piezas">
+    <article class="hg-card" data-cat="decoracion regalos">
+      <img style="object-position:50% 82%" src="img/ideas/maceta.jpg" alt="Maceta amarilla impresa en 3D con forma de cara y una planta" width="800" height="1000" loading="lazy" decoding="async">
+      <span class="hg-card-cat">Decoración</span>
+      <a class="hg-card-go" href="#studio" data-prompt="Maceta geométrica con plato para una planta pequeña" aria-label="Pídelo: macetas y tiestos">Pídelo</a>
+      <div class="hg-card-txt"><h3>Macetas y tiestos</h3><p>Macetas con carácter para tus plantas: geométricas, con caras divertidas o del color de tu sala. Con drenaje y plato.</p><div class="hg-card-meta"><span>PLA o PETG · de 8 a 25 cm</span><a href="https://unsplash.com/photos/7Ax5meAjpBo" target="_blank" rel="noopener">Foto: Vertex Designs / Unsplash</a></div></div>
+    </article>
+    <article class="hg-card" data-cat="decoracion regalos">
+      <img src="img/ideas/jarron.jpg" alt="Jarrón facetado impreso en 3D con tulipanes blancos" width="666" height="1000" loading="lazy" decoding="async">
+      <span class="hg-card-cat">Decoración</span>
+      <a class="hg-card-go" href="#studio" data-prompt="Jarrón decorativo en espiral de 20 cm" aria-label="Pídelo: jarrones decorativos">Pídelo</a>
+      <div class="hg-card-txt"><h3>Jarrones decorativos</h3><p>Jarrones en espiral o facetados para flores naturales o secas. Una pieza única para tu mesa.</p><div class="hg-card-meta"><span>Hasta 25 cm · colores a elegir</span><a href="https://unsplash.com/photos/lDQdKDwdx0M" target="_blank" rel="noopener">Foto: Christine Tan / Unsplash</a></div></div>
+    </article>
+    <article class="hg-card" data-cat="decoracion">
+      <img src="img/ideas/lampara.jpg" alt="Lámpara decorativa impresa en 3D encendida en un cuarto oscuro" width="666" height="1000" loading="lazy" decoding="async">
+      <span class="hg-card-cat">Decoración</span>
+      <a class="hg-card-go" href="#studio" data-prompt="Lámpara de mesa con pantalla ondulada" aria-label="Pídelo: lámparas de diseño">Pídelo</a>
+      <div class="hg-card-txt"><h3>Lámparas de diseño</h3><p>Pantallas que proyectan texturas al encenderse. Con base y luz LED cálida.</p><div class="hg-card-meta"><span>Pantalla + base · luz LED</span><a href="https://unsplash.com/photos/pgegshOgpvA" target="_blank" rel="noopener">Foto: Alexey Demidov / Unsplash</a></div></div>
+    </article>
+    <article class="hg-card" data-cat="decoracion">
+      <img src="img/ideas/geometrica.jpg" alt="Pieza decorativa geométrica calada impresa en 3D" width="1000" height="667" loading="lazy" decoding="async">
+      <span class="hg-card-cat">Decoración</span>
+      <a class="hg-card-go" href="#studio" data-prompt="Panel decorativo geométrico para la pared" aria-label="Pídelo: decoración geométrica">Pídelo</a>
+      <div class="hg-card-txt"><h3>Decoración geométrica</h3><p>Pantallas, paneles y piezas de pared con patrones que cambian con la luz.</p><div class="hg-card-meta"><span>Piezas modulares · medidas a pedido</span><a href="https://unsplash.com/photos/3IMCV7FUG7A" target="_blank" rel="noopener">Foto: Ken Okum / Unsplash</a></div></div>
+    </article>
+    <article class="hg-card" data-cat="figuras decoracion">
+      <img src="img/ideas/calavera.jpg" alt="Escultura de calavera calada impresa en 3D en color blanco" width="1000" height="667" loading="lazy" decoding="async">
+      <span class="hg-card-cat">Figuras</span>
+      <a class="hg-card-go" href="#studio" data-prompt="Escultura decorativa de calavera calada" aria-label="Pídelo: figuras y esculturas">Pídelo</a>
+      <div class="hg-card-txt"><h3>Figuras y esculturas</h3><p>Esculturas caladas, bustos y piezas de arte para repisas, escritorios y regalos.</p><div class="hg-card-meta"><span>Escala a pedido · acabado mate</span><a href="https://unsplash.com/photos/38XhGPwzI3U" target="_blank" rel="noopener">Foto: Quilia / Unsplash</a></div></div>
+    </article>
+    <article class="hg-card" data-cat="figuras regalos">
+      <img src="img/ideas/conejo.jpg" alt="Figura de conejo negra impresa en 3D sobre una ventana" width="1000" height="563" loading="lazy" decoding="async">
+      <span class="hg-card-cat">Figuras</span>
+      <a class="hg-card-go" href="#studio" data-prompt="Figura low-poly de un conejo en negro" aria-label="Pídelo: figuras de animales">Pídelo</a>
+      <div class="hg-card-txt"><h3>Figuras de animales</h3><p>Figuras de tu mascota o animales en estilo low-poly, en el color que quieras.</p><div class="hg-card-meta"><span>De 5 a 20 cm · un color o varios</span><a href="https://unsplash.com/photos/gJwaMow_bjA" target="_blank" rel="noopener">Foto: Mo Darasi / Unsplash</a></div></div>
+    </article>
+    <article class="hg-card" data-cat="hobby">
+      <img src="img/ideas/engranajes.jpg" alt="Engranajes, turbina y diferencial impresos en 3D" width="1000" height="562" loading="lazy" decoding="async">
+      <span class="hg-card-cat">Hobby</span>
+      <a class="hg-card-go" href="#studio" data-prompt="Juego de engranajes y un diferencial para un proyecto de hobby" aria-label="Pídelo: piezas mecánicas">Pídelo</a>
+      <div class="hg-card-txt"><h3>Piezas mecánicas</h3><p>Engranajes, turbinas, diferenciales y mecanismos que funcionan de verdad para tus proyectos.</p><div class="hg-card-meta"><span>PETG o PLA+ · tolerancias ajustadas</span><a href="https://unsplash.com/photos/ICfKwi-47tE" target="_blank" rel="noopener">Foto: Snapmaker 3D Printer / Unsplash</a></div></div>
+    </article>
+    <article class="hg-card" data-cat="hobby regalos">
+      <img src="img/ideas/hobby.jpg" alt="Mesa con piezas y figuras de colores impresas en 3D" width="1000" height="562" loading="lazy" decoding="async">
+      <span class="hg-card-cat">Hobby</span>
+      <a class="hg-card-go" href="#studio" data-prompt="Miniaturas y piezas para un juego de mesa" aria-label="Pídelo: hobby y miniaturas">Pídelo</a>
+      <div class="hg-card-txt"><h3>Hobby y miniaturas</h3><p>Miniaturas, piezas para maquetas, juegos de mesa y proyectos de fin de semana.</p><div class="hg-card-meta"><span>Detalle fino · varios colores</span><a href="https://unsplash.com/photos/RNi-41epEh4" target="_blank" rel="noopener">Foto: Locanam 3D Printing / Unsplash</a></div></div>
+    </article>
+    <a class="hg-card new" href="#studio" data-cat="*" data-auth><b>Tu idea, aquí</b><span>Crea tu cuenta gratis, describe tu idea y guarda tus modelos 3D.</span><i>Crear mi cuenta</i></a>
+  </div>
   <p class="tp-gallery-note">Piezas que podemos fabricar para tu casa y tus hobbies. Pulsa <b>Pídelo</b>, lo preparamos en Studio y lo pides impreso desde tu cuenta; te confirmamos precio y plazo antes de cobrar. Las fotos son de referencia.</p>
-  <div class="tp-grid">
-  <article class="tp-feature" data-cat="featured">
-  <div class="shader-frame" data-shader-stage data-shader-theme="lime">
-    <div class="shader-stage">
-      <canvas data-shader-scene aria-hidden="true"></canvas>
-      <div class="shader-scene-copy" aria-hidden="true"><span>OFICIAL · IDEAS EN MOVIMIENTO</span><strong>Sin límites<br>para imaginar.</strong></div>
-    </div>
-    <div class="shader-controls"><div class="shader-theme-group" role="group" aria-label="Paleta del efecto"><button type="button" data-shader-theme="lime" aria-pressed="true"><span class="shader-swatch lime" aria-hidden="true"></span>Lima</button><button type="button" data-shader-theme="pearl" aria-pressed="false"><span class="shader-swatch pearl" aria-hidden="true"></span>Perla</button><button type="button" data-shader-theme="ember" aria-pressed="false"><span class="shader-swatch ember" aria-hidden="true"></span>Cobre</button></div><button class="shader-pause" type="button" data-shader-pause aria-pressed="false">Pausar movimiento</button></div>
-  </div>
-  </article>
-  <article class="prod tp-card tp-idea tp-photo" data-cat="decoracion regalos">
-      <div class="img"><img style="object-position:50% 82%" src="img/ideas/maceta.jpg" alt="Maceta amarilla impresa en 3D con forma de cara y una planta" width="800" height="1000" loading="lazy" decoding="async"></div>
-      <div class="txt"><h3>Macetas y tiestos</h3>
-        <p>Macetas con carácter para tus plantas: geométricas, con caras divertidas o del color de tu sala. Con drenaje y plato.</p>
-        <div class="meta">PLA o PETG · de 8 a 25 cm</div></div>
-      <a class="tp-view" href="#studio" data-prompt="Maceta geométrica con plato para una planta pequeña" aria-label="Pídelo: macetas y tiestos">Pídelo</a>
-      <a class="tp-credit" href="https://unsplash.com/photos/7Ax5meAjpBo" target="_blank" rel="noopener">Foto: Vertex Designs / Unsplash</a>
-    </article>
-  <article class="prod tp-card tp-idea tp-photo" data-cat="decoracion regalos">
-      <div class="img"><img src="img/ideas/jarron.jpg" alt="Jarrón facetado impreso en 3D con tulipanes blancos" width="666" height="1000" loading="lazy" decoding="async"></div>
-      <div class="txt"><h3>Jarrones decorativos</h3>
-        <p>Jarrones en espiral o facetados para flores naturales o secas. Una pieza única para tu mesa.</p>
-        <div class="meta">Hasta 25 cm · colores a elegir</div></div>
-      <a class="tp-view" href="#studio" data-prompt="Jarrón decorativo en espiral de 20 cm" aria-label="Pídelo: jarrones decorativos">Pídelo</a>
-      <a class="tp-credit" href="https://unsplash.com/photos/lDQdKDwdx0M" target="_blank" rel="noopener">Foto: Christine Tan / Unsplash</a>
-    </article>
-  <article class="prod tp-card tp-idea tp-photo" data-cat="decoracion">
-      <div class="img"><img src="img/ideas/lampara.jpg" alt="Lámpara decorativa impresa en 3D encendida en un cuarto oscuro" width="666" height="1000" loading="lazy" decoding="async"></div>
-      <div class="txt"><h3>Lámparas de diseño</h3>
-        <p>Pantallas que proyectan texturas al encenderse. Con base y luz LED cálida.</p>
-        <div class="meta">Pantalla + base · luz LED</div></div>
-      <a class="tp-view" href="#studio" data-prompt="Lámpara de mesa con pantalla ondulada" aria-label="Pídelo: lámparas de diseño">Pídelo</a>
-      <a class="tp-credit" href="https://unsplash.com/photos/pgegshOgpvA" target="_blank" rel="noopener">Foto: Alexey Demidov / Unsplash</a>
-    </article>
-  <article class="prod tp-card tp-idea tp-photo" data-cat="decoracion">
-      <div class="img"><img src="img/ideas/geometrica.jpg" alt="Pieza decorativa geométrica calada impresa en 3D" width="1000" height="667" loading="lazy" decoding="async"></div>
-      <div class="txt"><h3>Decoración geométrica</h3>
-        <p>Pantallas, paneles y piezas de pared con patrones que cambian con la luz.</p>
-        <div class="meta">Piezas modulares · medidas a pedido</div></div>
-      <a class="tp-view" href="#studio" data-prompt="Panel decorativo geométrico para la pared" aria-label="Pídelo: decoración geométrica">Pídelo</a>
-      <a class="tp-credit" href="https://unsplash.com/photos/3IMCV7FUG7A" target="_blank" rel="noopener">Foto: Ken Okum / Unsplash</a>
-    </article>
-  <article class="prod tp-card tp-idea tp-photo" data-cat="figuras decoracion">
-      <div class="img"><img src="img/ideas/calavera.jpg" alt="Escultura de calavera calada impresa en 3D en color blanco" width="1000" height="667" loading="lazy" decoding="async"></div>
-      <div class="txt"><h3>Figuras y esculturas</h3>
-        <p>Esculturas caladas, bustos y piezas de arte para repisas, escritorios y regalos.</p>
-        <div class="meta">Escala a pedido · acabado mate</div></div>
-      <a class="tp-view" href="#studio" data-prompt="Escultura decorativa de calavera calada" aria-label="Pídelo: figuras y esculturas">Pídelo</a>
-      <a class="tp-credit" href="https://unsplash.com/photos/38XhGPwzI3U" target="_blank" rel="noopener">Foto: Quilia / Unsplash</a>
-    </article>
-  <article class="prod tp-card tp-idea tp-photo" data-cat="figuras regalos">
-      <div class="img"><img src="img/ideas/conejo.jpg" alt="Figura de conejo negra impresa en 3D sobre una ventana" width="1000" height="563" loading="lazy" decoding="async"></div>
-      <div class="txt"><h3>Figuras de animales</h3>
-        <p>Figuras de tu mascota o animales en estilo low-poly, en el color que quieras.</p>
-        <div class="meta">De 5 a 20 cm · un color o varios</div></div>
-      <a class="tp-view" href="#studio" data-prompt="Figura low-poly de un conejo en negro" aria-label="Pídelo: figuras de animales">Pídelo</a>
-      <a class="tp-credit" href="https://unsplash.com/photos/gJwaMow_bjA" target="_blank" rel="noopener">Foto: Mo Darasi / Unsplash</a>
-    </article>
-  <article class="prod tp-card tp-idea tp-photo" data-cat="hobby">
-      <div class="img"><img src="img/ideas/engranajes.jpg" alt="Engranajes, turbina y diferencial impresos en 3D" width="1000" height="562" loading="lazy" decoding="async"></div>
-      <div class="txt"><h3>Piezas mecánicas</h3>
-        <p>Engranajes, turbinas, diferenciales y mecanismos que funcionan de verdad para tus proyectos.</p>
-        <div class="meta">PETG o PLA+ · tolerancias ajustadas</div></div>
-      <a class="tp-view" href="#studio" data-prompt="Juego de engranajes y un diferencial para un proyecto de hobby" aria-label="Pídelo: piezas mecánicas">Pídelo</a>
-      <a class="tp-credit" href="https://unsplash.com/photos/ICfKwi-47tE" target="_blank" rel="noopener">Foto: Snapmaker 3D Printer / Unsplash</a>
-    </article>
-  <article class="prod tp-card tp-idea tp-photo" data-cat="hobby regalos">
-      <div class="img"><img src="img/ideas/hobby.jpg" alt="Mesa con piezas y figuras de colores impresas en 3D" width="1000" height="562" loading="lazy" decoding="async"></div>
-      <div class="txt"><h3>Hobby y miniaturas</h3>
-        <p>Miniaturas, piezas para maquetas, juegos de mesa y proyectos de fin de semana.</p>
-        <div class="meta">Detalle fino · varios colores</div></div>
-      <a class="tp-view" href="#studio" data-prompt="Miniaturas y piezas para un juego de mesa" aria-label="Pídelo: hobby y miniaturas">Pídelo</a>
-      <a class="tp-credit" href="https://unsplash.com/photos/RNi-41epEh4" target="_blank" rel="noopener">Foto: Locanam 3D Printing / Unsplash</a>
-    </article>
-  <a class="tp-create" href="#studio" data-cat="*" data-auth><b>Tu idea, aquí</b><span>Crea tu cuenta gratis, describe tu idea y guarda tus modelos 3D.</span><i>Crear mi cuenta</i></a>
-  </div>
+</section>
+
+<section class="hg-band" data-view="inicio" aria-label="Planes">
+  <div class="hg-band-in"><div><b>Crea sin límites desde $8 al mes</b><span>Archivos sin marca, descargas ilimitadas y, con Pro, uso comercial y prioridad.</span></div><a class="btn" href="#planes">Ver planes <span aria-hidden="true">→</span></a></div>
 </section>
 
 <section id="como-funciona" data-view="inicio" aria-labelledby="how-title">
@@ -289,8 +305,8 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 </section>
 
 <section id="cotizar" data-view="cotizar">
-  <h2>Estima el costo de tu impresión</h2>
-  <p class="lead" style="margin-top:4px">Selecciona un archivo STL y elige material y cantidad para obtener un precio aproximado de impresión. Revisaremos el modelo y la fabricación antes de confirmar el precio final. El envío se calcula aparte.</p>
+  <h2>Imprime tu archivo</h2>
+  <p class="lead" style="margin-top:4px">Sube tu archivo STL, elige material, relleno, colores y cantidad, y mira el precio al instante. El envío se suma en el checkout según el peso; recoger en Florida es gratis.</p>
   <div class="quote">
     <div class="qcard">
       <label class="drop" id="drop"><input id="stl" type="file" accept=".stl" aria-describedby="qfile-help"><b>Selecciona tu archivo .STL</b><br><span id="fname">o arrástralo aquí</span></label>
@@ -303,14 +319,14 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
       </div>
       <div id="qdims" class="specs"></div>
       <div id="qwarn" class="warn" aria-live="polite"></div>
-      <p class="note" id="qestimate-help">Interpretamos las medidas del STL en milímetros. El material y las horas son aproximaciones; el relleno no garantiza la resistencia de la pieza. La orientación y los soportes se revisan antes de confirmar el precio.</p>
+      <p class="note" id="qestimate-help">Leemos las medidas del STL en milímetros. El precio sale del volumen de tu pieza, el material, el relleno y los colores. El relleno no garantiza la resistencia de la pieza.</p>
       <p class="note" style="margin-top:14px">¿No tienes archivo? Crea uno en <a href="#studio">Studio</a> o <a href="#checkout" data-js data-order="idea">pide un diseño a medida</a>.</p>
     </div>
     <div class="qcard">
-      <span class="lbl">Estimado de impresión · USD</span>
+      <span class="lbl">Precio de impresión · USD</span>
       <table class="bk" id="qbk"><tr><td>Selecciona un archivo para estimar</td><td>—</td></tr></table>
-      <div class="total"><span>Estimado sin envío</span><b id="qtot">—</b></div>
-      <p class="note">Es un estimado. Al pedir, revisamos tu archivo y te confirmamos el precio final y el plazo antes de cobrar.</p>
+      <div class="total"><span>Precio sin envío</span><b id="qtot">—</b></div>
+      <p class="note">Este es el precio de tu pieza. Envío en EE.UU. desde $6.00 según el peso. Antes de fabricar revisamos que se pueda imprimir tal cual; si no, te avisamos y no se cobra.</p>
       <button class="btn q-order" id="qorder" type="button" disabled>Pedir esta impresión <span aria-hidden="true">→</span></button>
       <p id="qmsg" style="font-size:14px" role="status" aria-live="polite"></p>
     </div>
@@ -356,22 +372,22 @@ footer{padding-block:28px 40px; color:var(--ink2); font-size:13px; display:flex;
 <section id="panel" data-view="panel" aria-label="Panel de la tienda"></section>
 
 </main>
-<footer><a class="shader-footer-brand" href="#inicio" aria-label="hackgorithmic, inicio"><span class="hg-logo hg-logo-sm" aria-hidden="true">h<b>:</b></span><span class="hg-word" aria-hidden="true">hackgor<span class="hg-i">ı</span>thm<span class="hg-i">ı</span>c</span></a><nav class="tp-foot" aria-label="Pie"><a href="#studio">Studio</a><a href="#cotizar">Cotizar</a><a href="#planes">Planes</a><a href="#contacto">Contacto</a><a href="#pedidos" data-foot-orders>Mis pedidos</a><a href="privacidad.html">Privacidad</a></nav><span>© 2026 · Diseño y proyectos 3D · Florida</span><span>Una red de creación en desarrollo.</span></footer>
+<footer><a class="shader-footer-brand" href="#inicio" aria-label="hackgorithmic, inicio"><span class="hg-logo hg-logo-sm" aria-hidden="true">h<b>:</b></span><span class="hg-word" aria-hidden="true">hackgor<span class="hg-i">ı</span>thm<span class="hg-i">ı</span>c</span></a><nav class="tp-foot" aria-label="Pie"><a href="#studio">Studio</a><a href="#cotizar">Imprimir</a><a href="#planes">Planes</a><a href="#contacto">Contacto</a><a href="#pedidos" data-foot-orders>Mis pedidos</a><a href="privacidad.html">Privacidad</a></nav><span>© 2026 · Diseño y proyectos 3D · Florida</span><span>Una red de creación en desarrollo.</span></footer>
 </div>
 
 
-<script src="app.js?v=4"></script>
+<script src="app.js?v=5"></script>
 
 <script src="payments-config.js?v=2"></script>
 <script src="payments.js?v=3"></script>
-<script src="galeria.js?v=3"></script>
+<script src="galeria.js?v=4"></script>
 <script src="vistas.js?v=5"></script>
 <script src="accounts-config.js?v=10"></script>
 <script src="auth.js?v=14"></script>
-<script src="pedidos.js?v=2"></script>
+<script src="pedidos.js?v=3"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous" defer></script>
-<script src="taller.js?v=17"></script>
-<script src="dibujo.js?v=5"></script>
+<script src="taller.js?v=18"></script>
+<script src="dibujo.js?v=6"></script>
 <script defer src="./shader-scene.js"></script>
 </body>
 </html>

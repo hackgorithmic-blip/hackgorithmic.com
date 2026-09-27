@@ -61,16 +61,17 @@ function recalc(){
   const dens=mat==="petg"?1.27:1.24;
   const g=V*dens*fe, h=g/T.gph+0.15;
   const q=cotizar({g,h,mat,colores:col,qty});
-  if(![q.gT,q.hT,q.mat$,q.maq$,q.prep,q.total].every(Number.isFinite)||!Number.isSafeInteger(Math.round(q.total*100))){clearQuote("Esta pieza necesita revisión manual"); $("#qmsg").textContent="No podemos estimar esta geometría automáticamente. Puedes pedirla igual: la revisamos y te cotizamos."; $("#qorder").disabled=false; return;}
+  if(![q.gT,q.hT,q.mat$,q.maq$,q.prep,q.total].every(Number.isFinite)||!Number.isSafeInteger(Math.round(q.total*100))){clearQuote("Esta pieza necesita revisión manual"); $("#qmsg").textContent="No pudimos calcular esta pieza automáticamente. Pídela como diseño a medida y la revisamos."; return;}
   // Redondeamos el subtotal una sola vez y repartimos sus centavos entre las partidas.
   const materialCents=Math.round(q.mat$*100), prepCents=Math.round(q.prep*100);
   const subtotalCents=Math.round((q.mat$+q.maq$+q.prep)*100), totalCents=Math.round(q.total*100);
   const machineCents=subtotalCents-materialCents-prepCents, adjustmentCents=totalCents-subtotalCents;
   $("#qdims").innerHTML="<span><b>"+stl.size.map(x=>x.toFixed(1)).join(" × ")+"</b> mm</span><span>≈ <b>"+q.gT.toFixed(1)+"</b> g</span><span>≈ <b>"+q.hT.toFixed(1)+"</b> h de máquina</span>";
-  $("#qwarn").textContent=stl.size.some(x=>x>265)?"Una medida supera 265 mm. Debemos revisar orientación, máquina y viabilidad antes de confirmar la fabricación.":"";
-  $("#qbk").innerHTML="<tr><td>Material estimado ("+q.gT.toFixed(1)+" g "+mat.toUpperCase()+")</td><td>"+$$(materialCents/100)+"</td></tr><tr><td>Máquina estimada ("+q.hT.toFixed(1)+" h)</td><td>"+$$(machineCents/100)+"</td></tr><tr><td>Preparación del pedido</td><td>"+$$(prepCents/100)+"</td></tr>"+(adjustmentCents>0?"<tr><td>Ajuste al precio mínimo</td><td>"+$$(adjustmentCents/100)+"</td></tr>":"");
+  const big=stl.size.some(x=>x>265);
+  $("#qwarn").textContent=big?"Una medida supera 26.5 cm, más que nuestra impresora. Pídela como diseño a medida y la adaptamos.":"";
+  $("#qbk").innerHTML="<tr><td>Material ("+q.gT.toFixed(1)+" g "+mat.toUpperCase()+")</td><td>"+$$(materialCents/100)+"</td></tr><tr><td>Tiempo de máquina ("+q.hT.toFixed(1)+" h)</td><td>"+$$(machineCents/100)+"</td></tr><tr><td>Preparación del pedido</td><td>"+$$(prepCents/100)+"</td></tr>"+(adjustmentCents>0?"<tr><td>Ajuste al precio mínimo</td><td>"+$$(adjustmentCents/100)+"</td></tr>":"");
   $("#qtot").textContent=$$(totalCents/100);
-  $("#qorder").disabled=false;
+  $("#qorder").disabled=big;
   $("#qmsg").textContent="";
 }
 async function loadFile(file){
@@ -103,14 +104,6 @@ $("#stl").addEventListener("change",e=>loadFile(e.target.files[0]));
 ["dragover","dragenter"].forEach(ev=>$("#drop").addEventListener(ev,e=>{e.preventDefault();$("#drop").classList.add("on");}));
 $("#drop").addEventListener("drop",e=>{e.preventDefault();loadFile(e.dataTransfer.files[0]);});
 ["qmat","qinf","qcol","qqty"].forEach(id=>$("#"+id).addEventListener("input",recalc));
-/* Estimado en centavos para una cantidad (lo usa el checkout al cambiar la cantidad). */
-function estimadoSTL(qty){
-  if(!stl)return null;
-  const f=Number($("#qinf").value), mat=$("#qmat").value, col=Number($("#qcol").value), V=stl.cm3;
-  const fe=f+(1-f)*Math.exp(-V/8), g=V*(mat==="petg"?1.27:1.24)*fe, h=g/T.gph+0.15;
-  const t=cotizar({g,h,mat,colores:col,qty}).total;
-  return Number.isFinite(t)?Math.round(t*100):null;
-}
 /* "Pedir esta impresión": el pedido se hace dentro de la web (cuenta + checkout). El STL se sube al confirmar. */
 $("#qorder").addEventListener("click",()=>{
   if(!stl||$("#qorder").disabled)return;
@@ -118,8 +111,9 @@ $("#qorder").addEventListener("click",()=>{
   if(!window.HGCheckout){$("#qmsg").textContent="No pudimos abrir el pedido. Recarga la página.";return;}
   const qty=Math.min(50,Math.max(1,Math.floor(Number($("#qqty").value))||1)), mat=$("#qmat").value.toUpperCase(), col=Number($("#qcol").value);
   const mm=stl.size.map(x=>x.toFixed(0)).join(" × ");
+  const inf=$("#qinf").value, matKey=$("#qmat").value;
   HGCheckout.start({kind:"stl",title:stl.name.replace(/\.stl$/i,"").slice(0,100)||"Mi archivo STL",
     specs:[mm+" mm",mat+" · relleno "+$("#qinf").selectedOptions[0].text,col+" color"+(col>1?"es":"")],
-    qty,price:estimadoSTL,file:stl.file,fileKind:"stl",fileLabel:"Al realizar el pedido subimos "+stl.name+" para revisarlo y fabricarlo.",
-    custom:{file_name:stl.name.slice(0,120),mm,material:mat,infill:$("#qinf").selectedOptions[0].text,colors:String(col)}});
+    qty,file:stl.file,fileKind:"stl",pricing:{volume:stl.cm3,mat:matKey,inf,col:String(col)},
+    custom:{file_name:stl.name.slice(0,120),mm,material:mat,infill:$("#qinf").selectedOptions[0].text,colors:String(col),mat:matKey,inf,col:String(col)}});
 });

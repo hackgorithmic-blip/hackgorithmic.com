@@ -116,7 +116,7 @@ async function process(f){
     '<div class="tsw dctl" role="group" aria-label="Tamaño"><span>Tamaño</span>'+SIZES.map(s=>'<button type="button" class="chip" data-size="'+s+'" aria-pressed="'+(s===st.size)+'">'+s/10+' cm</button>').join('')+'</div>'+
     '<div class="tsw dctl"><label for="'+id+'">Trazo</label><input id="'+id+'" type="range" min="-2" max="2" step="1" value="0"><span class="dhint">menos ← → más</span></div>'+
     '<div class="tsw"><span>Base</span><span class="sb"></span><span style="margin-left:8px">Trazo</span><span class="sl"></span></div>'+
-    '<div class="trow"><button class="btn tdl" type="button">Descargar STL</button><button class="btn alt tped" type="button">Pedirlo impreso · desde $10</button><button class="btn alt tfig" type="button">Figura 3D completa</button></div>'+
+    '<div class="trow"><button class="btn tdl" type="button">Descargar STL</button><button class="btn alt tped" type="button">Pedirlo impreso</button><button class="btn alt tfig" type="button">Figura 3D completa</button></div>'+
     '<p class="tnote">Se imprime en dos colores cambiando el filamento a los 2 mm. ¿Lo quieres como figura completa (no solo relieve)? Nuestro equipo la modela y te confirma el precio antes de cobrar.</p>';
   const view=card.querySelector('.tview'),info=card.querySelector('.dinfo');
   let mesh=null,cur=null;
@@ -130,6 +130,8 @@ async function process(f){
     mesh=new THREE.Mesh(g,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.55,metalness:.03}));paint();
     __taller.showObject(view,mesh);
     info.textContent=r.w.toFixed(0)+' × '+r.h.toFixed(0)+' × '+r.z.toFixed(1)+' mm · ~'+r.grams+' g de PLA · ~'+r.mins+' min';
+    r.cm3=vol(r.pos);const pr=window.HGCheckout&&HGCheckout.price({kind:'dibujo',volume:r.cm3},1,'pickup');
+    card.querySelector('.tped').textContent='Pedirlo impreso'+(pr?' · '+('$'+(pr.subtotal_cents/100).toFixed(2)):'');
   }
   card.querySelectorAll('[data-size]').forEach(b=>b.onclick=()=>{st.size=+b.dataset.size;card.querySelectorAll('[data-size]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));rebuild();});
   card.querySelector('#'+id).addEventListener('change',e=>{st.detail=+e.target.value;rebuild();});
@@ -142,9 +144,11 @@ async function process(f){
       say('¡Listo! 📥 En tu laminador pon un cambio de color a los 2 mm para que el trazo salga de otro color.');};
     if(window.HGAuth&&!HGAuth.user)return HGAuth.require(dl,'Crea tu cuenta gratis para descargar tus modelos.');dl();};
   const pedir=o=>{if(window.HGCheckout)HGCheckout.start(o);};
+  /* Volumen de la placa en cm³ (triángulos en mm): el precio sale de aquí, igual que un STL. */
+  function vol(a){let v=0;for(let i=0;i<a.length;i+=9)v+=(a[i]*(a[i+4]*a[i+8]-a[i+5]*a[i+7])-a[i+1]*(a[i+3]*a[i+8]-a[i+5]*a[i+6])+a[i+2]*(a[i+3]*a[i+7]-a[i+4]*a[i+6]))/6;return Math.abs(v)/1000;}
   card.querySelector('.tped').onclick=()=>{if(!cur)return;const r=cur,size=st.size,base=st.base,trazo=st.trazo;
     pedir({kind:'dibujo',title:'Placa en relieve de '+size/10+' cm',specs:[r.w.toFixed(0)+' × '+r.h.toFixed(0)+' × '+r.z.toFixed(1)+' mm','Base '+base+' · trazo '+trazo,'Dos colores con cambio de filamento'],
-      price:q=>1000*q,fileKind:'stl',fileLabel:'Al realizar el pedido subimos el modelo 3D de tu dibujo (no la foto).',file:()=>__taller.stl([r.pos]),
+      fileKind:'stl',pricing:{volume:r.cm3||vol(r.pos)},file:()=>__taller.stl([r.pos]),
       custom:{size:size/10+' cm',mm:r.w.toFixed(0)+' × '+r.h.toFixed(0)+' × '+r.z.toFixed(1),colors:'base '+base+', trazo '+trazo}});};
   card.querySelector('.tfig').onclick=()=>pedir({kind:'dibujo-figura',title:'Figura 3D de mi dibujo',specs:['Nuestro equipo la modela a partir de tu dibujo','Te mostramos la vista previa antes de cobrar','Cuéntanos tamaño y colores en los detalles'],
     fileKind:'photo',file:f,fileLabel:'Al realizar el pedido subimos la foto de tu dibujo para que el equipo la modele.',custom:{}});

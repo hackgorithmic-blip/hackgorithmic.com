@@ -3,7 +3,12 @@
 --   private.hg_catalog        tipo de pedido → producto de la tienda hackgorithmic
 --   public.order_events       historial y mensajes de cada pedido (lo ven el cliente y la tienda)
 --   bucket "order-files"      archivos del pedido (STL, foto del dibujo). PRIVADO.
---   create_order              el cliente crea su pedido; queda "awaiting_quote" (por cotizar)
+--   public.print_quotes       medición de cada archivo subido (volumen y medidas), la escribe la función precio-archivo
+--   private.print_price       tarifas de impresión (mismas que app.js): precio y gramos según volumen, material, relleno, colores, cantidad
+--   private.shipping_cents    envío por peso (EE.UU.) · recoger o digital = gratis
+--   quote_total               precio real (subtotal + envío) de un archivo medido, para mostrarlo en el checkout
+--   create_order              el cliente crea su pedido. Con archivo (STL o dibujo en 3D): precio real y queda "awaiting_payment".
+--                             Sin archivo (diseño a medida, IA): queda "awaiting_quote" y la tienda pone el precio con la vista previa.
 --   cancel_my_order           el cliente cancela antes de pagar
 --   owner_orders              la tienda ve sus pedidos, con el correo del cliente
 --   owner_update_order        la tienda cotiza, marca pagado, producción, enviado, entregado o cancelado
@@ -63,18 +68,91 @@ create policy "order files read" on storage.objects for select to authenticated
          or exists (select 1 from public.stores s where s.slug = 'hackgorithmic' and s.owner_id = (select auth.uid())))
   );
 
+-- ============ Precio real por archivo ============
+-- La función precio-archivo mide el STL que la persona subió (volumen y medidas) y guarda la medición aquí.
+create table if not exists public.print_quotes (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users (id) on delete cascade,
+  file text not null check (char_length(file) <= 200),
+  volume_cm3 numeric not null check (volume_cm3 > 0 and volume_cm3 <= 20000),
+  size_mm numeric[] not null check (array_length(size_mm, 1) = 3),
+  created_at timestamptz not null default now()
+);
+create index if not exists print_quotes_user on public.print_quotes (user_id, created_at desc);
+alter table public.print_quotes enable row level security;
+revoke all on public.print_quotes from anon, authenticated;
+
+-- Tarifas (editar aquí y en app.js → T): PLA $22/kg, PETG $26/kg, +15 % merma, $3/h de máquina, margen x2,
+-- $3 de preparación, +20 % por color extra, piezas extra al 85 % de máquina, mínimo $8 por pedido y $5 por pieza, 25 g/h.
+create or replace function private.print_price(p_volume numeric, p_material text, p_infill numeric, p_colors integer, p_qty integer)
+returns table (grams numeric, cents integer) language sql immutable set search_path = '' as $$
+  with b as (
+    select case when p_material = 'petg' then 26.0 else 22.0 end as kg,
+           p_volume * (case when p_material = 'petg' then 1.27 else 1.24 end) * (p_infill + (1 - p_infill) * exp(-p_volume / 8.0)) as g,
+           1 + 0.20 * (p_colors - 1) as cx
+  ), c as (
+    select b.kg, b.g * b.cx * 1.15 * p_qty as gt, (b.g / 25.0 + 0.15) * b.cx * (1 + (p_qty - 1) * 0.85) as ht from b
+  )
+  select c.gt, round(greatest(8.0, (c.gt / 1000 * c.kg + c.ht * 3.0) * 2.0 + 3.0, p_qty * 5.0) * 100)::integer from c;
+$$;
+
+-- Envío en EE.UU. por peso (pieza + 100 g de empaque). Recoger en Florida o entrega digital: gratis.
+create or replace function private.shipping_cents(p_grams numeric, p_delivery text)
+returns integer language sql immutable set search_path = '' as $$
+  select case when p_delivery <> 'shipping' then 0
+              when p_grams + 100 <= 250 then 600
+              when p_grams + 100 <= 1000 then 900
+              when p_grams + 100 <= 3000 then 1500
+              else 2500 end;
+$$;
+
+-- Precio de un archivo medido: tu STL (material, relleno y colores que eligió) o tu dibujo en 3D (PLA, 2 colores, desde $10).
+create or replace function private.order_price(p_user uuid, p_quote uuid, p_file text, p_kind text, p_qty integer, p_custom jsonb, p_delivery text)
+returns jsonb language plpgsql stable set search_path = '' as $$
+declare v_q public.print_quotes; v_mat text; v_inf numeric; v_col integer; v_p record; v_sub integer; v_ship integer;
+begin
+  select * into v_q from public.print_quotes where id = p_quote and user_id = p_user and created_at > now() - interval '24 hours';
+  if not found or (p_file is not null and v_q.file <> p_file) then raise exception 'quote' using errcode = '22023'; end if;
+  if p_qty is null or p_qty not between 1 and 50 or p_custom is null or jsonb_typeof(p_custom) <> 'object' then raise exception 'print_options' using errcode = '22023'; end if;
+  if p_kind = 'dibujo' then
+    v_mat := 'pla'; v_inf := 0.35; v_col := 2;
+  else
+    v_mat := coalesce(p_custom->>'mat', 'pla');
+    v_inf := case coalesce(p_custom->>'inf', '0.35') when '0.35' then 0.35 when '0.55' then 0.55 when '1' then 1 end;
+    v_col := case when coalesce(p_custom->>'col', '1') ~ '^[1-4]$' then coalesce(p_custom->>'col', '1')::integer end;
+  end if;
+  if v_mat not in ('pla', 'petg') or v_inf is null or v_col is null then raise exception 'print_options' using errcode = '22023'; end if;
+  select * into v_p from private.print_price(v_q.volume_cm3, v_mat, v_inf, v_col, p_qty);
+  v_sub := case when p_kind = 'dibujo' then greatest(v_p.cents, 1000 * p_qty) else v_p.cents end;
+  v_ship := private.shipping_cents(v_p.grams, p_delivery);
+  return jsonb_build_object('subtotal_cents', v_sub, 'shipping_cents', v_ship, 'total_cents', v_sub + v_ship,
+    'grams', round(v_p.grams), 'material', v_mat, 'infill', v_inf, 'colors', v_col, 'size_mm', to_jsonb(v_q.size_mm));
+end $$;
+
+-- Lo que ve la persona en el checkout: el mismo cálculo que usa create_order.
+create or replace function public.quote_total(p_quote uuid, p_kind text, p_quantity integer, p_customization jsonb, p_delivery text)
+returns jsonb language plpgsql security definer set search_path = '' as $$
+declare v_user uuid := private.require_verified_user();
+begin
+  if p_kind not in ('stl', 'dibujo') or p_delivery not in ('shipping', 'pickup') then raise exception 'print_options' using errcode = '22023'; end if;
+  return private.order_price(v_user, p_quote, null, p_kind, p_quantity, p_customization, p_delivery);
+end $$;
+
 -- ============ El cliente crea su pedido ============
--- El precio que manda la página es solo un ESTIMADO: el pedido queda "awaiting_quote" y la tienda
--- confirma el total (owner_update_order 'quote') antes de cualquier cobro.
+-- Con archivo (tu STL o tu dibujo en 3D): el precio y el envío los calcula la base de datos con la medición del archivo
+-- (print_quotes) y el pedido queda "awaiting_payment". Sin archivo (diseño a medida, IA): queda "awaiting_quote" y la tienda
+-- pone el precio con la vista previa (owner_update_order 'quote'). La página nunca decide cuánto se cobra.
 drop function if exists public.create_order(text, text, integer, integer, jsonb, text, text, jsonb, text, uuid);
+drop function if exists public.create_order(text, text, integer, integer, jsonb, text, text, jsonb, text, uuid, uuid);
 create or replace function public.create_order(
   p_kind text, p_title text, p_quantity integer, p_estimate_cents integer, p_customization jsonb,
-  p_file text, p_buyer_name text, p_shipping_address jsonb, p_note text, p_request_key uuid)
+  p_file text, p_buyer_name text, p_shipping_address jsonb, p_note text, p_request_key uuid, p_quote uuid default null)
 returns jsonb language plpgsql security definer set search_path = '' as $$
 declare
   v_user uuid := private.require_verified_user();
   v_product public.products; v_store public.stores; v_existing public.orders;
   v_order uuid; v_delivery text; v_title text; v_line integer; v_estimate integer; v_payload jsonb;
+  v_price jsonb; v_status text := 'awaiting_quote'; v_ship integer; v_total integer;
 begin
   if p_request_key is null then raise exception 'request_key' using errcode = '22023'; end if;
   select p.* into v_product from private.hg_catalog c join public.products p on p.id = c.product_id where c.kind = p_kind;
@@ -125,16 +203,24 @@ begin
     raise exception 'file' using errcode = '22023';
   end if;
 
-  if p_kind like 'plan-%' then v_estimate := v_product.price_cents * p_quantity;
-  elsif p_estimate_cents is null then v_estimate := null;
-  elsif p_estimate_cents between 100 and 1000000 then v_estimate := p_estimate_cents;
-  else raise exception 'estimate' using errcode = '22023';
+  if p_kind in ('stl', 'dibujo') then
+    -- Precio real: se cobra por lo que mide el archivo que subió (lo mismo que vio en el checkout).
+    if p_quote is null or p_file is null or v_delivery = 'digital' then raise exception 'quote' using errcode = '22023'; end if;
+    v_price := private.order_price(v_user, p_quote, p_file, p_kind, p_quantity, p_customization, v_delivery);
+    v_line := (v_price->>'subtotal_cents')::integer; v_ship := (v_price->>'shipping_cents')::integer;
+    v_total := v_line + v_ship; v_status := 'awaiting_payment'; v_estimate := null;
+  else
+    if p_kind like 'plan-%' then v_estimate := v_product.price_cents * p_quantity;
+    elsif p_estimate_cents is null then v_estimate := null;
+    elsif p_estimate_cents between 100 and 1000000 then v_estimate := p_estimate_cents;
+    else raise exception 'estimate' using errcode = '22023';
+    end if;
+    v_line := greatest(v_product.price_cents, coalesce(v_estimate, v_product.price_cents * p_quantity));
   end if;
-  v_line := greatest(v_product.price_cents, coalesce(v_estimate, v_product.price_cents * p_quantity));
 
   v_payload := jsonb_build_object('kind', p_kind, 'title', v_title, 'quantity', p_quantity, 'estimate_cents', v_estimate,
     'customization', p_customization, 'file', p_file, 'buyer_name', btrim(p_buyer_name),
-    'shipping_address', p_shipping_address, 'note', coalesce(btrim(p_note), ''));
+    'shipping_address', p_shipping_address, 'note', coalesce(btrim(p_note), ''), 'quote', p_quote);
 
   -- Reintentos del mismo envío devuelven el mismo pedido.
   perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtext(v_user::text), pg_catalog.hashtext(p_request_key::text));
@@ -150,14 +236,14 @@ begin
     raise exception 'order_limit' using errcode = '54000';
   end if;
 
-  insert into public.orders (buyer_id, store_id, status, subtotal_cents, buyer_name, shipping_address, note, request_key, request_payload)
-  values (v_user, v_store.id, 'awaiting_quote', v_line, btrim(p_buyer_name), p_shipping_address, coalesce(btrim(p_note), ''), p_request_key, v_payload)
+  insert into public.orders (buyer_id, store_id, status, subtotal_cents, shipping_cents, total_cents, buyer_name, shipping_address, note, request_key, request_payload)
+  values (v_user, v_store.id, v_status, v_line, v_ship, v_total, btrim(p_buyer_name), p_shipping_address, coalesce(btrim(p_note), ''), p_request_key, v_payload)
   returning id into v_order;
   insert into public.order_items (order_id, product_id, title, quantity, unit_price_cents, line_total_cents, customization)
   values (v_order, v_product.id, left(v_product.title || ' · ' || v_title, 160), p_quantity, greatest(1, v_line / p_quantity), v_line,
-          jsonb_strip_nulls(p_customization || jsonb_build_object('kind', p_kind, 'estimate_cents', v_estimate, 'file', p_file)));
-  insert into public.order_events (order_id, actor, status, message) values (v_order, 'cliente', 'awaiting_quote', 'Pedido recibido.');
-  return jsonb_build_object('id', v_order);
+          jsonb_strip_nulls(p_customization || jsonb_build_object('kind', p_kind, 'estimate_cents', v_estimate, 'file', p_file, 'grams', v_price->'grams')));
+  insert into public.order_events (order_id, actor, status, message) values (v_order, 'cliente', v_status, 'Pedido recibido.');
+  return jsonb_build_object('id', v_order, 'status', v_status, 'total_cents', v_total);
 end $$;
 
 -- ============ El cliente cancela antes de pagar ============
@@ -287,8 +373,13 @@ begin
 end $$;
 
 -- ============ Permisos ============
-revoke all on function public.create_order(text, text, integer, integer, jsonb, text, text, jsonb, text, uuid) from public, anon;
-grant execute on function public.create_order(text, text, integer, integer, jsonb, text, text, jsonb, text, uuid) to authenticated;
+revoke all on function public.create_order(text, text, integer, integer, jsonb, text, text, jsonb, text, uuid, uuid) from public, anon;
+grant execute on function public.create_order(text, text, integer, integer, jsonb, text, text, jsonb, text, uuid, uuid) to authenticated;
+revoke all on function public.quote_total(uuid, text, integer, jsonb, text) from public, anon;
+grant execute on function public.quote_total(uuid, text, integer, jsonb, text) to authenticated;
+revoke all on function private.print_price(numeric, text, numeric, integer, integer) from public, anon, authenticated;
+revoke all on function private.shipping_cents(numeric, text) from public, anon, authenticated;
+revoke all on function private.order_price(uuid, uuid, text, text, integer, jsonb, text) from public, anon, authenticated;
 revoke all on function public.cancel_my_order(uuid) from public, anon;
 grant execute on function public.cancel_my_order(uuid) to authenticated;
 revoke all on function public.owner_orders(integer) from public, anon;

@@ -22,8 +22,8 @@ const svg=n=>'<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="cu
 const icon=k=>svg(ICON_OF[k]||'box');
 
 const ST={
-  awaiting_quote:['Recibido','Revisamos tu pedido y te confirmamos aquí el total con envío. No se cobra nada todavía.'],
-  awaiting_payment:['Listo para pagar','Ya confirmamos el total. Paga como te indicamos en los mensajes del pedido.'],
+  awaiting_quote:['Recibido','Estamos preparando tu vista previa y el precio. No se cobra nada todavía.'],
+  awaiting_payment:['Listo para pagar','Tu total está listo. Te indicamos cómo pagar en los mensajes del pedido.'],
   paid:['Pagado','Recibimos tu pago. Tu pieza entra a producción.'],
   processing:['En producción','Estamos fabricando tu pieza.'],
   shipped:['Enviado','Tu pedido va en camino.'],
@@ -63,15 +63,26 @@ const api={
   async create(p){
     if(!online()){
       const list=lread(),ex=list.find(o=>o.request_key===p.key);if(ex)return ex.id;
-      const o={id:uuid(),request_key:p.key,created_at:new Date().toISOString(),status:'awaiting_quote',subtotal_cents:p.estimate||0,shipping_cents:null,total_cents:null,
+      const t=p.totals,st=t?'awaiting_payment':'awaiting_quote',line=t?t.subtotal_cents:(p.estimate||0);
+      const o={id:uuid(),request_key:p.key,created_at:new Date().toISOString(),status:st,subtotal_cents:line,shipping_cents:t?t.shipping_cents:null,total_cents:t?t.total_cents:null,
         buyer_name:p.buyer_name,buyer_email:(A().user||{}).email||'',shipping_address:p.address,note:p.note,
-        order_items:[{title:KIND[p.kind]+' · '+p.title,quantity:p.quantity,line_total_cents:p.estimate||0,customization:Object.assign({},p.custom,{kind:p.kind},p.estimate!=null?{estimate_cents:p.estimate}:{},p.file?{file:p.file}:{})}],
-        order_events:[ev('cliente','awaiting_quote','Pedido recibido.')]};
+        order_items:[{title:KIND[p.kind]+' · '+p.title,quantity:p.quantity,line_total_cents:line,customization:Object.assign({},p.custom,{kind:p.kind},p.estimate!=null?{estimate_cents:p.estimate}:{},p.file?{file:p.file}:{},t?{grams:t.grams}:{})}],
+        order_events:[ev('cliente',st,'Pedido recibido.')]};
       list.unshift(o);lwrite(list);return o.id;}
     const c=await api.client();
     const{data,error}=await c.rpc('create_order',{p_kind:p.kind,p_title:p.title,p_quantity:p.quantity,p_estimate_cents:p.estimate,p_customization:p.custom,
-      p_file:p.file,p_buyer_name:p.buyer_name,p_shipping_address:p.address,p_note:p.note,p_request_key:p.key});
+      p_file:p.file,p_buyer_name:p.buyer_name,p_shipping_address:p.address,p_note:p.note,p_request_key:p.key,p_quote:p.quote||null});
     if(error)throw error;return data&&data.id;},
+  /* Mide el STL subido en el servidor (función precio-archivo) y devuelve la medición para calcular el precio. */
+  async measure(path){
+    const CFG=window.HACKGORITHMIC_ACCOUNTS||{},tok=await A().token();
+    const r=await fetch(String(CFG.url||'').replace(/\/$/,'')+'/functions/v1/precio-archivo',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},body:JSON.stringify({path})});
+    let j={};try{j=await r.json();}catch(e){}
+    if(!r.ok||!j.quote){const e=new Error(j.error||('http '+r.status));e.code=j.error;throw e;}
+    return j.quote;},
+  async quoteTotal(quote,kind,qty,custom,delivery){
+    const c=await api.client();const{data,error}=await c.rpc('quote_total',{p_quote:quote,p_kind:kind,p_quantity:qty,p_customization:custom,p_delivery:delivery});
+    if(error)throw error;return data;},
   async mine(){
     if(!online())return lread();
     const c=await api.client();
@@ -91,6 +102,11 @@ const api={
 function human(e){
   const m=String((e&&(e.message||e.error_description||e.code))||e||'');
   if(/store_not_ready/.test(m))return 'Estamos terminando de abrir la tienda en línea. Inténtalo de nuevo en unas horas.';
+  if(/too_big/.test(m))return 'Tu pieza mide más de 26.5 cm por un lado. Pídela como diseño a medida y la adaptamos.';
+  if(/\bstl\b|geometry/.test(m))return 'No pudimos leer tu archivo STL. Revisa que sea un modelo cerrado y en milímetros.';
+  if(/not_configured/.test(m))return 'El cálculo de precios se está activando. Inténtalo en unos minutos.';
+  if(/\bquote\b|print_options/.test(m))return 'No pudimos calcular el precio. Inténtalo de nuevo.';
+  if(/^limit$|http 429/.test(m))return 'Demasiados intentos seguidos. Espera unos minutos.';
   if(/order_limit/.test(m))return 'Llegaste al máximo de pedidos por hoy. Inténtalo mañana.';
   if(/verified email|Sign in|JWT|not authenticated/i.test(m))return 'Entra con tu cuenta confirmada para continuar.';
   if(/address/.test(m))return 'Revisa los datos de entrega.';
@@ -126,7 +142,8 @@ function normItem(it){
     price:typeof it.price==='function'?it.price:()=>null,custom:trimCustom(it.custom),
     file:it.file||null,fileKind:it.fileKind==='photo'?'photo':'stl',fileLabel:it.fileLabel||'',
     delivery:plan?['digital']:(Array.isArray(it.delivery)&&it.delivery.length?it.delivery.filter(d=>['shipping','pickup','digital'].includes(d)):['shipping','pickup']),
-    needNote:!!it.needNote,uploaded:null};
+    needNote:!!it.needNote,uploaded:null,
+    pricing:it.pricing&&it.file&&(it.kind==='stl'||it.kind==='dibujo')?Object.assign({kind:it.kind},it.pricing):null,quote:null,totals:null,priceState:'idle'};
 }
 function start(it){
   const a=A();if(!a||!it)return;
@@ -137,21 +154,70 @@ const planItem=n=>{const p=PLANS[n];return p?{kind:p.kind,plan:n,title:p.title,s
 const priceOf=()=>{if(!item)return null;const v=item.price(item.qty);return Number.isFinite(v)&&v>0?Math.round(v):null;};
 function payState(){const P=window.HackgorithmicPayments;try{return P?P.validateConfig(window.HACKGORITHMIC_PAYMENTS):{ready:false};}catch(e){return{ready:false};}}
 
+/* ---------- precio real de piezas con archivo (tu STL o tu dibujo en 3D) ----------
+ * El servidor mide el archivo y la base de datos calcula el precio (quote_total); en modo prueba se calcula aquí
+ * con las mismas tarifas (T y cotizar de app.js). Envío por peso en EE.UU. (igual que private.shipping_cents). */
+const envio=(g,d)=>d!=='shipping'?0:(g+100<=250?600:g+100<=1000?900:g+100<=3000?1500:2500);
+function localPrice(p,qty,del){
+  if(!p||!(p.volume>0)||typeof cotizar!=='function'||typeof T!=='object')return null;
+  const dib=p.kind==='dibujo',mat=dib?'pla':(p.mat==='petg'?'petg':'pla'),inf=dib?0.35:(+p.inf||0.35),col=dib?2:Math.min(4,Math.max(1,+p.col||1)),V=p.volume;
+  const g=V*(mat==='petg'?1.27:1.24)*(inf+(1-inf)*Math.exp(-V/8)),h=g/T.gph+0.15,q=cotizar({g,h,mat,colores:col,qty});
+  if(!Number.isFinite(q.total))return null;
+  let s=Math.round(q.total*100);if(dib)s=Math.max(s,1000*qty);const ship=envio(q.gT,del);
+  return{subtotal_cents:s,shipping_cents:ship,total_cents:s+ship,grams:Math.round(q.gT)};
+}
+const delOf=()=>((($id('checkout')||document).querySelector('input[name=delivery]:checked'))||{}).value||(item?item.delivery[0]:'shipping');
+let priceTok=0;
+async function refreshPrice(){
+  if(!item||!item.pricing)return;
+  const my=++priceTok,it=item,del=delOf()==='shipping'?'shipping':'pickup';
+  if(!online()){it.totals=localPrice(it.pricing,it.qty,del);it.priceState=it.totals?'ready':'error';it.priceError=it.totals?'':'No pudimos calcular el precio de tu archivo.';paint();return;}
+  it.priceState='working';paint();
+  try{
+    if(!it.quote){
+      if(!it.uploaded){const blob=await fileBlob(it);if(blob.size>MAX_FILE)throw new Error('size');
+        const path=A().user.id+'/'+uuid().replace(/-/g,'')+'.stl';await api.upload(path,blob,'model/stl');it.uploaded=path;}
+      it.quote=await api.measure(it.uploaded);
+    }
+    const t=await api.quoteTotal(it.quote,it.pricing.kind,it.qty,it.custom,del);
+    if(my!==priceTok||it!==item)return;
+    it.totals=t;it.priceState='ready';it.priceError='';
+  }catch(e){if(my!==priceTok||it!==item)return;console.error('[hackgorithmic] precio',e);it.priceState='error';it.priceError=human(e);}
+  paint();
+}
+function paint(){
+  const el=$id('checkout');if(!el||!item)return;
+  const sum=el.querySelector('.co-sum');if(sum)sum.innerHTML=summaryHTML();
+  const b=el.querySelector('.co-submit');if(!b||busy)return;
+  if(item.pricing){
+    const ok=item.priceState==='ready'&&item.totals;
+    b.disabled=item.priceState==='working';
+    b.textContent=ok?'Realizar pedido · '+money(item.totals.total_cents):item.priceState==='error'?'Volver a calcular el precio':'Calculando el precio…';
+    const st=el.querySelector('.co-status');if(st&&item.priceState==='error'){st.textContent=item.priceError||'No pudimos calcular el precio.';st.classList.add('bad');}
+  }
+}
+
 /* ---------- checkout ---------- */
 const DELIV={
-  shipping:['Envío a domicilio','Estados Unidos · el costo se confirma antes de pagar','Por confirmar'],
+  shipping:['Envío a domicilio','Estados Unidos · según el peso de tu pieza','Desde $6.00'],
   pickup:['Recoger en persona','Florida · te avisamos cuando esté lista','Gratis'],
   digital:['Entrega digital','Se activa en tu cuenta','Gratis']};
 function summaryHTML(){
-  const p=priceOf(),del=(($id('checkout')||document).querySelector('input[name=delivery]:checked')||{}).value||item.delivery[0];
-  const ship=del==='shipping'?'Por confirmar':'Gratis',plan=!!item.plan;
-  return '<div class="co-item"><div class="co-thumb">'+icon(item.kind)+(item.qty>1?'<i>'+item.qty+'</i>':'')+'</div><div class="co-info"><b>'+esc(item.title)+'</b><span>'+esc(KIND[item.kind])+'</span>'+
+  const del=delOf(),plan=!!item.plan,pr=item.pricing,t=pr&&item.totals,wk=pr&&item.priceState!=='ready';
+  const head='<div class="co-item"><div class="co-thumb">'+icon(item.kind)+(item.qty>1?'<i>'+item.qty+'</i>':'')+'</div><div class="co-info"><b>'+esc(item.title)+'</b><span>'+esc(KIND[item.kind])+'</span>'+
       (item.specs.length?'<ul>'+item.specs.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul>':'')+'</div></div>'+
-    (item.qtyLocked?'':'<div class="co-qty"><span>Cantidad</span><span class="co-step"><button type="button" data-q="-1" aria-label="Quitar una"'+(item.qty<=1?' disabled':'')+'>−</button><output aria-live="polite">'+item.qty+'</output><button type="button" data-q="1" aria-label="Agregar una"'+(item.qty>=50?' disabled':'')+'>+</button></span></div>')+
-    '<dl class="co-lines"><div><dt>'+(plan?'Plan mensual':'Subtotal estimado')+'</dt><dd>'+(p?money(p):'Por cotizar')+'</dd></div>'+(plan?'':'<div><dt>Envío</dt><dd>'+ship+'</dd></div>')+'</dl>'+
-    '<div class="co-total"><span>'+(plan?'Total al mes':'Total estimado')+'</span><b>'+(p?money(p):'Por cotizar')+'</b></div>'+
-    (plan?'':'<p class="co-fine">Te confirmamos el total final antes de cobrar.</p>')+
-    '<ul class="co-trust"><li>Revisamos cada pieza antes de fabricarla</li><li>Hecho en Florida</li><li>Sigue tu pedido desde tu cuenta</li></ul>';
+    (item.qtyLocked?'':'<div class="co-qty"><span>Cantidad</span><span class="co-step"><button type="button" data-q="-1" aria-label="Quitar una"'+(item.qty<=1?' disabled':'')+'>−</button><output aria-live="polite">'+item.qty+'</output><button type="button" data-q="1" aria-label="Agregar una"'+(item.qty>=50?' disabled':'')+'>+</button></span></div>');
+  const trust='<ul class="co-trust"><li>Revisamos cada pieza antes de fabricarla</li><li>Hecho en Florida</li><li>Sigue tu pedido desde tu cuenta</li></ul>';
+  if(plan){const p=priceOf();
+    return head+'<dl class="co-lines"><div><dt>Plan mensual</dt><dd>'+money(p||0)+'</dd></div></dl><div class="co-total"><span>Total al mes</span><b>'+money(p||0)+'</b></div>'+trust;}
+  if(pr){const calc='<span class="co-calc">Calculando…</span>';
+    return head+'<dl class="co-lines"><div><dt>Impresión'+(item.qty>1?' ('+item.qty+' piezas)':'')+'</dt><dd>'+(t?money(t.subtotal_cents):calc)+'</dd></div>'+
+      '<div><dt>Envío</dt><dd>'+(del!=='shipping'?'Gratis':t?(t.shipping_cents?money(t.shipping_cents):'Gratis'):calc)+'</dd></div></dl>'+
+      '<div class="co-total"><span>Total</span><b>'+(t?money(t.total_cents):'…')+'</b></div>'+
+      '<p class="co-fine">'+(wk?(item.priceState==='error'?esc(item.priceError||''):'Midiendo tu archivo para darte el precio exacto…'):'Precio calculado con tu archivo'+(t.grams?' (≈ '+t.grams+' g de material)':'')+'.')+'</p>'+trust;}
+  return head+'<dl class="co-lines"><div><dt>Diseño e impresión</dt><dd>Con tu vista previa</dd></div><div><dt>Envío</dt><dd>'+(del!=='shipping'?'Gratis':'Con tu vista previa')+'</dd></div></dl>'+
+    '<div class="co-total"><span>Total</span><b class="co-later">Con tu vista previa</b></div>'+
+    '<p class="co-fine">Primero diseñamos tu pieza: te enviamos la vista previa y el precio en Mis pedidos. No se cobra nada hasta que lo apruebes.</p>'+trust;
 }
 function renderCheckout(){
   const el=$id('checkout');if(!el)return;const a=A();
@@ -161,7 +227,7 @@ function renderCheckout(){
     el.querySelector('[data-co-login]').onclick=()=>a&&a.require(renderCheckout,'Entra o crea tu cuenta para completar tu pedido.');return;}
   const u=a.user,plan=!!item.plan,ps=payState(),stripe=plan&&ps.ready?ps.checkoutUrls[item.plan]:'';
   const opts=item.delivery.map((d,i)=>'<label class="co-opt"><input type="radio" name="delivery" value="'+d+'"'+(i===0?' checked':'')+'><span><b>'+DELIV[d][0]+'</b><small>'+DELIV[d][1]+'</small></span><em>'+DELIV[d][2]+'</em></label>').join('');
-  const fileNote=item.file?'<p class="co-filenote">'+svg('file')+'<span>'+esc(item.fileLabel||(item.fileKind==='photo'?'Al realizar el pedido subimos la foto de tu dibujo para que el equipo la modele.':'Al realizar el pedido subimos tu modelo 3D para fabricarlo.'))+' Solo lo ve hackgorithmic.</span></p>':'';
+  const fileNote=item.file?'<p class="co-filenote">'+svg('file')+'<span>'+esc(item.pricing?'Subimos tu archivo para medirlo y darte el precio exacto.':(item.fileLabel||(item.fileKind==='photo'?'Al realizar el pedido subimos la foto de tu dibujo para que el equipo la modele.':'Al realizar el pedido subimos tu modelo 3D para fabricarlo.')))+' Solo lo ve hackgorithmic.</span></p>':'';
   el.innerHTML='<div class="co">'+
     '<div class="co-head"><a class="co-back" href="'+(plan?'#planes':'#studio')+'">← '+(plan?'Volver a planes':'Seguir creando')+'</a><ol class="co-steps" aria-label="Pasos"><li class="done">'+(plan?'Plan':'Diseño')+'</li><li class="on" aria-current="step">'+(plan?'Datos':'Entrega')+'</li><li>Confirmación</li></ol></div>'+
     '<div class="co-grid">'+
@@ -184,7 +250,8 @@ function renderCheckout(){
       '<fieldset class="co-box co-pay"><legend>Pago</legend><div class="co-paynote">'+svg('lock')+'<div>'+
         (stripe?'<b>Pago seguro con tarjeta</b><span>Te llevamos a la página de pago de Stripe para completar tu suscripción.</span>'
           :plan?'<b>No se cobra nada ahora.</b><span>Reservamos tu plan y te avisamos en <b>Mis pedidos</b> cómo activarlo.</span>'
-          :'<b>No se cobra nada ahora.</b><span>Revisamos tu pedido y te confirmamos el total con envío en <b>Mis pedidos</b>. Pagas solo cuando lo apruebes.</span>')+
+          :item.pricing?'<b>Tu total ya está calculado.</b><span>Al realizar el pedido te indicamos cómo pagar en <b>Mis pedidos</b>. Revisamos que tu pieza se pueda imprimir antes de fabricarla.</span>'
+          :'<b>No se cobra nada ahora.</b><span>Te enviamos la vista previa y el precio en <b>Mis pedidos</b>. Pagas solo cuando lo apruebes.</span>')+
       '</div></div></fieldset>'+
       '<button class="btn co-submit" type="submit">'+(stripe?'Continuar al pago seguro':plan?'Reservar mi plan':'Realizar pedido')+'</button>'+
       '<p class="co-status" role="status" aria-live="polite"></p>'+
@@ -193,11 +260,12 @@ function renderCheckout(){
     '<aside class="co-side" aria-label="Resumen del pedido"><div class="co-sum">'+summaryHTML()+'</div></aside>'+
     '</div></div>';
   const f=el.querySelector('form.co-main'),sum=el.querySelector('.co-sum'),addr=el.querySelector('.co-addr');
-  const paintSum=()=>{sum.innerHTML=summaryHTML();};
+  const paintSum=()=>{if(item&&item.pricing)refreshPrice();else sum.innerHTML=summaryHTML();};
   f.addEventListener('change',e=>{if(e.target.name==='delivery'){if(addr)addr.hidden=e.target.value!=='shipping';paintSum();}});
   f.addEventListener('input',e=>{if(e.target.setCustomValidity)e.target.setCustomValidity('');});
   sum.addEventListener('click',e=>{const b=e.target.closest('[data-q]');if(!b||!item||busy)return;item.qty=Math.min(50,Math.max(1,item.qty+(+b.dataset.q)));paintSum();});
   f.addEventListener('submit',e=>{e.preventDefault();submit(f,stripe);});
+  if(item.pricing){if(item.priceState==='ready'&&item.totals&&!online())refreshPrice();else if(item.priceState!=='ready')refreshPrice();else paint();}
 }
 async function fileBlob(it){
   let b=typeof it.file==='function'?await it.file():it.file;if(!b)throw new Error('file');
@@ -229,6 +297,7 @@ async function submit(f,stripe){
   if(item.needNote&&note.length<10)return fail(f.elements.note,'Cuéntanos tu idea con un poco más de detalle.');
   const a=A();if(!a||!a.user){say('Entra a tu cuenta para continuar.',true);return;}
   if(stripe){location.href=stripe+'?client_reference_id='+encodeURIComponent(a.user.id||'');return;}
+  if(item.pricing&&!(item.priceState==='ready'&&item.totals)){await refreshPrice();if(!(item&&item.priceState==='ready'&&item.totals))return;}
   busy=true;f.querySelectorAll('button,input,select,textarea').forEach(x=>x.disabled=true);f.classList.add('busy');
   try{
     let path=item.uploaded;
@@ -239,12 +308,13 @@ async function submit(f,stripe){
       await api.upload(path,blob,item.fileKind==='photo'?'image/jpeg':'model/stl');item.uploaded=path;
     }
     say('Enviando tu pedido…');
-    const est=item.plan?null:priceOf();
-    const id=await api.create({kind:item.kind,title:item.title,quantity:item.qty,estimate:est,custom:item.custom,file:path||null,buyer_name:name,address,note,key});
-    last={id,plan:!!item.plan,title:item.title};item=null;key=null;
+    const est=item.plan||item.pricing?null:priceOf(),tot=item.pricing?item.totals:null;
+    const id=await api.create({kind:item.kind,title:item.title,quantity:item.qty,estimate:est,custom:item.custom,file:path||null,buyer_name:name,address,note,key,
+      quote:item.pricing?item.quote:null,totals:online()?null:tot});
+    last={id,plan:!!item.plan,title:item.title,total:tot?tot.total_cents:null};item=null;key=null;
     renderCheckout();scrollTo(0,0);
   }catch(err){console.error('[hackgorithmic] pedido',err);say(human(err),true);}
-  finally{busy=false;if(f.isConnected){f.classList.remove('busy');f.querySelectorAll('button,input,select,textarea').forEach(x=>x.disabled=false);}}
+  finally{busy=false;if(f.isConnected){f.classList.remove('busy');f.querySelectorAll('button,input,select,textarea').forEach(x=>x.disabled=false);paint();}}
 }
 function progress(s){
   if(s==='cancelled')return '<p class="od-cancel">Pedido cancelado</p>';
@@ -254,8 +324,8 @@ function progress(s){
 function doneHTML(o){
   return '<div class="co-done"><div class="co-check">'+svg('check')+'</div><p class="co-kicker">Pedido '+esc(num(o.id))+'</p>'+
     '<h1>'+(o.plan?'¡Listo! Reservamos tu plan':'¡Gracias! Recibimos tu pedido')+'</h1>'+
-    '<p>'+(o.plan?'Te avisamos en <b>Mis pedidos</b> cómo activarlo.':'Revisamos <b>'+esc(o.title)+'</b> y te confirmamos el total con envío en <b>Mis pedidos</b>. No se cobra nada hasta que lo apruebes.')+'</p>'+
-    progress('awaiting_quote')+'<div class="co-done-a"><a class="btn" href="#pedidos">Ver mis pedidos</a><a class="btn alt" href="#studio">Seguir creando</a></div></div>';
+    '<p>'+(o.plan?'Te avisamos en <b>Mis pedidos</b> cómo activarlo.':o.total!=null?'Total con envío: <b>'+money(o.total)+'</b>. Te indicamos cómo pagar en <b>Mis pedidos</b>.':'Preparamos la vista previa de <b>'+esc(o.title)+'</b> y te enviamos el precio en <b>Mis pedidos</b>. No se cobra nada hasta que lo apruebes.')+'</p>'+
+    progress(o.total!=null?'awaiting_payment':'awaiting_quote')+'<div class="co-done-a"><a class="btn" href="#pedidos">Ver mis pedidos</a><a class="btn alt" href="#studio">Seguir creando</a></div></div>';
 }
 
 /* ---------- tarjetas de pedido (cliente y tienda) ---------- */
@@ -281,7 +351,7 @@ function card(o,own){
   const it=(o.order_items||[])[0]||{},c=it.customization||{},k=c.kind||'idea',ship=o.shipping_address||{};
   const evs=(o.order_events||[]).slice().sort((x,y)=>new Date(x.created_at)-new Date(y.created_at));
   const quoted=o.total_cents!=null,est=c.estimate_cents;
-  const amount=quoted?money(o.total_cents):est?'Estimado '+money(est):'Por cotizar';
+  const amount=quoted?money(o.total_cents):'Con tu vista previa';
   const msgs=evs.filter(e=>e.message&&e.message!=='Pedido recibido.');
   const who=e=>e.actor==='tienda'?(own?'Tú · tienda':'hackgorithmic'):e.actor==='cliente'?(own?'Cliente':'Tú'):e.actor;
   const extra=own?(
@@ -395,6 +465,6 @@ document.addEventListener('click',e=>{
   const o=e.target.closest('[data-order="idea"]');if(o){e.preventDefault();start({kind:'idea',title:'Diseño a medida',specs:['Nuestro equipo modela tu idea','Te mostramos la vista previa antes de cobrar'],needNote:true,custom:{}});}
 });
 
-window.HGCheckout=Object.freeze({start,plan:n=>start(planItem(n))});
+window.HGCheckout=Object.freeze({start,plan:n=>start(planItem(n)),price:(p,qty,del)=>localPrice(p,qty||1,del||'pickup')});
 onView(document.body.dataset.view);refreshOwner();
 })();

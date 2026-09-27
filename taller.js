@@ -181,9 +181,9 @@ function recolor(o){if(!V)return;V.mb.material.color.setHex(HEX[o.base]);V.mn.ma
 const ask={pend:null};
 let epoch=0;const who=()=>window.HGAuth&&HGAuth.uid?HGAuth.uid():null;
 function msg(who,html){const d=document.createElement('div');d.className='tm '+who;d.innerHTML=html;log.appendChild(d);log.scrollTop=log.scrollHeight;return d;}
-const EJ=[['Un dragón pequeño de juguete'],['Una maceta con hojas'],['Placa para perro "Max" en cian'],['Letrero "Oficina de Ana" base negra'],['Posavasos que diga "Casa López"'],['Charm de corazón "Luna" en rosa']];
+const EJ=[['Un dragón pequeño de juguete'],['Una maceta con hojas'],['Una lámpara de mesa ondulada'],['Engranajes para un proyecto de hobby'],['Figura low-poly de mi perro'],['Un organizador para mi escritorio']];
 const iaOn=()=>!!(AI.endpoint&&window.HGAuth&&HGAuth.online);
-function setChips(){chips.innerHTML='';EJ.filter(([t])=>iaOn()||!/^Un dragón/.test(t)).forEach(([t])=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=()=>run(t);chips.appendChild(b);});}
+function setChips(){chips.innerHTML='';EJ.forEach(([t])=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=()=>run(t);chips.appendChild(b);});}
 /* Pedido de diseño al equipo (sin correo): abre el checkout con la idea. */
 const pedirIdea=(p,tam,impreso)=>{if(!window.HGCheckout)return;HGCheckout.start({kind:'idea',title:p.slice(0,120),specs:[tam?'Tamaño: '+tam:'',impreso===false?'Solo el archivo 3D':'Impreso y entregado','Te mostramos la vista previa antes de cobrar'],
   delivery:impreso===false?['digital']:['shipping','pickup'],custom:{prompt:p,size:tam||undefined,print:impreso!==false}});};
@@ -206,9 +206,9 @@ async function genIA(p,task){
   const my=epoch,owner=who(),stale=()=>my!==epoch;
   const titulo='Modelo 3D · “'+p+'”';
   const ejemplos=d=>{const w=document.createElement('div');w.className='tp-ej';
-    ['Placa para perro "Max" en cian','Letrero "Oficina de Ana" base negra','Posavasos que diga "Casa López"'].forEach(t=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=()=>run(t);w.appendChild(b);});d.appendChild(w);return d;};
+    ['Un dragón pequeño de juguete','Una maceta con hojas','Una lámpara de mesa ondulada'].forEach(t=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=()=>run(t);w.appendChild(b);});d.appendChild(w);return d;};
   if(!task&&(p.match(/[\p{L}\p{N}]/gu)||[]).length<4)
-    return ejemplos(msg('bot','Cuéntame un poco más de tu idea para poder modelarla, por ejemplo <b>un dragón pequeño</b> o <b>una maceta con hojas</b>. O prueba una pieza con texto:'));
+    return ejemplos(msg('bot','Cuéntame un poco más de tu idea para poder modelarla, por ejemplo <b>un dragón pequeño</b> o <b>una maceta con hojas</b>. O prueba una de estas:'));
   /* Tarjeta de venta: la idea la modela el equipo. Se usa cuando la IA no está conectada o no puede atender ahora. */
   const ideaCard=(nota)=>{
     /* Sin IA conectada, la idea se convierte en un pedido para el equipo (no en un "no se puede"). */
@@ -267,20 +267,11 @@ async function genIA(p,task){
   }
   log.scrollTop=log.scrollHeight;
 }
+/* Studio: toda idea va al generador 3D (IA) o, si no está disponible, al equipo. Las piezas con nombre ya no se crean
+ * aquí; renderCard/build se quedan solo para abrir modelos guardados antes (Mis modelos, Panel de la tienda). */
 async function go(p){
-  const my=epoch,owner=who();
   p=String(p||'').trim();if(!p)return;msg('me',esc(p));
-  let o=parse(p);
-  if(ask.pend){const pe=ask.pend;ask.pend=null;if(!o.tipo&&!o.forma){pe.texto=o.texto||p.replace(/["“”«»]/g,'').trim();o=pe;}}
-  if(!o.tipo&&!o.forma&&(o.complejo||!o.texto||o.texto!==p.replace(/["“”«»']/g,'').trim()))return genIA(p);
-  if(!o.texto){ask.pend=o;return msg('bot','¡Va! ¿Qué nombre o texto le pongo? ✍️');}
-  const wait=msg('bot','Modelando tu pieza… 🖨️');
-  try{await loadFont();}catch(e){wait.innerHTML='No pude abrir el generador 3D en este navegador 😕. ';const b=document.createElement('button');b.type='button';b.className='btn';b.textContent='Pedir el diseño al equipo';b.onclick=()=>pedirIdea(p,'',true);wait.appendChild(b);return;}
-  completar(o);if(!o.texto){wait.textContent='Ese texto no lo puedo grabar. Prueba con letras y números.';return;}
-  const m=build(o);
-  if(!m){wait.innerHTML='Ese texto es muy largo para esa forma. Prueba uno más corto o pide un <b>letrero</b>.';return;}
-  if(my!==epoch)return wait.remove();
-  wait.remove();renderCard(o,m);if(window.HGAuth)HGAuth.saveModel({tipo:o.tipo,forma:o.forma,texto:o.texto,base:o.base,letras:o.letras,aro:o.aro||null,raw:o.raw},owner);
+  return genIA(p);
 }
 function renderCard(o,m){
   const card=msg('bot tcard','');const titulo=(TIPO[o.tipo]+' '+(FORMA[o.forma]||'')).trim();const $p=precio(m,o);
@@ -311,7 +302,7 @@ function loadFont(){if(font)return Promise.resolve(font);if(fontP)return fontP;
     .then(()=>new Promise((res,rej)=>new THREE.FontLoader().load(FONT_URL,f=>{font=f;res(f);},undefined,rej)));fontP.catch(()=>{fontP=null;});return fontP;}
 window.__taller={parse,completar,build,checkClosed,stl,loadFont,showObject,reset:()=>{ask.pend=null;epoch++;},show:async spec=>{const my=epoch,owner=who();spec=spec&&typeof spec==='object'?spec:{};const str=v=>typeof v==='string'?v:'';if(spec.tipo==='ia'||spec.tipo==='idea'){const p=str(spec.raw||spec.texto).slice(0,400);if(!p)return false;const task=/^[\w-]{6,80}$/.test(str(spec.task))?spec.task:null;msg('me',esc(p));if(task)return genIA(p,task);const d=msg('bot','Esta idea aún no tiene modelo 3D. Generarlo usa uno de tus modelos del día. ');const b=document.createElement('button');b.type='button';b.className='btn';b.textContent='Generar ahora';b.onclick=()=>{b.disabled=true;genIA(p);};d.appendChild(b);return true;}if(!TIPO[spec.tipo])return false;const safe={tipo:spec.tipo,texto:str(spec.texto).slice(0,40),raw:str(spec.raw).slice(0,400)};if(FORMA[spec.forma]!==undefined)safe.forma=spec.forma;if(HEX[spec.base])safe.base=spec.base;if(HEX[spec.letras])safe.letras=spec.letras;if(['izq','der','ambos'].includes(spec.aro))safe.aro=spec.aro;spec=safe;await loadFont();if(my!==epoch||who()!==owner)return false;const o=completar({...spec});const m=build(o);if(!m)return false;renderCard(o,m);return true;}};
 if(!log)return;
-setChips();if(!iaOn()&&inp){inp.placeholder='Escribe tu pieza: letrero “Oficina de Ana”, placa para perro “Max”, posavasos “Casa López”…';const h=q('.tp-hint');if(h)h.lastChild.textContent='Piezas con texto al instante · figuras con IA: muy pronto';}
+setChips();if(!iaOn()&&inp){const h=q('.tp-hint');if(h)h.lastChild.textContent='Nuestro equipo modela tu idea · se guarda en tu cuenta';}
 /* Sin cuenta, la idea se queda escrita en la caja hasta que se genera (no se pierde al registrarse). */
 /* "Generar" lleva al Taller (espacio de trabajo) y ahí arranca el modelo. */
 const toWorkspace=()=>{if(window.hgRoute&&document.body.dataset.view!=='taller')hgRoute('taller');};

@@ -1,0 +1,252 @@
+/* ===== Estilo 2026: claro y oscuro + portada con "puertas" y carrusel =====
+ * tema.js pone data-theme="light" | "dark" en <html>. Se carga al final: todo va con html[data-theme] para ganar a las hojas anteriores. */
+
+/* ---------- Paletas ---------- */
+html[data-theme="dark"] {
+  --bg: #0e0e0e; --surface: #161616; --surface-2: #1d1d1d; --field: #101010;
+  --text: #f1f1ed; --text-2: #a5a5a0; --text-3: #7f7f7a;
+  --border: rgba(255, 255, 255, .12); --border-2: #30302e;
+  --pill: rgba(255, 255, 255, .07); --pill-hover: rgba(255, 255, 255, .13);
+  --header: rgba(16, 16, 16, .82); --glass: rgba(26, 26, 26, .72);
+  --accent: #cafa78; --accent-ink: #16210d; --accent-text: #cafa78; --accent-soft: rgba(202, 250, 120, .1); --accent-line: rgba(202, 250, 120, .45);
+  --danger: #ff9c9c; --warn: #eda785; --shadow: 0 30px 80px -40px rgba(0, 0, 0, .85);
+}
+html[data-theme="light"] {
+  --bg: #ffffff; --surface: #f5f5f2; --surface-2: #ecece7; --field: #ffffff;
+  --text: #121212; --text-2: #54544f; --text-3: #85857f;
+  --border: rgba(0, 0, 0, .1); --border-2: #e0e0da;
+  --pill: rgba(0, 0, 0, .045); --pill-hover: rgba(0, 0, 0, .09);
+  --header: rgba(255, 255, 255, .88); --glass: #ffffff;
+  --accent: #cafa78; --accent-ink: #16210d; --accent-text: #3d6a08; --accent-soft: rgba(110, 170, 30, .1); --accent-line: rgba(80, 130, 15, .4);
+  --danger: #b42318; --warn: #b45309; --shadow: 0 24px 60px -36px rgba(0, 0, 0, .35);
+}
+/* Las variables viejas de la página ahora salen de la paleta */
+html[data-theme] body.shader-site {
+  --bed: var(--bg); --paper: var(--surface); --card: var(--surface); --ink: var(--text); --ink2: var(--text-2); --line: var(--border-2);
+  --pla: var(--accent); --cyan: var(--accent-text); --tp-glass: var(--glass); --tp-glass-line: var(--border); --tp-pill: var(--pill); --tp-violet: var(--text);
+  background: var(--bg); color: var(--text);
+}
+html[data-theme] .shader-site :is(button, a, input, select, textarea):focus-visible { outline-color: var(--accent-text); }
+
+/* ---------- Encabezado ---------- */
+html[data-theme] .shader-site header.tp-top { flex-wrap: wrap; row-gap: 6px; background: var(--header); border-color: var(--border); }
+html[data-theme] .tp-top .shader-nav { color: var(--text-2); }
+html[data-theme] .tp-top .shader-nav a:hover { color: var(--text); }
+html[data-theme] .tp-top .shader-nav a[aria-current="page"] { color: var(--text); }
+html[data-theme] .tp-top .shader-nav a[aria-current="page"]::after { background: var(--text); }
+html[data-theme] .shader-site .tp-top .shader-header-cta,
+html[data-theme] .shader-site .tp-top .hg-account-btn.in { background: var(--pill); color: var(--text); border-color: var(--border); }
+html[data-theme] .shader-site .tp-top .shader-header-cta:hover:not(:disabled),
+html[data-theme] .shader-site .tp-top .hg-account-btn.in:hover { background: var(--pill-hover); border-color: var(--border); }
+html[data-theme] .tp-workspace { color: var(--accent-text)!important; background: var(--accent-soft); border-color: var(--accent-line); }
+.hg-theme { flex: none; display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--border, rgba(255,255,255,.12));
+  background: var(--pill, rgba(255,255,255,.07)); color: var(--text, #f1f1ed); cursor: pointer; }
+.hg-theme:hover { background: var(--pill-hover, rgba(255,255,255,.13)); }
+.hg-theme svg { width: 18px; height: 18px; }
+.hg-theme .i-sun, html[data-theme="light"] .hg-theme .i-moon { display: none; }
+html[data-theme="light"] .hg-theme .i-sun { display: block; }
+
+/* Barra grande para describir lo que quieres (va a Studio) */
+.hg-search { order: 5; flex-basis: 100%; min-width: 0; max-width: 100%; display: flex; align-items: center; gap: 8px; margin: 2px 0 2px; padding: 5px 5px 5px 14px; border-radius: 14px;
+  background: var(--pill); border: 1px solid var(--border); }
+.hg-search:focus-within { border-color: var(--accent-line); }
+.hg-search > svg { width: 18px; height: 18px; flex: none; color: var(--text-3); }
+.hg-search input { flex: 1 1 0; width: 0; min-width: 0; min-height: 40px; border: 0; outline: 0; background: transparent; color: var(--text); font: 500 15px var(--body); }
+.hg-search input::placeholder { color: var(--text-3); }
+.hg-search input::-webkit-search-cancel-button { display: none; }
+.hg-search-draw { flex: none; min-height: 38px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text-2); font: 600 13px var(--body); cursor: pointer; }
+.hg-search-draw:hover { color: var(--text); background: var(--pill-hover); }
+.shader-site .hg-search-go { min-height: 40px; padding: 0 16px; font-size: 13px; }
+body[data-view="taller"] .hg-search, body[data-view="checkout"] .hg-search { display: none; }
+
+/* ---------- Botones y texto ---------- */
+html[data-theme] .shader-site .btn.alt { background: var(--pill); color: var(--text); border-color: var(--border); }
+html[data-theme] .shader-site .btn.alt:hover:not(:disabled):not([aria-disabled="true"]) { background: var(--pill-hover); color: var(--text); border-color: var(--border); }
+html[data-theme] .shader-site :is(h1, h2, h3) { color: var(--text); }
+html[data-theme] .tp-hero h1, html[data-theme] .tp-ws-title { color: var(--text); }
+html[data-theme] :is(.tp-sub, .tp-ws-sub, .shader-site .lead) { color: var(--text-2); }
+html[data-theme] .tp-ws-kicker { color: var(--accent-text); }
+html[data-theme="light"] .tp-hero-bg { display: none; }
+
+/* ---------- Studio ---------- */
+html[data-theme] .shader-site .taller.tp-prompt { background: var(--glass); border-color: var(--border); box-shadow: var(--shadow); }
+html[data-theme] .shader-site .tp-prompt #tform textarea { color: var(--text); }
+html[data-theme] .shader-site .tp-prompt #tform textarea::placeholder { color: var(--text-3); }
+html[data-theme] .shader-site .tp-prompt #tlog { border-bottom-color: var(--border); }
+html[data-theme] body.shader-site[data-view="taller"] .tp-prompt #tlog:empty::before { color: var(--text-3); }
+html[data-theme] .tp-prompt .tm.bot { background: var(--pill); border-color: var(--border); color: var(--text); }
+html[data-theme] .tp-prompt .tm a, html[data-theme] .tnote a { color: var(--accent-text); }
+html[data-theme] .tinfo span, html[data-theme] .tnote, html[data-theme] .tp-hint, html[data-theme] .tp-try > span, html[data-theme] .tsw { color: var(--text-2); }
+html[data-theme] .tp-modes button { border-color: var(--border); color: var(--text-2); }
+html[data-theme] .tp-modes button:hover:not([aria-selected="true"]) { color: var(--text); border-color: var(--text-3); }
+html[data-theme] .tp-modes button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+html[data-theme] .tp-drop { border-color: var(--accent-line); background: var(--accent-soft); color: var(--text-2); }
+html[data-theme] .tp-drop b { color: var(--text); }
+html[data-theme] .tp-drop span { color: var(--text-3); }
+html[data-theme] .shader-site .tp-try #tchips button, html[data-theme] .tp-prompt .tm .tp-ej button, html[data-theme] .shader-site .tsw.dctl button {
+  background: var(--pill); border-color: var(--border); color: var(--text-2); }
+html[data-theme] .shader-site .tp-try #tchips button:hover, html[data-theme] .tp-prompt .tm .tp-ej button:hover { color: var(--accent-text); border-color: var(--accent-line); }
+html[data-theme] .shader-site .tsw.dctl button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+html[data-theme] .tp-prompt .dhint { color: var(--text-3); }
+
+/* ---------- Tarjetas, planes, cotizador, contacto, pie ---------- */
+html[data-theme] .shader-site :is(.qcard, .plan, .studio, .prod:not(.tp-card)) { background: var(--surface); border-color: var(--border); }
+html[data-theme] .shader-site .plan.main { background: var(--accent-soft); border-color: var(--accent-line); }
+html[data-theme] .shader-site .request-note { background: var(--accent-soft); border-left-color: var(--accent-text); color: var(--text-2); }
+html[data-theme] .shader-site .note a { color: var(--accent-text); }
+html[data-theme] .shader-site .warn { color: var(--warn); }
+html[data-theme] .shader-site .drop { border-color: var(--border-2); color: var(--text-2); }
+html[data-theme] .shader-site .drop.on { border-color: var(--accent-text); color: var(--text); }
+html[data-theme] .shader-site :is(select, input[type=number], .qcard input:not([type=file]), .qcard textarea) { background: var(--field); color: var(--text); border-color: var(--border-2); }
+html[data-theme] .shader-site .contact { background: var(--surface); border-color: var(--accent-line); color: var(--text); }
+html[data-theme] .shader-site .contact h2 { color: var(--text); }
+html[data-theme] .shader-site .contact p { color: var(--text-2); }
+html[data-theme] .shader-site footer { border-top-color: var(--border); color: var(--text-3); }
+html[data-theme] .tp-foot a { color: var(--text-2); }
+html[data-theme] .tp-foot a:hover { color: var(--text); }
+html[data-theme] .shader-site .shader-footer-brand, html[data-theme] .shader-site .shader-footer-brand .hg-word, html[data-theme] .shader-site .shader-footer-brand .hg-word span { color: var(--text)!important; }
+html[data-theme] .shader-site .steps { border-top: 0; }
+html[data-theme] .shader-site .step { padding: 20px; border-radius: 18px; background: var(--surface); border: 1px solid var(--border); }
+html[data-theme] .shader-site .step .n { color: var(--accent-text); }
+html[data-theme] .shader-site .step p { color: var(--text-2); }
+
+/* ---------- Cuenta (ventana) ---------- */
+html[data-theme] dialog.hg-auth { background: var(--surface); color: var(--text); border-color: var(--border); }
+html[data-theme] .hg-auth .hg-x button { color: var(--text-2); }
+html[data-theme] .hg-auth .hg-x button:hover { background: var(--pill); color: var(--text); }
+html[data-theme] .hg-sub, html[data-theme] .hg-status, html[data-theme] .hg-switch, html[data-theme] .hg-models .hg-empty { color: var(--text-2); }
+html[data-theme] .hg-form label { color: var(--text-2); }
+html[data-theme] .hg-form input { background: var(--field); color: var(--text); border-color: var(--border); }
+html[data-theme] .hg-lead { background: var(--accent-soft); border-color: var(--accent-line); color: var(--text); }
+html[data-theme] .hg-switch button { color: var(--accent-text); }
+html[data-theme] .hg-fine, html[data-theme] .hg-or, html[data-theme] .hg-models span { color: var(--text-3); }
+html[data-theme] .hg-models li { background: var(--field); border-color: var(--border); }
+html[data-theme] .hg-status.bad { color: var(--danger); }
+
+/* ---------- Checkout, Mis pedidos y Panel ---------- */
+html[data-theme] :is(.co-box, .co-sum, .od) { background: var(--surface); border-color: var(--border); }
+html[data-theme] .co-box input:not([type="radio"]), html[data-theme] .co-box select, html[data-theme] .co-box textarea,
+html[data-theme] .od-actions input, html[data-theme] .od-actions textarea { background: var(--field); border-color: var(--border-2); color: var(--text); }
+html[data-theme] .co-box .co-opt { background: var(--field); border-color: var(--border-2); }
+html[data-theme] .co-box .co-opt:has(input:checked) { background: var(--accent-soft); border-color: var(--accent-line); }
+html[data-theme] .co-step button { background: var(--surface-2); color: var(--text); }
+html[data-theme] :is(.co-thumb, .od-thumb) { background: var(--accent-soft); border-color: var(--accent-line); color: var(--accent-text); }
+html[data-theme] .co-info ul { color: var(--text-2); }
+html[data-theme] .co-filenote, html[data-theme] .od-msgs li, html[data-theme] .od-pill { background: var(--pill); }
+html[data-theme] .od-msgs li.shop { background: var(--accent-soft); border-color: var(--accent-line); }
+html[data-theme] .od-flow li span { background: var(--border-2); }
+html[data-theme] .od-flow li.on span { background: var(--accent); }
+html[data-theme] .od-pill.s-completed { background: var(--accent-soft); color: var(--accent-text); }
+html[data-theme] :is(.co-status.bad, .od-status.bad, .od-empty.bad, .od-cancel), html[data-theme] .shader-site .od-danger, html[data-theme] .od-pill.s-cancelled { color: var(--danger); }
+html[data-theme] .op-tabs button { background: var(--pill); border-color: var(--border); color: var(--text-2); }
+html[data-theme] .op-tabs button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+html[data-theme] .co-check { background: var(--accent); color: var(--accent-ink); }
+
+/* ---------- Logo "h:": el cuadro se queda oscuro en los dos modos y los dos puntos son círculos (los puntitos de las i) ---------- */
+html[data-theme="light"] .shader-site .hg-logo { background: #141414; border-color: #141414; color: #f4f4ef; }
+html[data-theme="light"] .shader-site .shader-footer-brand .hg-logo { color: #f4f4ef!important; }
+html[data-theme="light"] .hg-i::after { background: #7fbf1f; }
+.shader-site .hg-logo b { display: inline-flex; flex-direction: column; justify-content: center; gap: 4px; margin-left: 2px; font-size: 0; }
+.shader-site .hg-logo b::before, .shader-site .hg-logo b::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: #cafa78; }
+.shader-site .hg-logo-sm b { gap: 3px; }
+.shader-site .hg-logo-sm b::before, .shader-site .hg-logo-sm b::after { width: 4px; height: 4px; }
+
+/* ================= Portada ================= */
+.shader-site main > section.hg-intro { padding: 30px 0 18px; }
+.hg-intro h1 { margin: 0; font: 800 clamp(28px, 3.6vw, 46px)/1.08 var(--display); letter-spacing: -1.2px; color: var(--text); max-width: 20ch; }
+.hg-intro p { margin: 10px 0 0; max-width: 60ch; color: var(--text-2); font-size: 16px; line-height: 1.6; }
+
+/* Tres puertas de colores con fotos */
+.shader-site main > section.hg-doors { padding: 0 0 34px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.hg-door { display: flex; flex-direction: column; overflow: hidden; border-radius: 20px; text-decoration: none; background: var(--surface); transition: transform .25s ease, box-shadow .25s ease; }
+.hg-door:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.hg-door-pics { height: 210px; display: grid; grid-template-columns: 1.3fr 1fr; grid-template-rows: 1fr 1fr; gap: 3px; background: var(--surface-2); }
+.hg-door-pics img { width: 100%; height: 100%; object-fit: cover; display: block; min-height: 0; }
+.hg-door-pics img:first-child { grid-row: span 2; }
+.hg-door-pics.art { display: block; }
+.hg-door-pics.art svg { width: 100%; height: 100%; display: block; }
+.hg-door-body { position: relative; flex: 1; padding: 22px 22px 24px; }
+.hg-door-ic { display: block; width: 30px; height: 30px; }
+.hg-door-ic svg { width: 30px; height: 30px; }
+.hg-door-go { position: absolute; top: 20px; right: 20px; font-size: 30px; line-height: 1; opacity: .85; transition: transform .25s ease; }
+.hg-door:hover .hg-door-go { transform: translateX(4px); }
+.hg-door h2 { margin: 16px 0 8px; font: 800 26px/1.1 var(--display); letter-spacing: -.6px; }
+html[data-theme] .shader-site .hg-door h2 { color: inherit; }
+.hg-door p { margin: 0; font-size: 15px; line-height: 1.55; opacity: .85; }
+.hg-door.d-studio .hg-door-body { background: linear-gradient(140deg, #dcfb8f 0%, #92e06a 45%, #2fae6c 100%); color: #0b2413; }
+.hg-door.d-dibujo .hg-door-body { background: linear-gradient(140deg, #fbc53d 0%, #f6a531 48%, #ec5a1b 100%); color: #5a2606; }
+.hg-door.d-print .hg-door-body { background: linear-gradient(150deg, #3d7dff 0%, #2458e2 55%, #2a3fb3 100%); color: #fff; }
+/* Destellos de luz dentro de cada puerta */
+.hg-door-body { isolation: isolate; overflow: hidden; }
+.hg-door-body::before, .hg-door-body::after { content: ""; position: absolute; z-index: -1; border-radius: 50%; pointer-events: none; }
+.hg-door-body::before { width: 75%; aspect-ratio: 1; right: -22%; top: -45%; background: radial-gradient(circle, rgba(255, 255, 255, .34), transparent 64%); }
+.hg-door-body::after { width: 60%; aspect-ratio: 1; left: -18%; bottom: -38%; background: radial-gradient(circle, rgba(255, 255, 255, .24), transparent 64%); }
+.hg-door.d-dibujo .hg-door-body::after { background: radial-gradient(circle, rgba(255, 90, 20, .35), transparent 64%); left: auto; right: -20%; bottom: -40%; }
+/* Resplandor de colores detrás de las puertas */
+.shader-site main > section.hg-doors { position: relative; isolation: isolate; }
+.shader-site main > section.hg-doors::before { content: ""; position: absolute; inset: -70px -60px -30px; z-index: -1; pointer-events: none; filter: blur(34px);
+  background: radial-gradient(38% 60% at 14% 45%, rgba(47, 174, 108, .42), transparent 70%),
+              radial-gradient(34% 55% at 50% 35%, rgba(246, 165, 49, .36), transparent 70%),
+              radial-gradient(38% 60% at 86% 50%, rgba(61, 125, 255, .46), transparent 70%); }
+html[data-theme="light"] .shader-site main > section.hg-doors::before { opacity: .45; }
+
+/* Carrusel "Lo que podemos hacer" */
+.shader-site main > section.hg-shelf { padding: 18px 0 40px; }
+.hg-shelf-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+html[data-theme] .shader-site .hg-shelf-head h2 { margin: 0; font: 800 24px var(--display); letter-spacing: -.5px; }
+.hg-arrows { display: flex; gap: 8px; }
+.hg-arrows button { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border); background: var(--pill); color: var(--text); font-size: 20px; line-height: 1; cursor: pointer; }
+.hg-arrows button:hover { background: var(--pill-hover); }
+html[data-theme] .tp-filters button { background: var(--pill); border-color: var(--border); color: var(--text-2); }
+html[data-theme] .tp-filters button:hover { color: var(--text); background: var(--pill-hover); }
+html[data-theme] .tp-filters button[aria-pressed="true"] { background: var(--text); border-color: var(--text); color: var(--bg); }
+.hg-row { display: flex; gap: 16px; margin-top: 16px; padding-bottom: 8px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; overscroll-behavior-x: contain; }
+.hg-row > [hidden] { display: none!important; }
+.hg-card { position: relative; flex: none; width: clamp(236px, 23vw, 300px); aspect-ratio: 3 / 4; overflow: hidden; border-radius: 20px; scroll-snap-align: start; background: var(--surface-2); }
+.hg-card > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+.hg-card:hover > img { transform: scale(1.05); }
+.hg-card-cat { position: absolute; top: 12px; left: 12px; z-index: 2; padding: 5px 10px; border-radius: 999px; background: rgba(10, 10, 10, .55); color: #fff; font: 700 11px/1 var(--body);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.hg-card-go { position: absolute; top: 10px; right: 10px; z-index: 3; min-height: 32px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 10px;
+  background: #fff; color: #111!important; font: 700 12px var(--body); text-decoration: none; border: 1px solid rgba(0, 0, 0, .08); }
+.hg-card-go:hover { background: #cafa78; }
+.hg-card-txt { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 56px 16px 14px; color: #fff;
+  background: linear-gradient(to top, rgba(6, 6, 6, .92) 20%, rgba(6, 6, 6, .55) 60%, transparent); }
+html[data-theme] .shader-site .hg-card-txt h3 { margin: 0; color: #fff; font: 800 18px/1.2 var(--display); letter-spacing: -.3px; }
+.hg-card-txt p { margin: 6px 0 0; font-size: 13px; line-height: 1.45; color: rgba(255, 255, 255, .82); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.hg-card-meta { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; margin-top: 8px; font-size: 11px; color: rgba(255, 255, 255, .7); }
+.hg-card-meta a { color: rgba(255, 255, 255, .6)!important; text-decoration: none; white-space: nowrap; }
+.hg-card-meta a:hover { color: #fff!important; text-decoration: underline; }
+.hg-card.new { display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; padding: 20px; text-decoration: none; color: var(--text)!important;
+  background: var(--surface); border: 1.5px dashed var(--accent-line); }
+.hg-card.new b { font: 800 22px/1.15 var(--display); letter-spacing: -.4px; }
+.hg-card.new span { font-size: 14px; line-height: 1.5; color: var(--text-2); }
+.hg-card.new i { align-self: flex-start; margin-top: 6px; padding: 10px 14px; border-radius: 10px; background: var(--accent); color: var(--accent-ink); font: 700 13px var(--body); font-style: normal; }
+html[data-theme] .tp-gallery-note { color: var(--text-3); }
+html[data-theme] .tp-gallery-note b { color: var(--accent-text); }
+
+/* Franja de planes */
+.shader-site main > section.hg-band { padding: 0 0 40px; }
+.hg-band-in { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; padding: 24px 26px; border-radius: 20px;
+  background: var(--surface); border: 1px solid var(--border); }
+.hg-band-in b { display: block; font: 800 22px/1.2 var(--display); letter-spacing: -.4px; color: var(--text); }
+.hg-band-in span { display: block; margin-top: 4px; color: var(--text-2); font-size: 15px; }
+
+@media (max-width: 1000px) {
+  .shader-site main > section.hg-doors { grid-template-columns: minmax(0, 1fr); }
+  .hg-door { flex-direction: row; }
+  .hg-door-pics { width: 42%; height: auto; min-height: 190px; flex: none; }
+}
+@media (max-width: 620px) {
+  .hg-door { flex-direction: column; }
+  .hg-door-pics { width: auto; height: 170px; min-height: 0; }
+  .hg-door h2 { font-size: 22px; }
+  .hg-search-draw span { display: none; }
+  .hg-arrows { display: none; }
+  .hg-card { width: 78vw; }
+}
+@media (prefers-reduced-motion: reduce) { .hg-door, .hg-card > img, .hg-door-go { transition: none; } }
+
+/* Checkout: precio calculándose / precio con la vista previa */
+.co-calc { color: var(--text-3); font-weight: 500; }
+.co-total .co-later { font-size: 17px; font-weight: 700; letter-spacing: 0; color: var(--text-2); }

@@ -5,16 +5,18 @@ Todos los pedidos se hacen desde hackgorithmic.com con una cuenta. Ya no hay ped
 ## Cómo pide un cliente
 
 1. Crea algo y pulsa **Pedirlo impreso** (o **Pedir esta impresión** / **Elegir plan** / **Pedir un diseño a medida**):
-   - hackgorithmic Studio: pieza con texto, modelo con IA o idea que modela el equipo.
+   - hackgorithmic Studio: describe tu idea (modelo con IA o lo modela el equipo) o Tu dibujo en 3D.
    - Tu dibujo en 3D: placa en relieve o figura completa.
-   - Cotizar: su archivo STL.
+   - Imprimir: su archivo STL.
    - Planes: Creador $8 o Pro $24.
    - Contacto: diseño a medida.
 2. Si no tiene cuenta, se la pide (correo confirmado).
-3. **Checkout**: nombre, teléfono (opcional), entrega (envío en EE.UU., recoger en Florida o digital), notas y resumen con el precio estimado. Al confirmar se sube el archivo (STL o foto del dibujo) a un espacio privado.
+3. **Checkout**: nombre, teléfono (opcional), entrega (envío en EE.UU., recoger en Florida o digital) y notas.
+   - **Con archivo (tu STL o tu dibujo en 3D):** el archivo se sube al entrar, la función `precio-archivo` lo mide y la base de datos calcula el **precio real + envío** (mismas tarifas que la página). El pedido queda **Listo para pagar**.
+   - **Sin archivo (diseño a medida, IA):** dice "Con tu vista previa"; la tienda pone el precio desde el Panel.
 4. Ve la confirmación con su número de pedido (HG-XXXXXXXX) y lo sigue en **Mis pedidos**.
 
-No se cobra nada al pedir: el pedido queda **Recibido** hasta que la tienda confirma el total.
+Envío en EE.UU. por peso (pieza + 100 g): hasta 250 g $6 · hasta 1 kg $9 · hasta 3 kg $15 · más $25. Recoger en Florida: gratis. Se cambia en `private.shipping_cents` (SQL) y en `envio()` de `pedidos.js`.
 
 ## Cómo lo atiende la tienda (Panel)
 
@@ -47,7 +49,7 @@ Hasta el paso 3, quien intente pedir ve: "Estamos terminando de abrir la tienda 
 
 - Las funciones solo las puede usar una cuenta con correo confirmado; nadie anónimo crea, ve ni cambia pedidos.
 - Cada cliente solo ve sus pedidos; la tienda solo los de su tienda (RLS).
-- El precio que manda la página es un estimado: el total real lo fija la tienda antes de cobrar.
+- El precio lo calcula la base de datos con la medición del archivo (función precio-archivo): la página nunca decide cuánto se cobra. Los diseños a medida los cotiza la tienda.
 - Límites: 15 pedidos por persona al día, 40 archivos por persona, 25 MB por archivo (STL, JPG, PNG, WEBP).
 - Archivos en el bucket privado `order-files`: solo los ven quien los subió y la tienda.
 
