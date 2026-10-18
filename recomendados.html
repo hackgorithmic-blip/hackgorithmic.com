@@ -1,0 +1,82 @@
+<title>Recomendados h:</title>
+<style>
+/* Layout: catálogo de recomendados — rejilla de tarjetas de producto con botón de compra */
+:root{
+  --bg:#f5f3fa; --surface:#fff; --ink:#191325; --muted:#6c6482;
+  --line:#e6e1f0; --violet:#8b4ff5; --violet-d:#6d2fe0; --amber:#ffb703; --ink-amber:#3a2a00;
+  --sans:'Poppins',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f0b17; --surface:#1a1426; --ink:#f2edfb; --muted:#a99fc2; --line:#2b2238;
+  --violet:#a878ff; --violet-d:#8b4ff5; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0f0b17; --surface:#1a1426; --ink:#f2edfb; --muted:#a99fc2; --line:#2b2238;
+  --violet:#a878ff; --violet-d:#8b4ff5; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5}
+.wrap{max-width:960px;margin:0 auto;padding-inline:16px;padding-block:30px}
+.brand{font-weight:700;font-size:1.05rem}.brand b{color:var(--violet)}
+.hero{text-align:center;padding-block:14px 6px}
+.hero h1{font-size:2rem;margin:.4rem 0 0;letter-spacing:-.02em;text-wrap:balance}
+.hero p{color:var(--muted);max-width:52ch;margin:.6rem auto 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:26px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;
+  display:flex;flex-direction:column;gap:10px;min-width:0}
+.rank{font-size:.72rem;font-weight:700;letter-spacing:.06em;color:var(--violet);text-transform:uppercase}
+.card h3{margin:0;font-size:1.08rem;line-height:1.3}
+.card p{margin:0;color:var(--muted);font-size:.9rem;flex:1}
+.buy{margin-top:4px;display:block;text-align:center;text-decoration:none;font-weight:700;font-size:.9rem;
+  background:var(--amber);color:var(--ink-amber);padding:11px;border-radius:11px}
+.buy:hover{filter:brightness(1.05)}
+.disc{margin-top:30px;background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:16px 18px;color:var(--muted);font-size:.82rem}
+footer{margin-top:26px;text-align:center;color:var(--muted);font-size:.8rem}
+footer b{color:var(--violet)}
+a.site{color:var(--violet)}
+</style>
+
+<div class="wrap">
+  <div class="brand"><b>h:</b> hackgorithmic</div>
+
+  <div class="hero">
+    <h1>Los 10 gadgets que recomiendo</h1>
+    <p>Aparatos de tecnología más vendidos, escogidos por hackgorithmic. Toca el botón para verlo en Amazon.</p>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="disc">
+    <b style="color:var(--ink)">Aviso:</b> Como Afiliado de Amazon, gano con las compras que califican. Los precios y la disponibilidad se muestran en Amazon y pueden cambiar. · <i>As an Amazon Associate I earn from qualifying purchases.</i>
+  </div>
+
+  <footer>Hecho por <b>h: hackgorithmic</b> · hackgorithmic.com</footer>
+</div>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+<script>
+const TAG="josegonzalezs-20";
+// Enlaces por búsqueda con tu tag (válidos hoy). Cuando tengas el ASIN, se cambian por el producto exacto.
+const P=[
+ ["Fire TV Stick 4K","Convierte tu TV en smart. El más vendido de Amazon.","Fire TV Stick 4K"],
+ ["Fire TV Stick 4K Max","Más rápido y con WiFi 6, para streaming sin cortes.","Fire TV Stick 4K Max"],
+ ["Echo Dot","El altavoz con Alexa: música, alarmas y casa inteligente.","Echo Dot"],
+ ["Echo Show 8","Alexa con pantalla de 8 pulgadas para ver y escuchar.","Echo Show 8"],
+ ["Kindle","Lee miles de libros en un solo aparato ligero.","Kindle"],
+ ["Kindle Colorsoft","El nuevo Kindle a color, para libros y cómics.","Kindle Colorsoft"],
+ ["Fire HD 10","Tablet de 10 pulgadas Full HD para todo el día.","Fire HD 10 tablet"],
+ ["Fire HD 8","La tablet más económica de Amazon.","Fire HD 8 tablet"],
+ ["Ring Video Doorbell","Timbre con cámara: mira quién llega desde el teléfono.","Ring Video Doorbell"],
+ ["Blink Mini","Cámara de seguridad chiquita y barata para la casa.","Blink Mini camera"],
+];
+const g=document.getElementById('grid');
+P.forEach(([name,desc,q],i)=>{
+  const url=`https://www.amazon.com/s?k=${encodeURIComponent(q)}&tag=${TAG}`;
+  const c=document.createElement('div');c.className='card';
+  c.innerHTML=`<span class="rank">#${i+1}</span>
+    <h3>${name}</h3><p>${desc}</p>
+    <a class="buy" href="${url}" target="_blank" rel="nofollow sponsored noopener">Ver en Amazon →</a>`;
+  g.appendChild(c);
+});
+</script>
