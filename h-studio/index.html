@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/ https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/ https://cdn.jsdelivr.net/npm/fflate@0.8.2/ https://cdn.jsdelivr.net/npm/opentype.js@1.3.4/ https://cdn.jsdelivr.net/npm/@jscad/modeling@2.12.5/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' data: blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="h: Studio de hackgorithmic: diseña piezas 3D con IA, convierte logos y fotos en 3D, repara y divide mallas, y descarga el STL listo para imprimir.">
+<title>h: Studio · hackgorithmic</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20viewBox=%270%200%2064%2064%27%3E%3Crect%20width=%2764%27%20height=%2764%27%20rx=%2714%27%20fill=%27%236b3fe0%27/%3E%3Ctext%20x=%2732%27%20y=%2746%27%20font-family=%27Arial%27%20font-weight=%27900%27%20font-size=%2740%27%20text-anchor=%27middle%27%20fill=%27%23fff%27%3Eh:%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="studio.css?v=2">
+</head>
+<body>
+
+
+<div class="app">
+  <header>
+    <a class="back" href="/">← hackgorithmic.com</a><div class="logo"><b>h:</b>Studio <span class="beta">beta</span></div>
+    <div class="sp"></div>
+    <div class="status" id="status">Cargando motor…</div>
+    <div class="engine" id="engine" title="Motor de geometría">JSCAD</div>
+  </header>
+
+  <div class="stage">
+    <canvas id="view" aria-label="Vista 3D de la pieza sobre la cama de la impresora"></canvas>
+    <div class="hud"><div class="name" id="pname">—</div><div class="dims" id="pdims"></div></div>
+    <div class="views" role="group" aria-label="Vistas">
+      <button id="v-iso" title="Vista 3D">3D</button>
+      <button id="v-front" title="Frente">Frente</button>
+      <button id="v-top" title="Arriba">Arriba</button>
+      <button id="v-bot" title="Abajo">Abajo</button>
+    </div>
+    <div class="legend" id="legend"></div>
+    <div class="busy" id="busy" hidden><span class="dot"></span><span id="busytxt">Pensando…</span></div>
+  </div>
+
+  <aside>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="t-design" aria-selected="true" aria-controls="p-design">Diseñar</button>
+      <button role="tab" id="t-image" aria-selected="false" aria-controls="p-image">Imagen</button>
+      <button role="tab" id="t-shop" aria-selected="false" aria-controls="p-shop">Taller</button>
+    </div>
+
+    <!-- ===== DISEÑAR ===== -->
+    <div class="pane" id="p-design" role="tabpanel">
+      <section>
+        <h2>Describe tu pieza</h2>
+        <textarea class="ask" id="prompt" placeholder="Ej.: soporte para colgar el iPad en el tubo de 1 pulgada, inclinado 15°, con tornillo M5"></textarea>
+        <div class="row">
+          <button class="btn primary" id="go">Crear pieza nueva</button>
+          <button class="btn" id="edit">Cambiar esta</button>
+          <button class="btn" id="stop" hidden>Parar</button>
+        </div>
+        <div class="row">
+          <label class="btn sm file" id="photo-lbl" hidden>Foto o boceto<input type="file" id="photo" accept="image/*"></label>
+          <button class="photo-chip" id="photo-chip" hidden></button>
+        </div>
+        <label class="chk"><input type="checkbox" id="review" checked> Revisión automática (la IA mira la pieza y la corrige)</label>
+        <label class="chk"><input type="checkbox" id="deep"> Pensar más (piezas difíciles)</label>
+        <div class="reply" id="reply" hidden></div>
+        <div class="row" id="fixrow" hidden><button class="btn sm" id="fix">Pedir a la IA que lo arregle</button></div>
+      </section>
+      <section>
+        <h2>Plantillas</h2>
+        <div class="chips" id="tpls"></div>
+      </section>
+      <section>
+        <h2>Medidas</h2>
+        <div id="params"></div>
+        <div class="row"><button class="btn sm" id="undo" disabled>Deshacer</button><button class="btn sm" id="reset">Medidas originales</button><button class="btn sm" id="toshop">Llevar al Taller</button></div>
+      </section>
+      <section>
+        <details>
+          <summary>Código del diseño (para copiar o pegar)</summary>
+          <textarea id="json" spellcheck="false"></textarea>
+          <div class="row" style="margin-top:8px"><button class="btn sm" id="copy">Copiar</button><button class="btn sm" id="load">Cargar este código</button></div>
+        </details>
+      </section>
+    </div>
+
+    <!-- ===== IMAGEN ===== -->
+    <div class="pane" id="p-image" role="tabpanel" hidden>
+      <div class="card">
+        <h3>Logo o dibujo en relieve</h3>
+        <div class="note">Sube un SVG (queda perfecto) o un PNG/JPG con fondo claro. Sale en dos colores: base y logo.</div>
+        <div class="row"><label class="btn file">Elegir imagen<input type="file" id="logo-file" accept=".svg,image/svg+xml,image/png,image/jpeg,image/webp"></label><span class="note" id="logo-name"></span></div>
+        <canvas class="prev" id="logo-prev" width="640" height="360" hidden></canvas>
+        <div class="row" id="logo-trace" hidden>
+          <label class="chk"><input type="checkbox" id="logo-inv"> Invertir</label>
+          <label class="chk" style="flex:1;min-width:160px">Umbral <input type="range" id="logo-th" min="-1" max="254" value="-1" style="flex:1;accent-color:var(--accent)"></label>
+        </div>
+        <div class="row">
+          <div class="seg" id="logo-mode"><button data-v="placa" class="on">Placa</button><button data-v="solo">Solo el logo</button><button data-v="llavero">Llavero</button></div>
+        </div>
+        <div class="grid2">
+          <label>Ancho del logo<div class="numbox"><input id="logo-w" inputmode="decimal" value="70"><span>mm</span></div></label>
+          <label>Relieve<div class="numbox"><input id="logo-h" inputmode="decimal" value="1.2"><span>mm</span></div></label>
+        </div>
+        <button class="btn primary" id="logo-go" disabled>Crear pieza con el logo</button>
+      </div>
+
+      <div class="card">
+        <h3>Litofanía</h3>
+        <div class="note">Una foto que aparece al ponerle luz por detrás. Imprímela en PLA blanco.</div>
+        <div class="row"><label class="btn file">Elegir foto<input type="file" id="lit-file" accept="image/*"></label><span class="note" id="lit-name"></span></div>
+        <div class="grid2">
+          <label>Ancho<div class="numbox"><input id="lit-w" inputmode="decimal" value="100"><span>mm</span></div></label>
+          <label>Marco<div class="numbox"><input id="lit-f" inputmode="decimal" value="6"><span>mm</span></div></label>
+          <label>Grosor mínimo<div class="numbox"><input id="lit-t0" inputmode="decimal" value="0.8"><span>mm</span></div></label>
+          <label>Grosor máximo<div class="numbox"><input id="lit-t1" inputmode="decimal" value="3.2"><span>mm</span></div></label>
+        </div>
+        <label class="chk"><input type="checkbox" id="lit-up" checked> De pie, con base (imprime mejor)</label>
+        <button class="btn primary" id="lit-go" disabled>Crear litofanía</button>
+      </div>
+
+      <div class="card">
+        <h3>Foto a figura 3D (escultura)</h3>
+        <div class="note">Para figuras, personajes y decoración. Genera el modelo en uno de estos servicios, descarga el GLB o STL y ábrelo en el Taller: ahí lo escalas, le cortas la base, le grabas la marca h: y lo divides para la cama.</div>
+        <div class="row">
+          <a class="btn sm" href="https://www.tripo3d.ai" target="_blank" rel="noopener">Abrir Tripo</a>
+          <a class="btn sm" href="https://www.meshy.ai" target="_blank" rel="noopener">Abrir Meshy</a>
+          <a class="btn sm" href="https://3d.hunyuan.tencent.com" target="_blank" rel="noopener">Abrir Hunyuan 3D</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TALLER ===== -->
+    <div class="pane" id="p-shop" role="tabpanel" hidden>
+      <section>
+        <h2>Pieza</h2>
+        <div class="row">
+          <label class="btn primary file">Abrir archivo 3D<input type="file" id="shop-file" accept=".stl,.obj,.glb,.gltf,.3mf"></label>
+          <button class="btn" id="shop-from">Traer de Diseñar</button>
+        </div>
+        <div class="note" id="shop-info">STL, OBJ, GLB o 3MF. Lo que bajes de Tripo, Meshy o Thingiverse.</div>
+      </section>
+      <div id="shop-tools" hidden>
+        <section>
+          <h2>Orientación</h2>
+          <div class="row">
+            <button class="btn sm" data-rot="x">Girar X 90°</button>
+            <button class="btn sm" data-rot="y">Girar Y 90°</button>
+            <button class="btn sm" data-rot="z">Girar Z 90°</button>
+            <button class="btn sm" id="shop-auto">Acostar automático</button>
+          </div>
+        </section>
+        <section>
+          <h2>Tamaño</h2>
+          <div class="grid2">
+            <label>Medir por<select id="shop-axis"><option value="max">Lado más largo</option><option value="z">Alto (Z)</option><option value="x">Largo (X)</option><option value="y">Ancho (Y)</option></select></label>
+            <label>Medida<div class="numbox"><input id="shop-mm" inputmode="decimal" value="100"><span>mm</span></div></label>
+          </div>
+        </section>
+        <section>
+          <h2>Base plana</h2>
+          <div class="param"><label for="shop-cut">Cortar desde abajo</label><input type="range" id="shop-cut" min="0" max="20" step="0.1" value="0"><div class="numbox"><input id="shop-cut-n" inputmode="decimal" value="0"><span>mm</span></div></div>
+        </section>
+        <section>
+          <h2>Marca h:</h2>
+          <label class="chk"><input type="checkbox" id="shop-mark" checked> Grabar la marca h: en la base</label>
+        </section>
+        <section>
+          <h2>Dividir para la cama (270 mm)</h2>
+          <label class="chk"><input type="checkbox" id="shop-split" checked> Dividir solo si no cabe</label>
+          <label class="chk"><input type="checkbox" id="shop-pins" checked> Agujeros y pasadores para unir las partes</label>
+          <div class="cuts" id="cuts"></div>
+          <div class="row"><button class="btn sm" id="cut-add">Agregar corte</button></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- ===== SHARED ===== -->
+    <div class="shared">
+      <section>
+        <h2>Revisión para imprimir · Snapmaker U1</h2>
+        <div class="checks" id="checks"></div>
+        <div class="note" id="checknote"></div>
+      </section>
+      <section>
+        <h2>Exportar</h2>
+        <div class="row">
+          <button class="btn primary" id="dl">Descargar STL (.zip)</button>
+          <button class="btn" id="save">Guardar diseño</button>
+        </div>
+        <div class="note" id="dlnote">El .zip trae cada parte en STL para Snapmaker Orca y los ajustes PLA recomendados.</div>
+      </section>
+      <section>
+        <h2>Mis diseños</h2>
+        <div class="saved" id="saved"></div>
+      </section>
+    </div>
+  </aside>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/SVGLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/3MFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fflate@0.8.2/umd/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/opentype.js@1.3.4/dist/opentype.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@jscad/modeling@2.12.5/dist/jscad-modeling.min.js"></script>
+<script src="manifold.js?v=3.4.1"></script>
+<script src="engine.js?v=2"></script>
+<script src="designs.js?v=2"></script>
+<script src="config.js?v=1"></script>
+<script src="app.js?v=2"></script>
+</body>
+</html>
